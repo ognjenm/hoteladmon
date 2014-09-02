@@ -1,0 +1,18 @@
+<data profile='color'><scale mode='timeline' today='5 Ago 2014 - 19 Ago 2014'><x>
+<column><![CDATA[05:Ago]]></column>
+<column><![CDATA[06:Ago]]></column>
+<column><![CDATA[07:Ago]]></column>
+<column><![CDATA[08:Ago]]></column>
+<column><![CDATA[09:Ago]]></column>
+<column><![CDATA[10:Ago]]></column>
+<column><![CDATA[11:Ago]]></column>
+<column><![CDATA[12:Ago]]></column>
+<column><![CDATA[13:Ago]]></column>
+<column><![CDATA[14:Ago]]></column>
+<column><![CDATA[15:Ago]]></column>
+<column><![CDATA[16:Ago]]></column>
+<column><![CDATA[17:Ago]]></column>
+<column><![CDATA[18:Ago]]></column>
+<column><![CDATA[19:Ago]]></column></x><y><row><![CDATA[-Cabaña con ventilador]]></row><row><![CDATA[CV-1]]></row><row><![CDATA[CV-2]]></row><row><![CDATA[CV-3]]></row><row><![CDATA[CV-4]]></row><row><![CDATA[CV-5]]></row><row><![CDATA[-Cabaña con aire acondicionado]]></row><row><![CDATA[CAA-6]]></row><row><![CDATA[CAA-7]]></row><row><![CDATA[CAA-8]]></row><row><![CDATA[CAA-9]]></row><row><![CDATA[CAA-10]]></row><row><![CDATA[CAA-11]]></row><row><![CDATA[CAA-12]]></row><row><![CDATA[CAA-13]]></row><row><![CDATA[CAA-14]]></row><row><![CDATA[CAA-15]]></row><row><![CDATA[-Casa de Campaña ]]></row><row><![CDATA[CAMP-16]]></row><row><![CDATA[CAMP-17]]></row><row><![CDATA[CAMP-18]]></row><row><![CDATA[CAMP-19]]></row><row><![CDATA[-Casa de Campaña Safari]]></row><row><![CDATA[CSAFARI-20]]></row><row><![CDATA[CSAFARI-21]]></row><row><![CDATA[-RV]]></row><row><![CDATA[-Acampar propia casa de campaña]]></row><row><![CDATA[-Admisiones al parque]]></row></y></scale>
+<event week='2' day='0' type='event_line' x='1.2987012987012987' y='2.666666666666667' width='52.246753246753244' height='85' len='0'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonsoo: CV-2]]></body></event>
+<event week='2' day='0' type='event_line' x='163.63636363636363' y='2.666666666666667' width='389.90909090909093' height='85' len='0'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CV-2]]></body></event></data>

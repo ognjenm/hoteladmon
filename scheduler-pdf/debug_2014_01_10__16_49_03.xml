@@ -1,0 +1,29 @@
+<data profile='color'><scale mode='day' today='1 Ene 2014'><x>
+<column><![CDATA[1 Ene 2014]]></column></x><y>
+<row><![CDATA[00:00]]></row>
+<row><![CDATA[01:00]]></row>
+<row><![CDATA[02:00]]></row>
+<row><![CDATA[03:00]]></row>
+<row><![CDATA[04:00]]></row>
+<row><![CDATA[05:00]]></row>
+<row><![CDATA[06:00]]></row>
+<row><![CDATA[07:00]]></row>
+<row><![CDATA[08:00]]></row>
+<row><![CDATA[09:00]]></row>
+<row><![CDATA[10:00]]></row>
+<row><![CDATA[11:00]]></row>
+<row><![CDATA[12:00]]></row>
+<row><![CDATA[13:00]]></row>
+<row><![CDATA[14:00]]></row>
+<row><![CDATA[15:00]]></row>
+<row><![CDATA[16:00]]></row>
+<row><![CDATA[17:00]]></row>
+<row><![CDATA[18:00]]></row>
+<row><![CDATA[19:00]]></row>
+<row><![CDATA[20:00]]></row>
+<row><![CDATA[21:00]]></row>
+<row><![CDATA[22:00]]></row>
+<row><![CDATA[23:00]]></row></y></scale>
+<event week='0' day='0' type='event_line' x='0.07593014426727418' y='4.545454545454546' width='97.86104783599089' height='auto' len='1'><body backgroundColor='rgb(255, 165, 0)' color='rgb(255, 255, 255)'><![CDATA[Jose Angel: CV-1]]></body></event>
+<event week='0' day='0' type='event_line' x='0.07593014426727418' y='59.09090909090909' width='97.86104783599089' height='auto' len='1'><body backgroundColor='rgb(255, 165, 0)' color='rgb(255, 255, 255)'><![CDATA[Jose Angel: CAA-6]]></body></event>
+<event week='0' day='0' type='event_line' x='0.07593014426727418' y='113.63636363636364' width='97.86104783599089' height='auto' len='1'><body backgroundColor='rgb(255, 165, 0)' color='rgb(255, 255, 255)'><![CDATA[Jose Angel: CV-2]]></body></event></data>

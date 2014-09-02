@@ -1,0 +1,42 @@
+
+
+.dualBoxes { padding: 22px 16px; position: relative; }
+.dualBtn { padding: 0 8px; line-height: 24px; font-size: 11px; cursor: pointer; border: 1px solid #d5d5d5; color: #525252; margin-left: -1px; height: 20px; }
+.leftBox, .rightBox { position: relative; }
+.leftBox { float: left; }
+.rightBox { float: right; }
+.fltr { position: absolute; right: 0; top: 30px; font-size: 12px; }
+.boxFilter { margin-bottom: 15px; }
+.dualControl { text-align: center;  margin: 150px 1px; /*position: absolute; margin-left: -45px;   left: 50%; width: 90px;*/}
+.countLabel { color: gray; font-style:italic; margin-top: 10px; display: block; }
+.storageBox { display:none; }
+.copiedOption { background-color: Yellow; }
+.boxFilter {  background: white; height: 26px; width: 100%; border: 1px solid #D5D5D5; padding: 6px 8px; font-size: 11px; font-family: Arial, Helvetica, sans-serif; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; -ms-box-sizing: border-box; box-sizing: border-box; margin-top: 5px; }
+.displayNone {display:none;}
+.widget { background: #f7f7f7; border: 1px solid #cdcdcd; border-radius: 0px; -webkit-border-radius: 0px; -moz-border-radius: 0px; box-shadow: 0 2px 2px -2px #ccc; margin-top: 35px; position: relative; }
+.widget .body { padding: 14px 16px; }
+.clear { clear:both;display:block; }
+
+.multiple {
+    width: 100%;
+    /*height: 200px;*/
+    padding: 5px;
+    border: 1px solid #d7d7d7;
+    box-shadow: 0 1px 0 #fff;
+    -webkit-box-shadow: 0 1px 0 #fff;
+    -moz-box-shadow: 0 1px 0 #fff;
+    border-radius:0px;
+    background-color: #ffffff;
+    font-size: 15px;
+
+
+}
+
+/*
+option.uno {
+    font-family: Verdana,Arial;
+    font-size: 12px;
+    background-color: #e9e9e9;
+    border: solid 1px;
+}
+*/

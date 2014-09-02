@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl">
+	<name>bolsa</name>
+	<driver>com.mysql.jdbc.Driver</driver>
+	<username>root</username>
+	<password>chinuxsuse123</password>
+	<savePassword>true</savePassword>
+	<url>jdbc:mysql://localhost/ricardob_bolsa</url>
+	<database></database>
+	<serverAddress></serverAddress>
+	<classpath>mysql-connector-java-5.1.22-bin.jar</classpath>
+</jdbcDataAdapter>

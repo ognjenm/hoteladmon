@@ -1,0 +1,22 @@
+<data profile='color'><scale mode='timeline' today='1 Feb 2014 - 15 Feb 2014'><x>
+<column><![CDATA[01:Feb]]></column>
+<column><![CDATA[02:Feb]]></column>
+<column><![CDATA[03:Feb]]></column>
+<column><![CDATA[04:Feb]]></column>
+<column><![CDATA[05:Feb]]></column>
+<column><![CDATA[06:Feb]]></column>
+<column><![CDATA[07:Feb]]></column>
+<column><![CDATA[08:Feb]]></column>
+<column><![CDATA[09:Feb]]></column>
+<column><![CDATA[10:Feb]]></column>
+<column><![CDATA[11:Feb]]></column>
+<column><![CDATA[12:Feb]]></column>
+<column><![CDATA[13:Feb]]></column>
+<column><![CDATA[14:Feb]]></column>
+<column><![CDATA[15:Feb]]></column></x><y><row><![CDATA[-Cabaña con ventilador]]></row><row><![CDATA[CV-1]]></row><row><![CDATA[CV-2]]></row><row><![CDATA[CV-3]]></row><row><![CDATA[CV-4]]></row><row><![CDATA[CV-5]]></row><row><![CDATA[-Cabaña con aire acondicionado]]></row><row><![CDATA[CAA-6]]></row><row><![CDATA[CAA-7]]></row><row><![CDATA[CAA-8]]></row><row><![CDATA[CAA-9]]></row><row><![CDATA[CAA-10]]></row><row><![CDATA[CAA-11]]></row><row><![CDATA[CAA-12]]></row><row><![CDATA[CAA-13]]></row><row><![CDATA[CAA-14]]></row><row><![CDATA[CAA-15]]></row><row><![CDATA[-Casa de Campaña ]]></row><row><![CDATA[CAMP-16]]></row><row><![CDATA[CAMP-17]]></row><row><![CDATA[CAMP-18]]></row><row><![CDATA[CAMP-19]]></row><row><![CDATA[-Casa de Campaña Safari]]></row><row><![CDATA[CSAFARI-20]]></row><row><![CDATA[CSAFARI-21]]></row><row><![CDATA[-RV]]></row><row><![CDATA[-Acampar propia casa de campaña]]></row><row><![CDATA[-Admisiones al parque]]></row></y></scale>
+<event week='2' day='0' type='event_line' x='64.93506493506493' y='2.666666666666667' width='88.6103896103896' height='85' len='0'><body backgroundColor='rgb(0, 0, 0)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonsoo: CV-2]]></body></event>
+<event week='18' day='0' type='event_line' x='164.93506493506493' y='2.666666666666667' width='88.6103896103896' height='85' len='0'><body backgroundColor='rgb(0, 0, 0)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonsoo: CAMP-16]]></body></event>
+<event week='18' day='0' type='event_line' x='164.93506493506493' y='30.666666666666668' width='188.6103896103896' height='85' len='0'><body backgroundColor='rgb(0, 0, 0)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonsoo: CAMP-16]]></body></event>
+<event week='18' day='0' type='event_line' x='464.93506493506493' y='2.666666666666667' width='189.9090909090909' height='85' len='0'><body backgroundColor='rgb(0, 0, 0)' color='rgb(255, 255, 255)'><![CDATA[peluches: CAMP-16]]></body></event>
+<event week='23' day='0' type='event_line' x='164.93506493506493' y='2.666666666666667' width='288.61038961038963' height='85' len='0'><body backgroundColor='rgb(0, 0, 0)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonsoo: CSAFARI-20]]></body></event>
+<event week='2' day='0' type='event_line' x='364.93506493506493' y='2.666666666666667' width='88.6103896103896' height='85' len='0'><body backgroundColor='rgb(0, 0, 0)' color='rgb(255, 255, 255)'><![CDATA[peluches: CV-2]]></body></event></data>
