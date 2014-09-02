@@ -29,12 +29,19 @@
         $("#table-2").tableDnD({
             onDragClass: "myDragClass",
             onDrop: function(table, row) {
+                var aux=row.id;
+                aux= aux.substring(1);
+
                 var rows = table.tBodies[0].rows;
-                for (var i=0; i<rows.length; i++) {
-                    if(i==0) $("#PurchaseOrderItems_order").val(i);
-                    else $("#PurchaseOrderItems_order"+i).val(i);
-                }
+
+                /*rows[i].id;
+                if(i==0) $("#PurchaseOrderItems_order").val(i);
+                else $("#PurchaseOrderItems_order"+i).val(i);
+                */
+                bootbox.alert(row.id);
+
             }
+
         });
 
 

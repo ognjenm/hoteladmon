@@ -171,37 +171,25 @@ class PurchaseOrderController extends Controller
                     }
                 }
 
-                print_r($datax);
-                echo "<br>";
-                echo "<br>";
-
-                print_r($data);
-                echo "<br>";
-                echo "<br>";
-
-
-                /*if($model->save()){
+               if($model->save()){
                     $lista=New PurchaseOrderItems;
                     $lista->attributes=$data;
                     $lista->purchase_order_id=$model->id;
                     $lista->amount=(int)$lista->quantity*$lista->price;
                     $lista->save();
-                }*/
+                }
 
-            }
-
-            /*foreach($_POST['PurchaseOrderItems']['note'] as $note){
-                $notes=new PurchaseOrderItems;
-                $notes->purchase_order_id=$model->id;
-                $notes->provider_id=0;
-                $notes->article_id=0;
-                $notes->note=$note;
-                $notes->save();
+                if(!empty($datax)){
+                    $lista=New PurchaseOrderItems;
+                    $lista->attributes=$datax;
+                    $lista->purchase_order_id=$model->id;
+                    $lista->save();
+                }
             }
 
            Yii::app()->user->setFlash('success','Success');
            $this->redirect(array('view','id'=>$model->id));
-            */
+
 
 		}
 
