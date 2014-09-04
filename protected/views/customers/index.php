@@ -8,6 +8,7 @@
     $this->menu=array(
         array('label'=>Yii::t('mx', 'Customers'),'icon'=>'icon-refresh','url'=>array('index')),
         array('label'=>Yii::t('mx','Create'),'icon'=>'icon-plus','url'=>array('create')),
+        array('label'=>Yii::t('mx','Send Mail'),'icon'=>'icon-envelope','url'=>array('sendMail'),'linkOptions'=>array('rel'=>'tooltip','data-original-title'=>'Enviar correos a clientes con mascotas')),
     );
 
     $this->pageSubTitle=Yii::t('mx','Manage');

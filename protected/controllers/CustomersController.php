@@ -2,15 +2,10 @@
 
 class CustomersController extends Controller
 {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
+
 	public $layout='//layouts/column2';
 
-	/**
-	 * @return array action filters
-	 */
+
 	public function filters()
 	{
 		return array(
@@ -18,17 +13,13 @@ class CustomersController extends Controller
 		);
 	}
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
+
 	public function accessRules()
 	{
 		return array(
 
 			array('allow', // allow authenticated user to perform actions
-				'actions'=>array('create','update','index','view','admin','delete','getEmail','customersHistory'),
+				'actions'=>array('create','update','index','view','admin','delete','getEmail','customersHistory','sendMail'),
 				'users'=>array('@'),
 			),
 
@@ -38,10 +29,36 @@ class CustomersController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
+    public function  actionSendMail(){
+
+        $tabla='
+            <table id="table-2" class="items table table-hover table-condensed table-bordered">
+                <thead>
+                    <tr>
+                        <th style="text-align: center">'.CHtml::checkBox('mastercheck',false,array('id'=>'ckbCheckAll')).'Seleccione</th>
+                        <th style="text-align: center">Email</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+        $customers=Customers::model()->findAll(array('condition'=>'have_pets=1'));
+
+        foreach($customers as $id=>$value){
+            $tabla.='
+                <tr>
+                    <td class="checkbox-column">'.CHtml::checkBox('active'.$id,false,array('class'=>'select-on-check')).'</td>
+                    <td>'.$value->email.'</td>
+                </tr>
+            ';
+        }
+
+        $tabla.='</tbody></table>';
+
+        $this->render('sendMail',array(
+            'customers'=>$tabla
+        ));
+    }
+
 
     public function actionCustomersHistory(){
 

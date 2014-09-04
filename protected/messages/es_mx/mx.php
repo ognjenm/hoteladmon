@@ -755,7 +755,8 @@ return array(
     'Purchase Order'=>'Orden De Compra',
     'Services'=>'Servicios',
     'Property Types'=>'Tipos de propiedad',
-    'Lease amount after VAT, ISR, RETIVA'=>'Importe de la renta después del IVA,ISR,RETIVA'
+    'Lease amount after VAT, ISR, RETIVA'=>'Importe de la renta después del IVA,ISR,RETIVA',
+    'Send Mail'=>'Enviar Correo Electrónico'
 
 
 
