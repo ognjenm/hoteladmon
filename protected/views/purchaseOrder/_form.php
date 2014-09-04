@@ -162,7 +162,7 @@
             <tbody>
             <tr class="copy" id="t">
                 <td style="width: 50px;">
-                    <?php //echo $form->textField($items,"order[]",array('class'=>'span12','readonly'=>'readonly')); ?>
+                    <?php echo $form->textField($items,"order[]",array('class'=>'span12','readonly'=>'readonly')); ?>
                     <?php //echo CHtml::image(Yii::app()->theme->baseUrl."/images/updown2.gif",'',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'provider_id[]',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'article_id[]',array()); ?>

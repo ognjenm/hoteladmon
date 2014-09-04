@@ -149,7 +149,14 @@ class PurchaseOrderController extends Controller
 
             $tope=count($_POST['PurchaseOrderItems']['provider_id']);
 
-            for($i=0;$i<$tope;$i++){
+            foreach ($_POST['PurchaseOrderItems'] as $index=>$row) {
+                print_r($_POST['PurchaseOrderItems'][$index]);
+                echo "<br>";
+                echo "<br>";
+
+            }
+
+            /*for($i=0;$i<$tope;$i++){
                 $data=array();
                 $datax=array();
 
@@ -171,7 +178,14 @@ class PurchaseOrderController extends Controller
                     }
                 }
 
-               if($model->save()){
+                print_r($datax);
+                echo "<br>";
+                echo "<br>";
+                print_r($data);
+                echo "<br>";
+                echo "<br>";
+
+               /*if($model->save()){
                     $lista=New PurchaseOrderItems;
                     $lista->attributes=$data;
                     $lista->purchase_order_id=$model->id;
@@ -184,11 +198,11 @@ class PurchaseOrderController extends Controller
                     $lista->attributes=$datax;
                     $lista->purchase_order_id=$model->id;
                     $lista->save();
-                }
-            }
+                }*/
+            //}
 
-           Yii::app()->user->setFlash('success','Success');
-           $this->redirect(array('view','id'=>$model->id));
+           //Yii::app()->user->setFlash('success','Success');
+           //$this->redirect(array('view','id'=>$model->id));
 
 
 		}

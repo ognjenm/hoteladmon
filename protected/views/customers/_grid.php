@@ -31,10 +31,9 @@
             'filter'=>$model,
             'columns'=>array(
                 'email',
-                'alternative_email',
                 'first_name',
                 'last_name',
-                'country',
+                'city',
                array(
                    'name'=>'is_billed',
                    'value'=>'$data->is_billed==1 ? "Si" : "No"',

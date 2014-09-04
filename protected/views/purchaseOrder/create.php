@@ -28,18 +28,15 @@
 
         $("#table-2").tableDnD({
             onDragClass: "myDragClass",
+
             onDrop: function(table, row) {
-                var aux=row.id;
-                aux= aux.substring(1);
 
                 var rows = table.tBodies[0].rows;
 
-                /*rows[i].id;
-                if(i==0) $("#PurchaseOrderItems_order").val(i);
-                else $("#PurchaseOrderItems_order"+i).val(i);
-                */
-                bootbox.alert(row.id);
-
+                for (var i=0; i<rows.length; i++) {
+                    if(i==0) $("#PurchaseOrderItems_order").val(i);
+                    else $("#PurchaseOrderItems_order"+i).val(i);
+                }
             }
 
         });
@@ -47,6 +44,7 @@
 
         $("#table-2 tr").hover(function() {
             $(this.cells[0]).addClass('showDragHandle');
+
         }, function() {
             $(this.cells[0]).removeClass('showDragHandle');
         });
@@ -55,7 +53,7 @@
         $("#textoz").click(function(){
 
             var nuevaFila='<tr class="copy newcopy'+ index +'" id="t'+(index+1)+'" style="cursor: move">'+
-                            '<td style="width: 50px;" class=""></td>'+
+                            '<td style="width: 50px;" class="">'+'<input class="span12" readonly="readonly" name="PurchaseOrderItems[order][]" id="PurchaseOrderItems_order' + (index+1) + '" type="text"/>'+'</td>'+
                             '<td colspan="6"><textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + index + '"></textarea></td>'+
                             '<td><a class="btn btn-danger" onclick="$(this).parents().get(1).remove(); index--; return false;" href="#"><i class="icon-remove icon-white"></i></a></td>'+
                           "</tr>";
@@ -72,6 +70,6 @@
 
 </script>
 
-<div class="debugArea"></div>
+<div id="debugArea"></div>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
