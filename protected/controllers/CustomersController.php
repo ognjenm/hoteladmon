@@ -31,11 +31,13 @@ class CustomersController extends Controller
 
     public function  actionSendMail(){
 
+        $model= new Customers;
+
         $tabla='
             <table id="table-2" class="items table table-hover table-condensed table-bordered">
                 <thead>
                     <tr>
-                        <th style="text-align: center">'.CHtml::checkBox('mastercheck',false,array('id'=>'ckbCheckAll')).'Seleccione</th>
+                        <th style="text-align: center" class="span1">'.CHtml::checkBox('mastercheck',false,array('id'=>'ckbCheckAll')).'</th>
                         <th style="text-align: center">Email</th>
                     </tr>
                 </thead>
@@ -55,7 +57,8 @@ class CustomersController extends Controller
         $tabla.='</tbody></table>';
 
         $this->render('sendMail',array(
-            'customers'=>$tabla
+            'customers'=>$tabla,
+            'model'=>$model
         ));
     }
 

@@ -1,39 +1,16 @@
 <?php
 
-/**
- * This is the model class for table "customers".
- *
- * The followings are the available columns in table 'customers':
- * @property integer $id
- * @property string $email
- * @property string $alternative_email
- * @property string $first_name
- * @property string $last_name
- * @property string $country
- * @property string $state
- * @property string $city
- * @property string $how_find_us
- * @property string $home_phone
- * @property string $work_phone
- * @property string $cell_phone
- * @property string $international_code1
- * @property string $international_code2
- * @property string $international_code3
- * @property integer $is_billed
- */
+
 class Customers extends CActiveRecord
 {
-	/**
-	 * @return string the associated database table name
-	 */
+	public $body;
+
 	public function tableName()
 	{
 		return 'customers';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
+
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -51,20 +28,15 @@ class Customers extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
+
 	public function relations()
 	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
+
 		return array(
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
+
 	public function attributeLabels()
 	{
 		return array(
@@ -84,21 +56,10 @@ class Customers extends CActiveRecord
             'international_code2' => Yii::t('mx','Work Phone'),
             'international_code3' => Yii::t('mx','Cell Phone'),
 			'is_billed' => Yii::t('mx','billed'),
+            'body'=>''
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
 	public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.

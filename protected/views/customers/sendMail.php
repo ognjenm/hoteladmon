@@ -25,4 +25,12 @@
 
 ?>
 
-<?php echo $customers ?>
+<div class="row-fluid">
+    <div class="span4">
+        <?php echo $customers ?>
+    </div>
+    <div class="span8">
+        <?php echo $this->renderPartial('_formEmail', array('model'=>$model)); ?>
+    </div>
+</div>
+
