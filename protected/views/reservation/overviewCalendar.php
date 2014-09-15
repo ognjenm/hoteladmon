@@ -22,6 +22,7 @@ $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_timeline.js');
 $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_treetimeline.js');
 $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_pdf.js');
 $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_active_links.js');
+$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
 $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
 
 $this->breadcrumbs=array(
@@ -149,6 +150,10 @@ $this->widget('bootstrap.widgets.TbAlert', array(
         scheduler.templates.event_class=function(start, end, event){
             if(event.statux) return "event_"+event.statux;
             return "";
+        };
+
+        scheduler.templates.tooltip_text = function(start, end,ev){
+            return "<b>Tipo de reservacion:</b> "+ev.type_reservation+"<br/><b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/><b>Check Out:</b> "+scheduler.templates.tooltip_date_format(end);
         };
 
         scheduler.init('scheduler_here',null,"timeline");

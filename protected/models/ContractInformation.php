@@ -21,11 +21,11 @@ class ContractInformation extends CActiveRecord
 			array('gender_lessee, gender_owner, property_type, has_surety, gender_surety, is_iva, iva_percent, is_isr, isr_percent, is_retiva, service_id, iscompany_lessee, iscompany_owner', 'numerical', 'integerOnly'=>true),
 			array('lessee', 'length', 'max'=>255),
 			array('owner, paydays, forced_months, name_surety, title', 'length', 'max'=>100),
-			array('property_location, address_payment, address_surety, property_address_surety, address_public_register', 'length', 'max'=>500),
+			array('property_location, address_payment, address_surety, property_address_surety', 'length', 'max'=>500),
 			array('amount_rent, payment_services, monthly_payment_arrears, new_rent_payment, monthly_payment_increase, penalty_nonpayment, deposit_guarantee, iva, isr, retiva, total, total_amount', 'length', 'max'=>10),
 			array('company_lessee, company_owner', 'length', 'max'=>150),
 			array('rfc_lessee', 'length', 'max'=>25),
-			array('inception_lease, end_lease, date_signature, content', 'safe'),
+			array('inception_lease, end_lease, address_public_register, date_signature, content', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, lessee, gender_lessee, owner, gender_owner, property_location, property_type, address_payment, paydays, amount_rent, forced_months, inception_lease, end_lease, payment_services, monthly_payment_arrears, new_rent_payment, monthly_payment_increase, penalty_nonpayment, deposit_guarantee, has_surety, name_surety, gender_surety, address_surety, property_address_surety, address_public_register, date_signature, title, content, is_iva, iva_percent, iva, is_isr, isr_percent, isr, is_retiva, retiva, total, service_id, iscompany_lessee, company_lessee, rfc_lessee, iscompany_owner, company_owner, total_amount', 'safe', 'on'=>'search'),
@@ -37,6 +37,8 @@ class ContractInformation extends CActiveRecord
 	 */
 	public function relations()
 	{
+		// NOTE: you may need to adjust the relation name and the related
+		// class name for the relations automatically generated below.
 		return array(
             'services' => array(self::BELONGS_TO, 'Services', 'service_id'),
 		);
@@ -205,8 +207,7 @@ class ContractInformation extends CActiveRecord
         );
     }
 
-
-    public static function model($className=__CLASS__)
+	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}

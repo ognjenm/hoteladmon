@@ -363,11 +363,11 @@ class ReservationController extends Controller
                $scheduler->set_options("rooms", $list);
 
         $sql="SELECT reservation.id,reservation.checkin,reservation.checkout,reservation.statux,reservation.description,
-        reservation.room_id,customers.first_name,rooms.room FROM customer_reservations inner join reservation on
+        reservation.room_id,customers.first_name,customers.last_name,rooms.room FROM customer_reservations inner join reservation on
         customer_reservations.id=reservation.customer_reservation_id inner join customers on
         customer_reservations.customer_id=customers.id inner join rooms on reservation.room_id=rooms.id";
 
-        $scheduler->render_sql($sql, "id","checkin,checkout,first_name,description,statux,room_id,room");
+        $scheduler->render_sql($sql, "id","checkin,checkout,first_name,description,statux,room_id,room,last_name");
 
     }
 

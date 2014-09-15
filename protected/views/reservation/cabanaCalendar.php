@@ -11,6 +11,7 @@ $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_minical.js');
 $cs->registerScriptFile($assets.'/locale/locale_'.$lenguaje.'.js');
 $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
 $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
+$cs->registerCssFile($assets.'/dhtmlxscheduler_flat.css');
 
 $this->breadcrumbs=array(
     Yii::t('mx','Reservations')=>array('index'),
@@ -81,7 +82,15 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
     var url = "<?php echo $this->createUrl('scheduler_cabana'); ?>";
 
+    //scheduler.templates.tooltip_date_format=scheduler.date.date_to_str("%Y-%m-%d %H:%i");
+
+    scheduler.config.className = 'dhtmlXTooltip tooltip';
+    scheduler.config.timeout_to_display = 50;
+    scheduler.config.delta_x = 15;
+    scheduler.config.delta_y = -20;
+
     scheduler.config.container_autoresize = true;
+    scheduler.skin="flat";
     scheduler.config.xml_date="%Y-%m-%d %H:%i";
     scheduler.config.multi_day = true;
     scheduler.config.show_loading=true;
@@ -105,7 +114,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
     });
 
     scheduler.templates.event_bar_text = function(start,end,ev){
-        return ev.text+": "+ev.room;
+        return ev.text+" "+ev.last_name+": "+ev.room;
     };
 
     scheduler.templates.event_class=function(start, end, event){
@@ -113,9 +122,26 @@ $this->widget('bootstrap.widgets.TbAlert', array(
         return "";
     };
 
-    scheduler.templates.tooltip_text = function(start, end,ev){
+
+    /*scheduler.templates.tooltip_text = function(start,end,ev){
+        return "<b>Event:</b> "+ev.type_reservation+"<br/><b>Start date:</b> " +
+            scheduler.templates.tooltip_date_format(start)+
+            "<br/><b>End date:</b> "+scheduler.templates.tooltip_date_format(end);
+    };*/
+
+    /*var format=scheduler.date.date_to_str("%Y-%m-%d %H:%i");
+    scheduler.templates.tooltip_text = function(start,end,event) {
+        return "<b>Event:</b> "+event.text+"<br/><b>Start date:</b> "+
+            format(start)+"<br/><b>End date:</b> "+format(end);
+    };*/
+
+    scheduler.templates.event_text=function(start,end,event){
+        return "<span title='"+event.text+"'>"+event.text+"</span>";
+    }
+
+    /*scheduler.templates.tooltip_text = function(start, end,ev){
      return "<b>Tipo de reservacion:</b> "+ev.type_reservation+"<br/><b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/><b>Check Out:</b> "+scheduler.templates.tooltip_date_format(end);
-    };
+    };*/
 
     scheduler.init("scheduler_cabanas",null,"month");
     scheduler.load(url);
