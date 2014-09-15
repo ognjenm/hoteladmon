@@ -58,7 +58,6 @@ class JQRelcopy extends CWidget
 				this.remove();
 				mmfAutoCompleteClone.autocomplete({$jsOptions});
 				mmfAutoCompleteParent.prepend(mmfAutoCompleteClone);
-
 			}";
 	}
 
