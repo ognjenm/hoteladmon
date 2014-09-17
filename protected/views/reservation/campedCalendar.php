@@ -23,7 +23,6 @@ $this->breadcrumbs=array(
 );
 
 
-
 $this->menu=array(
     array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
     array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
