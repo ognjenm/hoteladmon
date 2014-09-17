@@ -8,49 +8,49 @@
 ?>
 
 <?php
-$dhtmlx=Yii::getPathOfAlias('ext.dhtmlx.scheduler.assets');
-$assets =Yii::app()->assetManager->publish($dhtmlx);
-$lenguaje=substr(Yii::app()->getLanguage(), 0, 2);
+    $dhtmlx=Yii::getPathOfAlias('ext.dhtmlx.scheduler.assets');
+    $assets =Yii::app()->assetManager->publish($dhtmlx);
+    $lenguaje=substr(Yii::app()->getLanguage(), 0, 2);
 
-$cs = Yii::app()->getClientScript();
-$cs->registerScriptFile($assets.'/dhtmlxscheduler.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_container_autoresize.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_agenda_view.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_minical.js');
-$cs->registerScriptFile($assets.'/locale/locale_'.$lenguaje.'.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_timeline.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_treetimeline.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_pdf.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_active_links.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
-$cs->registerCssFile($assets.'/dhtmlxscheduler.css');
+    $cs = Yii::app()->getClientScript();
+    $cs->registerScriptFile($assets.'/dhtmlxscheduler.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_container_autoresize.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_agenda_view.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_minical.js');
+    $cs->registerScriptFile($assets.'/locale/locale_'.$lenguaje.'.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_timeline.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_treetimeline.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_pdf.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_active_links.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
+    $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
 
-$this->breadcrumbs=array(
-    Yii::t('mx','Reservations')=>array('index'),
-    Yii::t('mx','Manage'),
-);
+    $this->breadcrumbs=array(
+        Yii::t('mx','Reservations')=>array('index'),
+        Yii::t('mx','Manage'),
+    );
 
-$this->menu=array(
-    array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
-    array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
-);
+    $this->menu=array(
+        array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
+        array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
+    );
 
-$this->pageSubTitle=Yii::t('mx','Reservations');
-$this->pageIcon='icon-cogs';
+    $this->pageSubTitle=Yii::t('mx','Reservations');
+    $this->pageIcon='icon-cogs';
 
 
-if(Yii::app()->user->hasFlash('success')):
-    Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
-endif;
+    if(Yii::app()->user->hasFlash('success')):
+        Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
+    endif;
 
-$this->widget('bootstrap.widgets.TbAlert', array(
-    'block'=>true,
-    'fade'=>true,
-    'closeText'=>'×',
-    'alerts'=>array(
-        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
-    ),
-));
+    $this->widget('bootstrap.widgets.TbAlert', array(
+        'block'=>true,
+        'fade'=>true,
+        'closeText'=>'×',
+        'alerts'=>array(
+            'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+        ),
+    ));
 
 ?>
 
@@ -103,6 +103,9 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
         var rooms = <?php Rooms::model()->getRoomsJson(); ?>;
         var data = "<?php echo $this->createUrl('schedulerOverview'); ?>";
+        var total=0;
+        var abono=0;
+        var saldo=0;
 
         scheduler.locale.labels.timeline_tab = "<?php echo Yii::t('mx','Calendar For Cabana'); ?>";
         scheduler.locale.labels.section_custom="Section";
@@ -153,14 +156,38 @@ $this->widget('bootstrap.widgets.TbAlert', array(
         };
 
         scheduler.templates.tooltip_text = function(start, end,ev){
-            return "<b>Tipo de reservacion:</b> "+ev.type_reservation+"<br/><b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/><b>Check Out:</b> "+scheduler.templates.tooltip_date_format(end);
+
+            $.ajax({
+                url: "<?php echo CController::createUrl('/reservation/getInformation'); ?>",
+                data: { customerReservationId: ev.customerReservationId },
+                type: "POST",
+                dataType: "json",
+                beforeSend: function() {  }
+            })
+
+                .done(function(data) {
+                    total=data.total;
+                    abono=data.abono;
+                    saldo=data.saldo;
+                })
+
+                .fail(function(data) { alert(data); })
+                .always(function() { });
+
+
+            return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +
+                    "<b>Cliente:</b> "+ev.text+"<br/>" +
+                    "<b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/>" +
+                    "<b>Check Out:</b> "+scheduler.templates.tooltip_date_format(end)+"<br/>" +
+                    "<b>Total:</b>$"+total+"<br/>"+
+                    "<b>Abono:</b>$"+abono+"<br/>"+
+                    "<b>Saldo:</b>$"+saldo+"<br/>";
         };
 
         scheduler.init('scheduler_here',null,"timeline");
-
         scheduler.load(data);
-        var dp = new dataProcessor(url);
-        dp.init(scheduler);
+        //var dp = new dataProcessor(url);
+        //dp.init(scheduler);
 
     }
 </script>

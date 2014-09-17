@@ -28,7 +28,8 @@ class ReservationController extends Controller
                                  'budget','scheduler_camped','CabanaCamped',
                                  'undiscountedBudget','dayPassUndiscountedBudget',
                                  'GridReservation','overviewCalendar','SchedulerOverview',
-                                 'emailFormats','getCustomerId','ChangeStatus','payment'
+                                 'emailFormats','getCustomerId','ChangeStatus','payment',
+                                 'getInformation'
                 ),
                 'users'=>array('@'),
             ),
@@ -37,6 +38,24 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionGetInformation(){
+
+        $customerReservationId=$_POST['customerReservationId'];
+
+        $monto=0;
+        $customerReservation=CustomerReservations::model()->findByPk((int)$customerReservationId);
+        $settings=Settings::model()->find();
+
+        $total=$customerReservation->total;
+        $abono=($customerReservation->total*(int)$settings->early_payment)/100;
+        $saldo=$customerReservation->total-$abono;
+
+        echo CJSON::encode(array('total'=>number_format($total,2),'abono'=>number_format($abono,2),'saldo'=>number_format($saldo,2)));
+
+        Yii::app()->end();
+
     }
 
     public function actionPayment($id){
@@ -169,7 +188,7 @@ class ReservationController extends Controller
         $this->render('accountNumber',array(
             'format'=>$format,
             'customerReservationId'=>$id,
-            'from'=>($from->used_email != null) ? $from->used_email : $from->arrived_email,
+            'from'=>($from!=null) ? $from->used_email : Yii::app()->params['adminEmail'],
             'email'=>$customer->email,
             'cc'=>$customer->alternative_email,
             'status'=>$status,
@@ -345,29 +364,33 @@ class ReservationController extends Controller
         $scheduler->set_options("rooms", $list);
 
         $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,reservation.description,
-        reservation.room_id as section_id,customers.first_name as text,rooms.room FROM customer_reservations inner join reservation on
+        reservation.room_id as section_id,concat(customers.first_name,' ',customers.last_name) as text,rooms.room, customers.id as customerId,
+        customer_reservations.id as customerReservationId, FORMAT(customer_reservations.total,2) as total FROM customer_reservations inner join reservation on
         customer_reservations.id=reservation.customer_reservation_id inner join customers on
         customer_reservations.customer_id=customers.id inner join rooms on reservation.room_id=rooms.id";
 
-        $scheduler->render_sql($sql, "id","start_date,end_date,text,section_id,description,statux,room");
+        $scheduler->render_sql($sql, "id","start_date,end_date,text,section_id,description,statux,room,customerId,customerReservationId,total");
 
     }
 
     public function actionScheduler_cabana(){
                $cn = Yii::app()->quoteUtil->conexion();
 
-               $list = new OptionsConnector($cn,'PDO');
-               $list->render_table("rooms","id","id(value),room(label)");
+               //$list = new OptionsConnector($cn,'PDO');
+               //$list->render_table("rooms","id","id(value),room(label)");
 
                $scheduler = new SchedulerConnector($cn,'PDO');
-               $scheduler->set_options("rooms", $list);
 
-        $sql="SELECT reservation.id,reservation.checkin,reservation.checkout,reservation.statux,reservation.description,
-        reservation.room_id,customers.first_name,customers.last_name,rooms.room FROM customer_reservations inner join reservation on
+               //$scheduler->set_options("rooms", $list);
+
+
+        $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,reservation.description,
+        customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name,customers.last_name,rooms.room,
+        concat(customers.first_name,' ',customers.last_name) as text FROM customer_reservations inner join reservation on
         customer_reservations.id=reservation.customer_reservation_id inner join customers on
         customer_reservations.customer_id=customers.id inner join rooms on reservation.room_id=rooms.id";
 
-        $scheduler->render_sql($sql, "id","checkin,checkout,first_name,description,statux,room_id,room,last_name");
+        $scheduler->render_sql($sql, "id","start_date,end_date,text,statux,room,customerReservationId");
 
     }
 
@@ -376,11 +399,11 @@ class ReservationController extends Controller
         $scheduler = new SchedulerConnector($cn,'PDO');
 
         $sql="SELECT reservation.id,reservation.service_type,reservation.checkin,reservation.checkout,reservation.statux,reservation.description,
-        reservation.room_id,customers.first_name FROM customer_reservations inner join reservation on
+        customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name FROM customer_reservations inner join reservation on
         customer_reservations.id=reservation.customer_reservation_id inner join customers on
         customer_reservations.customer_id=customers.id where reservation.room_id=0";
 
-        $scheduler->render_sql($sql, "id","checkin,checkout,first_name,service_type,statux");
+        $scheduler->render_sql($sql, "id","checkin,checkout,first_name,service_type,statux,customerReservationId");
 
     }
 

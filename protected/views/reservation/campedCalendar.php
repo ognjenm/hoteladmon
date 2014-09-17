@@ -1,18 +1,21 @@
 <?php
-$dhtmlx=Yii::getPathOfAlias('ext.dhtmlx.scheduler.assets');
-$assets =Yii::app()->assetManager->publish($dhtmlx);
-$lenguaje=substr(Yii::app()->getLanguage(), 0, 2);
+    $dhtmlx=Yii::getPathOfAlias('ext.dhtmlx.scheduler.assets');
+    $assets =Yii::app()->assetManager->publish($dhtmlx);
+    $lenguaje=substr(Yii::app()->getLanguage(), 0, 2);
 
-$cs = Yii::app()->getClientScript();
-$cs->registerScriptFile($assets.'/dhtmlxscheduler.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_container_autoresize.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_agenda_view.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_minical.js');
-$cs->registerScriptFile($assets.'/locale/locale_'.$lenguaje.'.js');
-$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
-//$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_expand.js');
-
-$cs->registerCssFile($assets.'/dhtmlxscheduler.css');
+    $cs = Yii::app()->getClientScript();
+    $cs->registerScriptFile($assets.'/dhtmlxscheduler.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_container_autoresize.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_agenda_view.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_minical.js');
+    $cs->registerScriptFile($assets.'/locale/locale_'.$lenguaje.'.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_timeline.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_treetimeline.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_pdf.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_active_links.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
+    $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
+    $cs->registerCssFile($assets.'/dhtmlxscheduler_flat.css');
 
 $this->breadcrumbs=array(
     Yii::t('mx','Reservations')=>array('index'),
@@ -91,8 +94,9 @@ $this->widget('bootstrap.widgets.TbAlert', array(
     scheduler.config.container_autoresize = true;
     scheduler.config.xml_date="%Y-%m-%d %H:%i";
     scheduler.config.multi_day = true;
+    brief_mode = true;
+    scheduler.config.active_link_view = "day";
     scheduler.config.show_loading=true;
-    scheduler.config.touch = "force";
     scheduler.config.first_hour = 9;
     scheduler.config.time_step = 30;
     scheduler.config.dblclick_create = false;
@@ -121,11 +125,34 @@ $this->widget('bootstrap.widgets.TbAlert', array(
         return "";
     };
 
-    var format=scheduler.date.date_to_str("%Y-%m-%d %H:%i");
-    scheduler.templates.tooltip_date_format=format;
-    /*scheduler.templates.tooltip_text = function(start, end,ev){
-     return "<b>Tipo de reservacion:</b> "+ev.type_reservation+"<br/><b>Check In:</b> "+format(start)+"<br/><b>Check Out:</b> "+format(end);
-     };*/
+    scheduler.templates.tooltip_text = function(start, end,ev){
+
+        $.ajax({
+            url: "<?php echo CController::createUrl('/reservation/getInformation'); ?>",
+            data: { customerReservationId: ev.customerReservationId },
+            type: "POST",
+            dataType: "json",
+            beforeSend: function() {  }
+        })
+
+            .done(function(data) {
+                total=data.total;
+                abono=data.abono;
+                saldo=data.saldo;
+            })
+
+            .fail(function(data) { alert(data); })
+            .always(function() { });
+
+
+        return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +
+            "<b>Cliente:</b> "+ev.text+"<br/>" +
+            "<b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/>" +
+            "<b>Check Out:</b> "+scheduler.templates.tooltip_date_format(end)+"<br/>" +
+            "<b>Total:</b>$"+total+"<br/>"+
+            "<b>Abono:</b>$"+abono+"<br/>"+
+            "<b>Saldo:</b>$"+saldo+"<br/>";
+    };
 
     scheduler.init("scheduler_camped",null,"month");
     scheduler.load(url);
