@@ -1,0 +1,20 @@
+<data profile='color'><scale mode='timeline' today='15 Sep 2014 - 29 Sep 2014'><x>
+<column><![CDATA[15:Sep]]></column>
+<column><![CDATA[16:Sep]]></column>
+<column><![CDATA[17:Sep]]></column>
+<column><![CDATA[18:Sep]]></column>
+<column><![CDATA[19:Sep]]></column>
+<column><![CDATA[20:Sep]]></column>
+<column><![CDATA[21:Sep]]></column>
+<column><![CDATA[22:Sep]]></column>
+<column><![CDATA[23:Sep]]></column>
+<column><![CDATA[24:Sep]]></column>
+<column><![CDATA[25:Sep]]></column>
+<column><![CDATA[26:Sep]]></column>
+<column><![CDATA[27:Sep]]></column>
+<column><![CDATA[28:Sep]]></column>
+<column><![CDATA[29:Sep]]></column></x><y><row><![CDATA[-Cabaña con ventilador]]></row><row><![CDATA[CV-1]]></row><row><![CDATA[CV-2]]></row><row><![CDATA[CV-3]]></row><row><![CDATA[CV-4]]></row><row><![CDATA[CV-5]]></row><row><![CDATA[-Cabaña con aire acondicionado]]></row><row><![CDATA[CAA-6]]></row><row><![CDATA[CAA-7]]></row><row><![CDATA[CAA-8]]></row><row><![CDATA[CAA-9]]></row><row><![CDATA[CAA-10]]></row><row><![CDATA[CAA-11]]></row><row><![CDATA[CAA-12]]></row><row><![CDATA[CAA-13]]></row><row><![CDATA[CAA-14]]></row><row><![CDATA[CAA-15]]></row><row><![CDATA[-Casa de Campaña ]]></row><row><![CDATA[CAMP-16]]></row><row><![CDATA[CAMP-17]]></row><row><![CDATA[CAMP-18]]></row><row><![CDATA[CAMP-19]]></row><row><![CDATA[-Casa de Campaña Safari]]></row><row><![CDATA[CSAFARI-20]]></row><row><![CDATA[CSAFARI-21]]></row><row><![CDATA[-RV]]></row><row><![CDATA[-Acampar propia casa de campaña]]></row><row><![CDATA[-Admisiones al parque]]></row></y></scale>
+<event week='1' day='0' type='event_line' x='1.2987012987012987' y='2.666666666666667' width='195.1038961038961' height='85' len='0'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CV-1]]></body></event>
+<event week='2' day='0' type='event_line' x='1.2987012987012987' y='2.666666666666667' width='195.1038961038961' height='85' len='0'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CV-2]]></body></event>
+<event week='2' day='0' type='event_line' x='63.63636363636363' y='30.666666666666668' width='189.9090909090909' height='85' len='0'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CV-2]]></body></event>
+<event week='18' day='0' type='event_line' x='1.2987012987012987' y='2.666666666666667' width='95.1038961038961' height='85' len='0'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[jkh: CAMP-16]]></body></event></data>

@@ -1,0 +1,29 @@
+<data profile='color'><scale mode='day' today='12 Sep 2014'><x>
+<column><![CDATA[12 Sep 2014]]></column></x><y>
+<row><![CDATA[00:00]]></row>
+<row><![CDATA[01:00]]></row>
+<row><![CDATA[02:00]]></row>
+<row><![CDATA[03:00]]></row>
+<row><![CDATA[04:00]]></row>
+<row><![CDATA[05:00]]></row>
+<row><![CDATA[06:00]]></row>
+<row><![CDATA[07:00]]></row>
+<row><![CDATA[08:00]]></row>
+<row><![CDATA[09:00]]></row>
+<row><![CDATA[10:00]]></row>
+<row><![CDATA[11:00]]></row>
+<row><![CDATA[12:00]]></row>
+<row><![CDATA[13:00]]></row>
+<row><![CDATA[14:00]]></row>
+<row><![CDATA[15:00]]></row>
+<row><![CDATA[16:00]]></row>
+<row><![CDATA[17:00]]></row>
+<row><![CDATA[18:00]]></row>
+<row><![CDATA[19:00]]></row>
+<row><![CDATA[20:00]]></row>
+<row><![CDATA[21:00]]></row>
+<row><![CDATA[22:00]]></row>
+<row><![CDATA[23:00]]></row></y></scale>
+<event week='0' day='0' type='event_line' x='0.07616146230007592' y='4.545454545454546' width='97.85757806549886' height='auto' len='1'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CV-2]]></body></event>
+<event week='0' day='0' type='event_line' x='0.07616146230007592' y='59.09090909090909' width='97.85757806549886' height='auto' len='1'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CAMP-16]]></body></event>
+<event week='0' day='0' type='event_line' x='0.07616146230007592' y='113.63636363636364' width='97.85757806549886' height='auto' len='1'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[jkh: CV-2]]></body></event></data>

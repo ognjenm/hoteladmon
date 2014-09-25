@@ -1,0 +1,27 @@
+<data profile='color'><scale mode='month' today='Septiembre 2014'><x>
+<column><![CDATA[Lunes]]></column>
+<column><![CDATA[Martes]]></column>
+<column><![CDATA[Miércoles]]></column>
+<column><![CDATA[Jueves]]></column>
+<column><![CDATA[Viernes]]></column>
+<column><![CDATA[Sábado]]></column>
+<column><![CDATA[Domingo]]></column></x>
+<row height='89'><![CDATA[01|02|03|04|05|06|07]]></row>
+<row height='166'><![CDATA[08|09|10|11|12|13|14]]></row>
+<row height='118'><![CDATA[15|16|17|18|19|20|21]]></row>
+<row height='89'><![CDATA[22|23|24|25|26|27|28]]></row>
+<row height='89'><![CDATA[29|30|01|02|03|04|05]]></row></scale>
+<event week='1' day='2' type='event_line' x='200' y='0' width='492.4010152284264' height='19' len='1'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CSAFARI-20]]></body></event>
+<event week='2' day='0' type='event_line' x='0' y='89' width='91.38578680203045' height='19' len='1'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CSAFARI-20]]></body></event>
+<event week='2' day='0' type='event_line' x='0' y='113' width='692.4010152284264' height='19' len='2'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CV-1]]></body></event>
+<event week='3' day='0' type='event_line' x='0' y='255' width='191.38578680203045' height='19' len='2'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CV-1]]></body></event>
+<event week='2' day='1' type='event_line' x='100' y='89' width='592.4010152284264' height='19' len='-1'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CAMP-16]]></body></event>
+<event week='2' day='4' type='event_line' x='400' y='137' width='191.89340101522842' height='19' len='2'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CV-2]]></body></event>
+<event week='2' day='4' type='event_line' x='400' y='161' width='191.89340101522842' height='19' len='2'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CAMP-16]]></body></event>
+<event week='2' day='4' type='event_line' x='400' y='185' width='191.89340101522842' height='19' len='2'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[jkh: CV-2]]></body></event>
+<event week='2' day='5' type='event_line' x='500' y='209' width='192.4010152284264' height='19' len='2'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[: CV-2]]></body></event>
+<event week='2' day='6' type='event_line' x='600.5076142131979' y='137' width='91.89340101522842' height='19' len='1'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[jkh: CAMP-16]]></body></event>
+<event week='3' day='0' type='event_line' x='0' y='279' width='91.38578680203045' height='19' len='1'><body backgroundColor='rgb(0, 0, 255)' color='rgb(255, 255, 255)'><![CDATA[jkh: CAMP-16]]></body></event>
+<event week='3' day='0' type='event_line' x='0' y='303' width='191.38578680203045' height='19' len='2'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CV-2]]></body></event>
+<event week='3' day='0' type='event_line' x='0' y='327' width='291.38578680203045' height='19' len='3'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[luis alfoso: CV-2]]></body></event>
+<event week='3' day='1' type='event_line' x='100' y='279' width='491.89340101522845' height='19' len='-9'><body backgroundColor='rgb(23, 150, 176)' color='rgb(255, 255, 255)'><![CDATA[Luis Alfonso: CAA-6]]></body></event></data>
