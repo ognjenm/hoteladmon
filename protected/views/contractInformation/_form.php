@@ -74,6 +74,16 @@
             )); ?>
 
 
+        <?php echo $form->textAreaRow($model,'address_public_register_lessee',array(
+            'rows'=>6,
+            'cols'=>50,
+            'class'=>'span12',
+            'style'=>'text-transform:uppercase',
+            'rel'=>'tooltip',
+            'title'=>Yii::t('mx','Example').': Boca del Río, veracruz, bajo el número 11173 del volumen 529 de la sección primera con fecha 26 de agosto del año 2003'
+        )); ?>
+
+
         <div class="control-group">
             <label class="control-label" for="ContractInformation_iscompany_owner"><?php echo Yii::t('mx','The owner is a company'); ?></label>
             <div class="controls">
@@ -424,7 +434,13 @@
                         'prompt'=>Yii::t('mx','Select')
                     )); ?>
 
-                    <?php echo $form->textFieldRow($model,'name_surety',array('class'=>'span12','maxlength'=>100,'style'=>'text-transform:uppercase')); ?>
+                    <?php echo $form->textFieldRow($model,'name_surety',array(
+                        'class'=>'span12',
+                        'maxlength'=>100,
+                        'style'=>'text-transform:uppercase',
+                        'rel'=>'tooltip',
+                        'title'=>Yii::t('mx','If there is more than one guarantor introduce separated by semicolons. Example: Graciela Arroyo; Julian Martin Sagardi')
+                    )); ?>
 
                     <?php
 
@@ -466,7 +482,13 @@
                         'prompt'=>Yii::t('mx','Select')
                     )); ?>
 
-                    <?php echo $form->textFieldRow($model,'name_surety',array('class'=>'span12','maxlength'=>100,'style'=>'text-transform:uppercase')); ?>
+                    <?php echo $form->textFieldRow($model,'name_surety',array(
+                        'class'=>'span12',
+                        'maxlength'=>100,
+                        'style'=>'text-transform:uppercase',
+                        'rel'=>'tooltip',
+                        'title'=>Yii::t('mx','If there is more than one guarantor introduce separated by semicolons. Example: Graciela Arroyo; Julian Martin Sagardi')
+                    )); ?>
 
                     <?php
 

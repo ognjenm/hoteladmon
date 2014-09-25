@@ -756,7 +756,9 @@ return array(
     'Services'=>'Servicios',
     'Property Types'=>'Tipos de propiedad',
     'Lease amount after VAT, ISR, RETIVA'=>'Importe de la renta después del IVA,ISR,RETIVA',
-    'Send Mail'=>'Enviar Correo Electrónico'
+    'Send Mail'=>'Enviar Correo Electrónico',
+    'Address Public Register Lessee'=>'Datos de inscripción y del registro público de la propiedad del arrendatario',
+    'If there is more than one guarantor introduce separated by semicolons. Example: Graciela Arroyo; Julian Martin Sagardi'=>'Si existe más de un fiador introducirlos separados por punto y coma. Ejemplo: Graciela Arroyo; Julian Martín Sagardi'
 
 
 

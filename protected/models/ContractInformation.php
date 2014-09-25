@@ -25,10 +25,10 @@ class ContractInformation extends CActiveRecord
 			array('amount_rent, payment_services, monthly_payment_arrears, new_rent_payment, monthly_payment_increase, penalty_nonpayment, deposit_guarantee, iva, isr, retiva, total, total_amount', 'length', 'max'=>10),
 			array('company_lessee, company_owner', 'length', 'max'=>150),
 			array('rfc_lessee', 'length', 'max'=>25),
-			array('inception_lease, end_lease, address_public_register, date_signature, content', 'safe'),
+			array('inception_lease, end_lease, address_public_register, date_signature, content, address_public_register_lessee', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, lessee, gender_lessee, owner, gender_owner, property_location, property_type, address_payment, paydays, amount_rent, forced_months, inception_lease, end_lease, payment_services, monthly_payment_arrears, new_rent_payment, monthly_payment_increase, penalty_nonpayment, deposit_guarantee, has_surety, name_surety, gender_surety, address_surety, property_address_surety, address_public_register, date_signature, title, content, is_iva, iva_percent, iva, is_isr, isr_percent, isr, is_retiva, retiva, total, service_id, iscompany_lessee, company_lessee, rfc_lessee, iscompany_owner, company_owner, total_amount', 'safe', 'on'=>'search'),
+			array('id, lessee, gender_lessee, owner, gender_owner, property_location, property_type, address_payment, paydays, amount_rent, forced_months, inception_lease, end_lease, payment_services, monthly_payment_arrears, new_rent_payment, monthly_payment_increase, penalty_nonpayment, deposit_guarantee, has_surety, name_surety, gender_surety, address_surety, property_address_surety, address_public_register, date_signature, title, content, is_iva, iva_percent, iva, is_isr, isr_percent, isr, is_retiva, retiva, total, service_id, iscompany_lessee, company_lessee, rfc_lessee, iscompany_owner, company_owner, total_amount, address_public_register_lessee', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -94,6 +94,7 @@ class ContractInformation extends CActiveRecord
             'iscompany_owner' => Yii::t('mx','The owner is company'),
             'company_owner' => Yii::t('mx','Company Name').' ('.Yii::t('mx','Owner').')',
             'total_amount' => Yii::t('mx','Lease amount after VAT, ISR, RETIVA'),
+			'address_public_register_lessee' => Yii::t('mx','Address Public Register Lessee'),
 		);
 	}
 
@@ -148,6 +149,7 @@ class ContractInformation extends CActiveRecord
 		$criteria->compare('iscompany_owner',$this->iscompany_owner);
 		$criteria->compare('company_owner',$this->company_owner,true);
 		$criteria->compare('total_amount',$this->total_amount,true);
+		$criteria->compare('address_public_register_lessee',$this->address_public_register_lessee,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -206,6 +208,7 @@ class ContractInformation extends CActiveRecord
                 'application.modules.auditTrail.behaviors.LoggableBehavior',
         );
     }
+
 
 	public static function model($className=__CLASS__)
 	{

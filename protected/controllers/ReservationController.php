@@ -322,6 +322,7 @@ class ReservationController extends Controller
                '{PUESTO-USUARIO}','{DIAS-LIMITE-PAGO}'
 
            );
+
            $replace=array(
                $customer->first_name,
                $customer->last_name,
@@ -344,7 +345,7 @@ class ReservationController extends Controller
 
             $this->render('budget',array(
                 'customerReservationId'=>$customerReservation->id,
-                'from'=>$from->used_email,
+                'from'=>($from!=null) ? $from->used_email : Yii::app()->params['adminEmail'],
                 'email'=>$customer->email,
                 'cc'=>$customer->alternative_email,
                 'cotizacion'=>$cotizacion,
