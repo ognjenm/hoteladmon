@@ -2258,6 +2258,9 @@ class QuoteDetails extends CApplicationComponent{
         $customer=Customers::model()->findByPk($customerReservation->customer_id);
         $settings=Settings::model()->find();
         $reservations=Reservation::model()->findAll($criteriaReserv);
+        $payments=Payments::model()->findAllByPk($customerReservationId);
+        $payment=0;
+        $totalCotizacion=0;
 
         if($reservations){
             foreach($reservations as $item):
@@ -2306,13 +2309,23 @@ class QuoteDetails extends CApplicationComponent{
 
         if($customerReservation->see_discount==true){
             $tabla=Yii::app()->quoteUtil->getTableCotizacion($models);
-            $cantidad=Yii::app()->quoteUtil->getTotalPrice($models,true);
+            $totalCotizacion=Yii::app()->quoteUtil->getTotalPrice($models,true);
         }
 
         if($customerReservation->see_discount==false){
             $tabla=Yii::app()->quoteUtil->getCotizacionNoDiscount($models);
-            $cantidad=Yii::app()->quoteUtil->getTotalPrice($models,false);
+            $totalCotizacion=Yii::app()->quoteUtil->getTotalPrice($models,false);
         }
+
+
+        foreach($payments as $pago){
+            $payment=$payment+$pago->amount;
+        }
+
+        $totalPayment=$payment;
+        //$tota
+
+
 
         $monto=($cantidad*(int)$settings->early_payment)/100;
         $monto=number_format($monto,2);

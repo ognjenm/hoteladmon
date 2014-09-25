@@ -10,14 +10,13 @@ class ContractInformation extends CActiveRecord
 		return 'contract_information';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
+
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+            array('service_id', 'required'),
 			array('gender_lessee, gender_owner, property_type, has_surety, gender_surety, is_iva, iva_percent, is_isr, isr_percent, is_retiva, service_id, iscompany_lessee, iscompany_owner', 'numerical', 'integerOnly'=>true),
 			array('lessee', 'length', 'max'=>255),
 			array('owner, paydays, forced_months, name_surety, title', 'length', 'max'=>100),

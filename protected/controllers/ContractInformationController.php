@@ -278,6 +278,7 @@ class ContractInformationController extends Controller
         $address_public_register_lessee='';
         $warrantyForDamages='';
         $fiadores='';
+        $gender_surety='';
 
         $propertyTypes = TbForm::createForm($property->getForm(),$property,
             array('htmlOptions'=>array('class'=>'well'),
@@ -303,7 +304,15 @@ class ContractInformationController extends Controller
 
 
             $gender_owner= ($model->gender_owner==1) ? Yii::t('mx','El propietario') : Yii::t('mx','La propietaria');
-            $gender_lessee= ($model->gender_lessee==1) ? Yii::t('mx','El arrendatario') : Yii::t('mx','La arrendataria');
+
+            if($model->gender_lessee==1){
+                $gender_lessee=Yii::t('mx','El arrendatario');
+                $inquilino="del inquilino";
+            }else{
+                $gender_lessee=Yii::t('mx','La arrendataria');
+                $inquilino="de la inquilina";
+            }
+
             $properties=PropertyTypes::model()->findByPk($model->property_type);
             $property_type=$properties->property;
             $inception_lease=date('Y-M-d',strtotime($model->inception_lease));
@@ -408,50 +417,63 @@ class ContractInformationController extends Controller
 
             if($model->has_surety){
                 $contract=Contract::model()->findByPk(1);
-            }else{
-                $contract=Contract::model()->findByPk(2);
-            }
 
-            $names_surety=explode(';',$model->name_surety);
-            $totalGuarantors=count($names_surety);
+                $names_surety=explode(';',$model->name_surety);
+                $totalGuarantors=count($names_surety);
 
-            if($totalGuarantors > 1){
-                $cont=1;
-                $gender_surety="Los fiadores";
+                if($totalGuarantors > 1){
+                    $cont=1;
+                    $gender_surety="Los fiadores";
 
-                foreach($names_surety as $names){
-                    if($cont<$totalGuarantors){
-                        $fiadores.=$names.' y ';
-                    }else{
-                        $fiadores.=$names;
+                    foreach($names_surety as $names){
+                        if($cont<$totalGuarantors){
+                            $fiadores.=$names.' y ';
+                        }else{
+                            $fiadores.=$names;
+                        }
+                        $cont++;
+
                     }
-                    $cont++;
 
+                    $warrantyForDamages='<b><u>'.strtoupper($fiadores).'</u></b> con domicilio en la ';
+                    $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firman el presente contrato que hacen suyo en todas y cada una de sus partes, ';
+                    $warrantyForDamages.='como los fiadores y principales pagadores de las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
+                    $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
+                    $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando afecto para';
+                    $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
+                    $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', renunciando expresamente los fiadores a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
+                    $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometidos a  pagar por su fiado  cualquier';
+                    $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado. ';
+                }else{
+
+                    $fiadores=$model->name_surety;
+
+                    if($model->gender_surety==1){
+                        $gender_surety=Yii::t('mx','El fiador');
+                        $pagador="pagador";
+                    }
+                    else{
+                        $gender_surety=Yii::t('mx','La Fiadora');
+                        $pagador="pagadora";
+                    }
+
+
+                    $warrantyForDamages='<b><u>'.strtoupper($model->name_surety).'</u></b> con domicilio en la ';
+                    $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firma el presente contrato que hace suyo en todas y cada una de sus partes, ';
+                    $warrantyForDamages.='como <b><u>'.strtoupper($gender_surety).'</u></b> y principal '.$pagador.' las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
+                    $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
+                    $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando afecto para';
+                    $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
+                    $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', renunciando expresamente <b><u>'.strtoupper($gender_surety).'</u></b> a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
+                    $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometida a  pagar por su fiado  cualquier';
+                    $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado.';
                 }
 
-                $warrantyForDamages='<b><u>'.strtoupper($fiadores).'</u></b> con domicilio en la ';
-                $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firman el presente contrato que hacen suyo en todas y cada una de sus partes,';
-                $warrantyForDamages.='como los fiadores y principales pagadores de las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
-                $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
-                $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte de la inquilina; dejando afecto para';
-                $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
-                $warrantyForDamages.=', renunciando expresamente los fiadores a los beneficios que les conceden a su favor los articulos 2421, 2421, 2747,';
-                $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometidos a  pagar por su fiado  cualquier';
-                $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado. ';
-            }else{
 
-                $gender_surety= ($model->gender_surety==1) ? Yii::t('mx','El fiador') : Yii::t('mx','La Fiadora');
-                $warrantyForDamages='<b><u>'.strtoupper($model->name_surety).'</u></b> con domicilio en la ';
-                $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firma el presente contrato que hace suyo en todas y cada una de sus partes,';
-                $warrantyForDamages.='como <b><u>'.strtoupper($gender_surety).'</u></b> y principal pagadora las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
-                $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
-                $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte de la inquilina; dejando afecto para';
-                $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
-                $warrantyForDamages.=', renunciando expresamente <b><u>'.strtoupper($gender_surety).'</u></b> a los beneficios que les conceden a su favor los articulos 2421, 2421, 2747,';
-                $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometida a  pagar por su fiado  cualquier';
-                $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado.';
+            }else{
+                $contract=Contract::model()->findByPk(2);
             }
 
 
@@ -493,14 +515,14 @@ class ContractInformationController extends Controller
                 'is_retiva'=>$model->is_retiva,
                 'retiva'=>$model->retiva,
                 'total'=>$model->total,
-                'service_id'=>strtoupper($model->services->service),
+                'service_id'=>$model->service_id ? strtoupper($model->services->service) : 0,
                 'iscompany_lessee' => $model->iscompany_lessee,
                 'company_lessee' =>($model->company_lessee),
                 'rfc_lessee' =>strtoupper($model->rfc_lessee),
                 'iscompany_owner' => $model->iscompany_owner,
                 'company_owner' =>strtoupper($model->company_owner),
                 'total_amount'=>$model->total_amount,
-                'address_public_register_lessee'=>strtoupper($prefix_lessee.$lesseeString.$address_public_register_lessee),
+                'address_public_register_lessee'=>strtoupper($address_public_register_lessee),
                 'contract_start'=>$contract_start[0],
                 'company/lessee'=>strtoupper($lesseeString),
                 'prefix_lessee'=>$prefix_lessee,
@@ -555,6 +577,7 @@ class ContractInformationController extends Controller
         $address_public_register_lessee='';
         $warrantyForDamages='';
         $fiadores='';
+        $gender_surety='';
 
         $propertyTypes = TbForm::createForm($property->getForm(),$property,
             array('htmlOptions'=>array('class'=>'well'),
@@ -579,7 +602,15 @@ class ContractInformationController extends Controller
             array_push($search,'{CONTRACT_START}','{COMPANY/LESSEE}','{PREFIX_LESSEE}','{PREFIX_OWNER}','{WARANTYFORDAMAGES}');
 
             $gender_owner= ($model->gender_owner==1) ? Yii::t('mx','El propietario') : Yii::t('mx','La propietaria');
-            $gender_lessee= ($model->gender_lessee==1) ? Yii::t('mx','El arrendatario') : Yii::t('mx','La arrendataria');
+
+
+            if($model->gender_lessee==1){
+                $gender_lessee=Yii::t('mx','El arrendatario');
+                $inquilino="del inquilino";
+            }else{
+                $gender_lessee=Yii::t('mx','La arrendataria');
+                $inquilino="de la inquilina";
+            }
 
             $properties=PropertyTypes::model()->findByPk($model->property_type);
             $property_type=$properties->property;
@@ -687,54 +718,64 @@ class ContractInformationController extends Controller
 
             if($model->has_surety){
                 $contract=Contract::model()->findByPk(1);
+
+                $names_surety=explode(';',$model->name_surety);
+                $totalGuarantors=count($names_surety);
+
+                if($totalGuarantors > 1){
+                    $cont=1;
+                    $gender_surety="Los fiadores";
+
+                    foreach($names_surety as $names){
+                        if($cont<$totalGuarantors){
+                            $fiadores.=$names.' y ';
+                        }else{
+                            $fiadores.=$names;
+                        }
+                        $cont++;
+
+                    }
+
+                    $warrantyForDamages='<b><u>'.strtoupper($fiadores).'</u></b> con domicilio en la ';
+                    $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firman el presente contrato que hacen suyo en todas y cada una de sus partes, ';
+                    $warrantyForDamages.='como los fiadores y principales pagadores de las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
+                    $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
+                    $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando afecto para';
+                    $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
+                    $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', renunciando expresamente los fiadores a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
+                    $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometidos a  pagar por su fiado  cualquier';
+                    $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado. ';
+                }else{
+
+                    $fiadores=$model->name_surety;
+
+                    if($model->gender_surety==1){
+                        $gender_surety=Yii::t('mx','El fiador');
+                        $pagador="pagador";
+                    }
+                    else{
+                        $gender_surety=Yii::t('mx','La Fiadora');
+                        $pagador="pagadora";
+                    }
+
+
+                    $warrantyForDamages='<b><u>'.strtoupper($model->name_surety).'</u></b> con domicilio en la ';
+                    $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firma el presente contrato que hace suyo en todas y cada una de sus partes, ';
+                    $warrantyForDamages.='como <b><u>'.strtoupper($gender_surety).'</u></b> y principal '.$pagador.' las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
+                    $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
+                    $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando afecto para';
+                    $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
+                    $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', renunciando expresamente <b><u>'.strtoupper($gender_surety).'</u></b> a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
+                    $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometida a  pagar por su fiado  cualquier';
+                    $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado.';
+                }
+
+
             }else{
                 $contract=Contract::model()->findByPk(2);
             }
-
-            $names_surety=explode(';',$model->name_surety);
-            $totalGuarantors=count($names_surety);
-
-
-            if($totalGuarantors > 1){
-                $cont=1;
-                $gender_surety="Los fiadores";
-
-                foreach($names_surety as $names){
-                    if($cont<$totalGuarantors){
-                        $fiadores.=$names.' y ';
-                    }else{
-                        $fiadores.=$names;
-                    }
-                    $cont++;
-
-                }
-
-                $warrantyForDamages='<b><u>'.strtoupper($fiadores).'</u></b> con domicilio en la ';
-                $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firman el presente contrato que hacen suyo en todas y cada una de sus partes,';
-                $warrantyForDamages.='como los fiadores y principales pagadores de las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
-                $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
-                $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte de la inquilina; dejando afecto para';
-                $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
-                $warrantyForDamages.=', renunciando expresamente los fiadores a los beneficios que les conceden a su favor los articulos 2421, 2421, 2747,';
-                $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometidos a  pagar por su fiado  cualquier';
-                $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado. ';
-            }else{
-
-                $gender_surety= ($model->gender_surety==1) ? Yii::t('mx','El fiador') : Yii::t('mx','La Fiadora');
-
-                $warrantyForDamages='<b><u>'.strtoupper($model->name_surety).'</u></b> con domicilio en la ';
-                $warrantyForDamages.='<b><u>'.strtoupper($model->address_surety).'</u></b> firma el presente contrato que hace suyo en todas y cada una de sus partes,';
-                $warrantyForDamages.='como <b><u>'.strtoupper($gender_surety).'</u></b> y principal pagadora las obligaciones contraídas por <b><u>'.strtoupper($gender_lessee).'</u></b>';
-                $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
-                $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte de la inquilina; dejando afecto para';
-                $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                $warrantyForDamages.=', mismo que se encuentra inscrito en el registro público de la ciudad de <b><u>'.strtoupper($model->address_public_register).'</u></b>';
-                $warrantyForDamages.=', renunciando expresamente <b><u>'.strtoupper($gender_surety).'</u></b> a los beneficios que les conceden a su favor los articulos 2421, 2421, 2747,';
-                $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometida a  pagar por su fiado  cualquier';
-                $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado.';
-            }
-
 
 
             $replace=array(
@@ -775,14 +816,14 @@ class ContractInformationController extends Controller
                 'is_retiva'=>$model->is_retiva,
                 'retiva'=>$model->retiva,
                 'total'=>$model->total,
-                'service_id'=>strtoupper($model->services->service),
+                'service_id'=>$model->service_id ? strtoupper($model->services->service) : 0,
                 'iscompany_lessee' => $model->iscompany_lessee,
                 'company_lessee' =>strtoupper($model->company_lessee),
                 'rfc_lessee' =>strtoupper($model->rfc_lessee),
                 'iscompany_owner' => $model->iscompany_owner,
                 'company_owner' =>strtoupper($model->company_owner),
                 'total_amount'=>$model->total_amount,
-                'address_public_register_lessee'=>strtoupper($prefix_lessee.$lesseeString.$address_public_register_lessee),
+                'address_public_register_lessee'=>strtoupper($address_public_register_lessee),
                 'contract_start'=>$contract_start[0],
                 'company/lessee'=>strtoupper($lesseeString),
                 'prefix_lessee'=>$prefix_lessee,
