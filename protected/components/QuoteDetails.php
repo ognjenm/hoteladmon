@@ -2187,7 +2187,6 @@ class QuoteDetails extends CApplicationComponent{
         $mpdf->WriteHTML($this->render('_ajaxContent', array('table'=>$tableBalance)));
         $mpdf->Output('reporte.pdf','D');  //EYiiPdf::OUTPUT_TO_DOWNLOAD
 
-
     }
 
     public function ExportPdfToAccountant($data){
@@ -2258,9 +2257,15 @@ class QuoteDetails extends CApplicationComponent{
         $customer=Customers::model()->findByPk($customerReservation->customer_id);
         $settings=Settings::model()->find();
         $reservations=Reservation::model()->findAll($criteriaReserv);
-        $payments=Payments::model()->findAllByPk($customerReservationId);
+
+        $payments=Payments::model()->findAll(array(
+            'condition'=>'customer_reservation_id=:customerReservationId',
+            'params'=>array(':customerReservationId'=>$customerReservationId)
+        ));
+
         $payment=0;
         $totalCotizacion=0;
+        $emailformatId=(int)$format;
 
         if($reservations){
             foreach($reservations as $item):
@@ -2317,22 +2322,6 @@ class QuoteDetails extends CApplicationComponent{
             $totalCotizacion=Yii::app()->quoteUtil->getTotalPrice($models,false);
         }
 
-
-        foreach($payments as $pago){
-            $payment=$payment+$pago->amount;
-        }
-
-        $totalPayment=$payment;
-        //$tota
-
-
-
-        $monto=($cantidad*(int)$settings->early_payment)/100;
-        $monto=number_format($monto,2);
-
-        $montoRestante=($cantidad*$pagoRestantePorciento)/100;
-        $montoRestante=number_format($montoRestante,2);
-
         $userId=(int)Yii::app()->user->id;
 
         $employee=Employees::model()->find(array('condition'=>'user_id=:userId','params'=>array('userId'=>$userId)));
@@ -2357,21 +2346,59 @@ class QuoteDetails extends CApplicationComponent{
             '{PRIMER-PAGO}'
         );
 
-        $replace=array(
-            $customer->first_name,$customer->last_name,
-            $customer->country,$customer->state,
-            $customer->city,$customer->home_phone,
-            $customer->work_phone,$customer->cell_phone,
-            $customer->email,$customer->alternative_email,
-            $response,$tabla,
-            $employee->first_name." ".$employee->middle_name." ".$employee->last_name,$employee->job_title,
-            $limitDayPayment,$monto,
-            $settings->early_payment,$pagoRestantePorciento,
-            $montoRestante,$bank,
-            $monto
-        );
 
-        $emailformatId=(int)$format;
+        //si es envio de cuenta
+        if($emailformatId==1){
+
+            $totalAPagar=($totalCotizacion*(int)$settings->early_payment)/100;
+            $totalAPagar=number_format($totalAPagar,2);
+
+            $balance=($totalCotizacion*$pagoRestantePorciento)/100;
+            $balance=number_format($balance,2);
+
+            $replace=array(
+                $customer->first_name,$customer->last_name,
+                $customer->country,$customer->state,
+                $customer->city,$customer->home_phone,
+                $customer->work_phone,$customer->cell_phone,
+                $customer->email,$customer->alternative_email,
+                $response,$tabla,
+                $employee->first_name." ".$employee->middle_name." ".$employee->last_name,$employee->job_title,
+                $limitDayPayment,$totalAPagar,
+                $settings->early_payment,$pagoRestantePorciento,
+                $balance,$bank,
+                $totalAPagar
+            );
+
+        }
+
+        //si es confirmacion de pago
+        if($emailformatId==2){
+
+            foreach($payments as $pago){
+                $payment=$payment+$pago->amount;
+            }
+
+            $totalPagado=$payment;
+            $balance=$totalCotizacion-$totalPagado;
+            $balance=number_format($balance,2);
+
+            $replace=array(
+                $customer->first_name,$customer->last_name,
+                $customer->country,$customer->state,
+                $customer->city,$customer->home_phone,
+                $customer->work_phone,$customer->cell_phone,
+                $customer->email,$customer->alternative_email,
+                $response,$tabla,
+                $employee->first_name." ".$employee->middle_name." ".$employee->last_name,$employee->job_title,
+                $limitDayPayment,number_format($totalPagado,2),
+                $settings->early_payment,$pagoRestantePorciento,
+                $balance,$bank,
+                number_format($totalPagado,2)
+            );
+
+        }
+
 
         $sql2="select * from email_format_items where email_format_id=:formatId order by orden asc";
         $connection=Yii::app()->db;

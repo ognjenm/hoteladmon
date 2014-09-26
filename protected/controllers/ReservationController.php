@@ -43,18 +43,37 @@ class ReservationController extends Controller
     public function actionGetInformation(){
 
         $customerReservationId=$_POST['customerReservationId'];
+        $payment=0;
+        $totalPagado=0;
+        $balance=0;
 
-        $monto=0;
-        $customerReservation=CustomerReservations::model()->findByPk((int)$customerReservationId);
-        $settings=Settings::model()->find();
+        if(Yii::app()->request->isAjaxRequest){
 
-        $total=$customerReservation->total;
-        $abono=($customerReservation->total*(int)$settings->early_payment)/100;
-        $saldo=$customerReservation->total-$abono;
+                $customerReservation=CustomerReservations::model()->findByPk((int)$customerReservationId);
 
-        echo CJSON::encode(array('total'=>number_format($total,2),'abono'=>number_format($abono,2),'saldo'=>number_format($saldo,2)));
+                $payments=Payments::model()->findAll(array(
+                    'condition'=>'customer_reservation_id=:customerReservationId',
+                    'params'=>array(':customerReservationId'=>$customerReservationId)
+                ));
 
-        Yii::app()->end();
+                foreach($payments as $pago){
+                    $payment=$payment+$pago->amount;
+                }
+
+                $totalPagado=$payment;
+                $balance=$customerReservation->total-$totalPagado;
+
+                echo CJSON::encode(array(
+                    'total'=>number_format($customerReservation->total,2),
+                    'abono'=>number_format($totalPagado,2),
+                    'saldo'=>number_format($balance,2)
+                ));
+
+            Yii::app()->end();
+
+        }
+
+
 
     }
 
@@ -153,37 +172,6 @@ class ReservationController extends Controller
         $customer=Customers::model()->findByPk($customerReservation->customer_id);
 
        $format=Yii::app()->quoteUtil->EmailFormats($id,$requestFormat,$response,$bankId);
-
-       /* if($requestFormat==1){
-
-            $crit=array(
-                'condition'=>'customer_reservation_id=:id',
-                'params'=>array(
-                    'id'=>(int)$id
-                )
-            );
-
-            $reservations=Reservation::model()->findAll($crit);
-
-            foreach($reservations as $item):
-                array_push($concepts,Yii::t('mx',$item->service_type));
-
-            endforeach;
-
-            $concept= implode(",", $concepts);
-
-            $charge=new Charges;
-            $charge->customer_reservation_id=(int)$id;
-            $charge->concept_id=1;
-            $charge->description="Hospedaje de ".$concept;
-            $charge->amount=$customerReservation->total;
-            $charge->datex=date('Y-M-d');
-            $charge->user_id=Yii::app()->user->id;
-            $charge->guest_name=Yii::t('mx','Automatic Charge');
-            $charge->save();
-
-        }*/
-
 
         $this->render('accountNumber',array(
             'format'=>$format,

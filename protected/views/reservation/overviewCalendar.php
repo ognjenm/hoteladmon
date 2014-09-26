@@ -106,6 +106,8 @@
         var total=0;
         var abono=0;
         var saldo=0;
+        var customer=0;
+        var aux=0;
 
         scheduler.locale.labels.timeline_tab = "<?php echo Yii::t('mx','Calendar For Cabana'); ?>";
         scheduler.locale.labels.section_custom="Section";
@@ -157,22 +159,29 @@
 
         scheduler.templates.tooltip_text = function(start, end,ev){
 
-            $.ajax({
-                url: "<?php echo CController::createUrl('/reservation/getInformation'); ?>",
-                data: { customerReservationId: ev.customerReservationId },
-                type: "POST",
-                dataType: "json",
-                beforeSend: function() {  }
-            })
+            aux=customer;
+            customer=ev.customerReservationId;
 
-                .done(function(data) {
-                    total=data.total;
-                    abono=data.abono;
-                    saldo=data.saldo;
+            if(aux != customer){
+
+                $.ajax({
+                    url: "<?php echo CController::createUrl('/reservation/getInformation'); ?>",
+                    data: { customerReservationId: ev.customerReservationId },
+                    type: "POST",
+                    dataType: "json",
+                    beforeSend: function() {  }
                 })
 
-                .fail(function(data) { alert(data); })
-                .always(function() { });
+                    .done(function(data) {
+                        total=data.total;
+                        abono=data.abono;
+                        saldo=data.saldo;
+                    })
+
+                    .fail(function(data) { alert(data); })
+                    .always(function() { });
+
+            }
 
 
             return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +

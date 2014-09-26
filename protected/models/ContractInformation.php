@@ -73,7 +73,7 @@ class ContractInformation extends CActiveRecord
             'gender_surety' => Yii::t('mx','Gender surety'),
             'address_surety' => Yii::t('mx','Address Of The Surety'),
             'property_address_surety' => Yii::t('mx','Address of the property of guarantor remains as collateral'),
-            'address_public_register' => Yii::t('mx','Registration data and public record of the property of the guarantor'),
+            'address_public_register' => Yii::t('mx','Data writing and inscription in the Property RPPC guarantor'),
             'date_signature' => Yii::t('mx','Date Of Signature'),
             'title' => Yii::t('mx','Filename of this contract'),
             'content' => Yii::t('mx','Content'),

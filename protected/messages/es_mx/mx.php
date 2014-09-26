@@ -575,7 +575,7 @@ return array(
     'Name Of The Surety'=>'Nombre del fiador',
     'Address Of The Surety'=>'Domicilio del fiador',
     'Address of the property of guarantor remains as collateral'=>'Dirección de la propiedad del fiador que queda como garantía',
-    'Registration data and public record of the property of the guarantor'=>'Datos de inscripción y del registro público de la propiedad del fiador',
+    'Data writing and inscription in the Property RPPC guarantor'=>'Datos de la escritura y de la inscripción en el RPPC de la propiedad del fiador',
     'Date Of Signature'=>'Fecha de la firma',
     'Title'=>'Titulo',
     'Contract'=>'Contrato',
