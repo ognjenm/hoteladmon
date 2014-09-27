@@ -80,7 +80,7 @@
             'class'=>'span12',
             'style'=>'text-transform:uppercase',
             'rel'=>'tooltip',
-            'title'=>Yii::t('mx','Example').': Boca del Río, veracruz, bajo el número 11173 del volumen 529 de la sección primera con fecha 26 de agosto del año 2003'
+            'title'=>Yii::t('mx','Example').': (número de escritura) 53,550 VOLUMEN 370 EN LA HEROICA CIUDAD DE PUEBLA DE ZARAGOZA, A LOS DIECINUEVE DÍAS DEL MES DE ABRIL DEL AÑO DOS MIL, ANTE EL LICENCIADO BENJAMÍN DEL CALLEJO GARCÍA, ABOGADO, NOTARIO TITULAR DE LA NOTARIA PUBLICA NUMERO DIECISIETE. QUEDANDO INSCRITO DE FORMA DEF BAJO EL NUMERO 643 FOJAS 1 A 7 VOL 10 SE SECCIÓN I DE FECHA 19 DE MAYO DE 2000'
         )); ?>
 
 
@@ -519,7 +519,7 @@
                         'class'=>'span12',
                         'style'=>'text-transform:uppercase',
                         'rel'=>'tooltip',
-                        'title'=>Yii::t('mx','Example').': Boca del Río, veracruz, bajo el número 11173 del volumen 529 de la sección primera con fecha 26 de agosto del año 2003'
+                        'title'=>Yii::t('mx','Example').': (número de escritura) 53,550 VOLUMEN 370 EN LA HEROICA CIUDAD DE PUEBLA DE ZARAGOZA, A LOS DIECINUEVE DÍAS DEL MES DE ABRIL DEL AÑO DOS MIL, ANTE EL LICENCIADO BENJAMÍN DEL CALLEJO GARCÍA, ABOGADO, NOTARIO TITULAR DE LA NOTARIA PUBLICA NUMERO DIECISIETE. QUEDANDO INSCRITO DE FORMA DEF BAJO EL NUMERO 643 FOJAS 1 A 7 VOL 10 SE SECCIÓN I DE FECHA 19 DE MAYO DE 2000'
                     )); ?>
 
                 </div>

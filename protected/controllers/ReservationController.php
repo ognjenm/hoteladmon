@@ -73,8 +73,6 @@ class ReservationController extends Controller
 
         }
 
-
-
     }
 
     public function actionPayment($id){

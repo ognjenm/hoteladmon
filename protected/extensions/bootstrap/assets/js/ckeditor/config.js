@@ -8,5 +8,10 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
     config.skin = 'moono-light';
+
+    config.contentsCss = 'calibri.css';
+//the next line add the new font to the combobox in CKEditor
+    config.font_names = 'Calibri/calibri;' + config.font_names;
+
 };
 

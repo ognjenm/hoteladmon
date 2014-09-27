@@ -441,7 +441,7 @@ class ContractInformationController extends Controller
                     $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
                     $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando a efecto para';
                     $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                    $warrantyForDamages.=', mismo que se representa con el instrumento en <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', mismo que se representa con el instrumento notarial <b><u>'.strtoupper($model->address_public_register).'</u></b>';
                     $warrantyForDamages.=', renunciando expresamente los fiadores a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
                     $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometidos a  pagar por su fiado  cualquier';
                     $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado. ';
@@ -465,7 +465,7 @@ class ContractInformationController extends Controller
                     $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
                     $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando a efecto para';
                     $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                    $warrantyForDamages.=', mismo que se representa con el instrumento en <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', mismo que se representa con el instrumento notarial <b><u>'.strtoupper($model->address_public_register).'</u></b>';
                     $warrantyForDamages.=', renunciando expresamente <b><u>'.strtoupper($gender_surety).'</u></b> a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
                     $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometida a  pagar por su fiado  cualquier';
                     $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado.';
@@ -742,7 +742,7 @@ class ContractInformationController extends Controller
                     $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
                     $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando a efecto para';
                     $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                    $warrantyForDamages.=', mismo que se representa con el instrumento en <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', mismo que se representa con el instrumento notarial <b><u>'.strtoupper($model->address_public_register).'</u></b>';
                     $warrantyForDamages.=', renunciando expresamente los fiadores a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
                     $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometidos a  pagar por su fiado  cualquier';
                     $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado. ';
@@ -766,7 +766,7 @@ class ContractInformationController extends Controller
                     $warrantyForDamages.=', sin que pueda cesar su responsabilidad hasta que <b><u>'.strtoupper($gender_owner).'</u></b> reciba a su entera satisfacción';
                     $warrantyForDamages.=' el inmueble arrendado, enteramente desocupado y sin deuda alguna por parte '.$inquilino.'; dejando a efecto para';
                     $warrantyForDamages.=' cumplimiento de dicha obligación el inmueble de su propiedad ubicado en <b><u>'.strtoupper($model->property_address_surety).'</u></b>';
-                    $warrantyForDamages.=', mismo que se representa con el instrumento en <b><u>'.strtoupper($model->address_public_register).'</u></b>';
+                    $warrantyForDamages.=', mismo que se representa con el instrumento notarial <b><u>'.strtoupper($model->address_public_register).'</u></b>';
                     $warrantyForDamages.=', renunciando expresamente <b><u>'.strtoupper($gender_surety).'</u></b> a los beneficios que les conceden a su favor los artículos 2421, 2421, 2747,';
                     $warrantyForDamages.='2748, 2779, 2780, 2781, 2782 del Código Civil, quedando formalmente comprometida a  pagar por su fiado  cualquier';
                     $warrantyForDamages.='  adeudo que resulte por concepto del arrendamiento y de la ocupación y uso del inmueble alquilado.';

@@ -1,0 +1,5 @@
+@font-face {
+    font-family: "calibri";
+    src: url("fonts/calibri.eot"); /* IE */
+    src: local("Calibri"), url("fonts/calibri.ttf") format("truetype"); /*non-IE*/
+}

@@ -123,7 +123,7 @@
 
                 array('label' =>Yii::t('mx','Banks'),
                     'url' => '#',
-                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    //'visible'=>Yii::app()->user->isSuperAdmin,
                     'items' => array(
                         //
 
@@ -140,7 +140,7 @@
                         //'---',
                         array('label'=>Yii::t('mx','Account Types'), 'url'=>array('/accountTypes')),
                         array('label'=>Yii::t('mx','Payment Type'), 'url'=>array('/paymentsTypes')),
-                        array('label'=>Yii::t('mx','Persons authorized checks'), 'url'=>array('/authorizingPersons')),
+                        array('label'=>Yii::t('mx','Persons authorized checks'), 'url'=>array('/authorizingPersons'),'visible'=>Yii::app()->user->isSuperAdmin),
 
                     )
                 ),

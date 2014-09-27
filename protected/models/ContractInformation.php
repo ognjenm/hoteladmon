@@ -93,7 +93,7 @@ class ContractInformation extends CActiveRecord
             'iscompany_owner' => Yii::t('mx','The owner is company'),
             'company_owner' => Yii::t('mx','Company Name').' ('.Yii::t('mx','Owner').')',
             'total_amount' => Yii::t('mx','Lease amount after VAT, ISR, RETIVA'),
-			'address_public_register_lessee' => Yii::t('mx','Address Public Register Lessee'),
+			'address_public_register_lessee' => Yii::t('mx','Data writing and inscription in the Property RPPC lessee'),
 		);
 	}
 

@@ -757,7 +757,7 @@ return array(
     'Property Types'=>'Tipos de propiedad',
     'Lease amount after VAT, ISR, RETIVA'=>'Importe de la renta después del IVA,ISR,RETIVA',
     'Send Mail'=>'Enviar Correo Electrónico',
-    'Address Public Register Lessee'=>'Datos de inscripción y del registro público de la propiedad del arrendatario',
+    'Data writing and inscription in the Property RPPC lessee'=>'Datos de la escritura y de la inscripción en el RPPC de la Razón Social del Arrendatario',
     'If there is more than one guarantor introduce separated by semicolons. Example: Graciela Arroyo; Julian Martin Sagardi'=>'Si existe más de un fiador introducirlos separados por punto y coma. Ejemplo: Graciela Arroyo; Julian Martín Sagardi'
 
 
