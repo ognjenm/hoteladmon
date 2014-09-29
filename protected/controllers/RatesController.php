@@ -45,8 +45,16 @@ class RatesController extends Controller
 	public function actionView($id)
 	{
 
+        $prices=Prices::model()->findAll(array(
+           'condition'=>'rate_id=:rateId',
+            'params'=>array('rateId'=>$id)
+        ));
+
+        $prices2=new CArrayDataProvider($prices);
+
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
+            'prices'=>$prices2
 		));
 	}
 

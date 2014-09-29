@@ -29,7 +29,7 @@ class ReservationController extends Controller
                                  'undiscountedBudget','dayPassUndiscountedBudget',
                                  'GridReservation','overviewCalendar','SchedulerOverview',
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
-                                 'getInformation'
+                                 'getInformation','dailyReport'
                 ),
                 'users'=>array('@'),
             ),
@@ -38,6 +38,16 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionDailyReport(){
+
+        $tabla=Yii::app()->quoteUtil->dailyReport();
+
+        $this->render('dailyReport',array(
+            'tabla'=>$tabla,
+        ));
+
     }
 
     public function actionGetInformation(){

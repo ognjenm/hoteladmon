@@ -35,12 +35,12 @@
                 ),
 
                 array(  'label' =>Yii::t('mx','Rates'),
-                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    //'visible'=>Yii::app()->user->isSuperAdmin,
                     'url' => '#',
                     'items' => array(
                         array('label'=>Yii::t('mx','Rates'), 'url'=>array('/rates')),
-                        array('label'=>Yii::t('mx','Sales Agents'), 'url'=>array('/salesAgents')),
-                        array('label'=>Yii::t('mx','Reservation Channel'), 'url'=>array('/reservationChannel')),
+                        array('label'=>Yii::t('mx','Sales Agents'), 'url'=>array('/salesAgents'),'visible'=>Yii::app()->user->isSuperAdmin),
+                        array('label'=>Yii::t('mx','Reservation Channel'), 'url'=>array('/reservationChannel'),'visible'=>Yii::app()->user->isSuperAdmin),
                         //array('label'=>Yii::t('mx','Camped And Daypass'), 'url'=>array('/campedAndDaypass')),
                     )
                 ),

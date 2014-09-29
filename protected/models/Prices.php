@@ -68,9 +68,9 @@ class Prices extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'rate_id' => 'Rate',
-			'pax' => 'Pax',
-			'price' => 'Price',
+			'rate_id' => Yii::t('mx','Rate'),
+			'pax' => Yii::t('mx','Pax'),
+			'price' => Yii::t('mx','Price'),
 		);
 	}
 

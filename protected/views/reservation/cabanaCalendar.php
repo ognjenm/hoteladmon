@@ -25,6 +25,7 @@
     $this->menu=array(
         array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
         array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
+        array('label'=>Yii::t('mx','Daily Report'),'icon'=>'icon-calendar','url'=>array('dailyReport')),
     );
 
     $this->pageSubTitle=Yii::t('mx','Reservations');

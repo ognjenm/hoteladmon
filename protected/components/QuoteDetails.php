@@ -1409,8 +1409,6 @@ class QuoteDetails extends CApplicationComponent{
 
         return $price;
 
-
-
     }
 
     public function getPriceTent($adults,$children,$service_type,$room_type_id,$nights,$season){
@@ -1870,19 +1868,22 @@ class QuoteDetails extends CApplicationComponent{
     }
 
 
-    public function DailyReport(){
-        $tabledailyreport='';
+    public function dailyReport(){
         $counter=0;
-        $grupo=null;
         $total=0;
-        $grupoant=0;
+        $adultos=0;
+        $niños=0;
+        $mascotas=0;
 
-        $sql="SELECT customer_reservations.id,reservation.checkin,reservation.checkout,rooms.room,customers.first_name,customers.state,
-        reservation.adults,reservation.children,reservation.pets,reservation.price FROM customer_reservations inner join reservation on
-        customer_reservations.id=reservation.customer_reservation_id inner join customers on
-        customer_reservations.customer_id=customers.id inner join rooms on reservation.room_id=rooms.id where
-        (reservation.statux=:estado or reservation.statux=:estado2) and reservation.checkin like '2014-03-01%' and
-        '2014-03-01 59:59:59' <= reservation.checkout  order by customer_reservations.id";
+        $sql="SELECT customer_reservations.id as customerId,reservation.checkin,reservation.checkout,reservation.nights,rooms.room,
+        customers.first_name,customers.last_name,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price,
+        payments.amount as anticipo,reservation.price-payments.amount as saldo
+        FROM customer_reservations
+        inner join reservation on customer_reservations.id=reservation.customer_reservation_id
+        inner join customers on customer_reservations.customer_id=customers.id
+        inner join rooms on reservation.room_id=rooms.id
+        INNER JOIN payments ON payments.customer_reservation_id=customer_reservations.id
+        where (reservation.statux=:estado or reservation.statux=:estado2) and reservation.checkin like '2014-09-29%' order by customer_reservations.id";
 
         $connection=Yii::app()->db;
         $command=$connection->createCommand($sql);
@@ -1894,59 +1895,86 @@ class QuoteDetails extends CApplicationComponent{
         $dataReader=$command->queryAll();
         //$connection->active=false;
         $tabledailyreport='
-            <div style="width:100%; height:500px; overflow: scroll;">
             <table class="items table table-hover table-condensed table-bordered">
                 <thead>
                     <tr>
-                        <th>'.Yii::t('mx','Check In').'</th>
-                        <th>'.Yii::t('mx','Check Out').'</th>
-                        <th>'.Yii::t('mx','Room').'</th>
-                        <th>'.Yii::t('mx','Adults').'</th>
-                        <th>'.Yii::t('mx','Children').' Ta</th>
-                        <th>'.Yii::t('mx','Pets').' Tb</th>
-                        <th>'.Yii::t('mx','Price').' Tb</th>
+                        <th>'.Yii::t('mx','Data').'</th>
+                        <th>'.Yii::t('mx','Name').'</th>
+                        <th># '.Yii::t('mx','People').'</th>
+                        <th>'.Yii::t('mx','Debe').'</th>
+                        <th>'.Yii::t('mx','Nights').'</th>
+                        <th>'.Yii::t('mx','Dates').'</th>
+                        <th>'.Yii::t('mx','Acounts').'</th>
                     </tr>
                 <thead>
             <tbody>
-                <tr>
         ';
 
         foreach($dataReader as $item){
 
-            $grupoant=$grupo;
-            $grupo=$item['first_name'];
-
-
-            if($grupoant != $grupo){
-
-                $tabledailyreport.='<tr>
-                <td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.$item['first_name'].' - '.$item['state'].'</strong></td>
-            </tr>';
-            }
-
-            $tabledailyreport.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+            //$tabledailyreport.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
             $tabledailyreport.='
-                        <td>'.$item['checkin'].'</td>
-                        <td>'.$item['checkout'].'</td>
-                        <td>'.$item['room'].'</td>
-                        <td>'.$item['adults'].'</td>
-                        <td>'.$item['children'].'</td>
-                        <td>'.$item['pets'].'</td>
-                        <td>'.number_format($item['price'],2).'</td>
-                    </tr>';
+                <tr>
+                    <td>
+                    <p><strong>Caba&ntilde;a: </strong>'.$item['room'].'</p>
+
+                    <p><strong>Cliente:</strong> '.$item['customerId'].'</p>
+
+                    <p><strong>Procedencia:</strong> '.$item['state'].'</p>
+                    </td>
+                    <td>'.$item['first_name'].' '.$item['last_name'].'</td>
+                    <td>
+                    <p><strong>Adultos:</strong> '.$item['adults'].'</p>
+
+                    <p><strong>Ni&ntilde;os:</strong> '.$item['children'].'</p>
+
+                    <p><strong>Mascotas:</strong> '.$item['pets'].'</p>
+                    </td>
+                    <td>$'.number_format($item['saldo'],2).'</td>
+                    <td>
+                    <p>'.$item['nights'].'</p>
+                    </td>
+                    <td>
+                    <p><strong>Entra:</strong> '.$item['checkin'].'</p>
+
+                    <p><strong>Sale:</strong> '.$item['checkout'].'</p>
+                    </td>
+                    <td>
+                    <p><strong>Total:</strong> $'.number_format($item['price'],2).'</p>
+
+                    <p><strong>Anticipo:</strong> $'.number_format($item['anticipo'],2).'</p>
+
+                    <p><strong>Resta:</strong> $'.number_format($item['saldo'],2).'</p>
+                    </td>
+                </tr>';
+
+            $total.=$item['anticipo'];
             $counter++;
-            $total.=$item['price'];
+
+            $adultos=$adultos+$item['adults'];
+            $niños=$niños+$item['children'];
+            $mascotas=$mascotas+$item['pets'];
         }
 
-        if($grupoant != $grupo){
-            $tabledailyreport.='<tr>
-                <td colspan="7" class="pull-rigth" bgcolor="#CCCCCC"><strong>'.$item['price'].'</strong></td>
-            </tr>';
-            $total=0;
-        }
+        $tabledailyreport.='
+                <tr class="alt" style="background:#EEEEEE;">
+                    <td valign="middle" colspan="2" rowspan="1" style="text-align: center;"><strong>TOTALES:</strong></td>
+                    <td>
+                    <p><strong>Adultos:</strong> '.$adultos.'</p>
 
-        $tabledailyreport.='</tbody></table></div>';
-        echo $tabledailyreport;
+                    <p><strong>Ni&ntilde;os:</strong> '.$niños.'</p>
+
+                    <p><strong>Mascotas:</strong> '.$mascotas.'</p>
+                    </td>
+                    <td valign="middle" style="text-align: center;">$'.number_format($total,2).'</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>';
+
+        $tabledailyreport.='</tbody></table>';
+
+        return $tabledailyreport;
 
     }
 

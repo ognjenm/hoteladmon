@@ -37,11 +37,39 @@
                     'attributes'=>array(
                         'id',
                         'service_type',
-                        'room_type_id',
+                        array(
+                            'name'=>Yii::t('mx','Room Type'),
+                            'value'=>$model->roomType->tipe
+                        ),
                         'season',
-                        'type_reservation_id',
-                        'price',
+                        array(
+                            'name'=>Yii::t('mx','Type Reservation'),
+                            'value'=>$model->typeReservation->tipe
+                        ),
                     ),
             )); ?>
+
+
+    <?php $this->widget('bootstrap.widgets.TbGridView',array(
+        'id'=>'prices-grid',
+        'type' => 'hover condensed',
+        'emptyText' => Yii::t('mx','There are no data to display'),
+        'showTableOnEmpty' => false,
+        'summaryText' => '<strong>'.Yii::t('mx','Prices').': {count}</strong>',
+        'template' => '{items}{pager}',
+        'responsiveTable' => true,
+        'enablePagination'=>true,
+        'dataProvider'=>$prices,
+        'pager' => array(
+            'class' => 'bootstrap.widgets.TbPager',
+            'displayFirstAndLast' => true,
+        ),
+        //'selectableRows'=>2,
+        'columns'=>array(
+            'pax',
+            'price'
+        ),
+    ));
+    ?>
 
 
