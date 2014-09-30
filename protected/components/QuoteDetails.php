@@ -1867,6 +1867,21 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+    public function exportDailyReport(){
+
+        $stylesheet = file_get_contents(Yii::getPathOfAlias('webroot').'/themes/cocotheme/css/style.css');
+
+        $footer = '<div align="center">'.Yii::t('mx','Page').' {PAGENO} </div>';
+        $mpdf = Yii::app()->ePdf->mpdf('c','letter',8,'',10,10,30,20,10,10);
+        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->mirrorMargins = 1;
+        $mpdf->SetHTMLHeader($this->reportHeader());
+        $mpdf->SetHTMLFooter($footer);
+        $mpdf->WriteHTML($stylesheet, 1);
+        $mpdf->WriteHTML($this->render('_ajaxContent', array('table'=>$this->dailyReport())));
+        $mpdf->Output('Reporte-Diario.pdf','D');
+    }
+
 
     public function dailyReport(){
         $counter=0;
@@ -1874,6 +1889,7 @@ class QuoteDetails extends CApplicationComponent{
         $adultos=0;
         $niños=0;
         $mascotas=0;
+        $columnas=array();
 
         $sql="SELECT customer_reservations.id as customerId,reservation.checkin,reservation.checkout,reservation.nights,rooms.room,
         customers.first_name,customers.last_name,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price,
@@ -1910,55 +1926,91 @@ class QuoteDetails extends CApplicationComponent{
             <tbody>
         ';
 
+        for($x=1;$x<=15;$x++){
+
+            if($x % 2==0) $cadena='<tr style="background:#EEEEEE;">';
+            else $cadena='<tr>';
+
+            $columnas[$x]=$cadena.'
+                    <td>
+                    <p><strong>Caba&ntilde;a: </strong>'.$x.'</p>
+                    <p><strong>Cliente:</strong></p>
+                    <p><strong>Procedencia:</strong></p>
+                    </td>
+                    <td></td>
+                    <td>
+                    <p><strong>Adultos:</strong></p>
+                    <p><strong>Ni&ntilde;os:</strong></p>
+                    <p><strong>Mascotas:</strong></p>
+                    </td>
+                    <td>$0.00</td>
+                    <td><p>0</p></td>
+                    <td>
+                    <p><strong>Entra:</strong></p>
+                    <p><strong>Sale:</strong></p>
+                    </td>
+                    <td>
+                    <p><strong>Total:</strong> $0.00</p>
+                    <p><strong>Anticipo:</strong> $0.00</p>
+                    <p><strong>Resta:</strong> $0.00</p>
+                    </td>
+                </tr>';
+        }
+
         foreach($dataReader as $item){
 
             //$tabledailyreport.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
-            $tabledailyreport.='
-                <tr>
-                    <td>
-                    <p><strong>Caba&ntilde;a: </strong>'.$item['room'].'</p>
+            for($x=1;$x<=15;$x++){
 
-                    <p><strong>Cliente:</strong> '.$item['customerId'].'</p>
+                if($x % 2==0) $cadena='<tr style="background:#EEEEEE;">';
+                else $cadena='<tr>';
 
-                    <p><strong>Procedencia:</strong> '.$item['state'].'</p>
-                    </td>
-                    <td>'.$item['first_name'].' '.$item['last_name'].'</td>
-                    <td>
-                    <p><strong>Adultos:</strong> '.$item['adults'].'</p>
+                $room=explode('-',$item['room']);
+                $room=(int)$room[1];
+                if($room==$x){
+                    $columnas[$x]=$cadena.'
 
-                    <p><strong>Ni&ntilde;os:</strong> '.$item['children'].'</p>
+                                <td>
+                                    <p><strong>Caba&ntilde;a: </strong>'.$item['room'].'</p>
+                                    <p><strong>Cliente:</strong> '.$item['customerId'].'</p>
+                                    <p><strong>Procedencia:</strong> '.$item['state'].'</p>
+                                </td>
+                                <td>'.$item['first_name'].' '.$item['last_name'].'</td>
+                                <td>
+                                    <p><strong>Adultos:</strong> '.$item['adults'].'</p>
+                                    <p><strong>Ni&ntilde;os:</strong> '.$item['children'].'</p>
+                                    <p><strong>Mascotas:</strong> '.$item['pets'].'</p>
+                                </td>
+                                <td>$'.number_format($item['saldo'],2).'</td>
+                                <td><p>'.$item['nights'].'</p></td>
+                                <td>
+                                    <p><strong>Entra:</strong> '.$item['checkin'].'</p>
+                                    <p><strong>Sale:</strong> '.$item['checkout'].'</p>
+                                </td>
+                                <td>
+                                    <p><strong>Total:</strong> $'.number_format($item['price'],2).'</p>
+                                    <p><strong>Anticipo:</strong> $'.number_format($item['anticipo'],2).'</p>
+                                    <p><strong>Resta:</strong> $'.number_format($item['saldo'],2).'</p>
+                                </td>
+                            </tr>';
+                }
 
-                    <p><strong>Mascotas:</strong> '.$item['pets'].'</p>
-                    </td>
-                    <td>$'.number_format($item['saldo'],2).'</td>
-                    <td>
-                    <p>'.$item['nights'].'</p>
-                    </td>
-                    <td>
-                    <p><strong>Entra:</strong> '.$item['checkin'].'</p>
-
-                    <p><strong>Sale:</strong> '.$item['checkout'].'</p>
-                    </td>
-                    <td>
-                    <p><strong>Total:</strong> $'.number_format($item['price'],2).'</p>
-
-                    <p><strong>Anticipo:</strong> $'.number_format($item['anticipo'],2).'</p>
-
-                    <p><strong>Resta:</strong> $'.number_format($item['saldo'],2).'</p>
-                    </td>
-                </tr>';
+            }
 
             $total.=$item['anticipo'];
-            $counter++;
-
             $adultos=$adultos+$item['adults'];
             $niños=$niños+$item['children'];
             $mascotas=$mascotas+$item['pets'];
         }
 
+
+        foreach($columnas as $columna){
+            $tabledailyreport.=$columna;
+        }
+
         $tabledailyreport.='
                 <tr class="alt" style="background:#EEEEEE;">
-                    <td valign="middle" colspan="2" rowspan="1" style="text-align: center;"><strong>TOTALES:</strong></td>
+                    <td valign="middle" colspan="2" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
                     <td>
                     <p><strong>Adultos:</strong> '.$adultos.'</p>
 
@@ -1966,7 +2018,7 @@ class QuoteDetails extends CApplicationComponent{
 
                     <p><strong>Mascotas:</strong> '.$mascotas.'</p>
                     </td>
-                    <td valign="middle" style="text-align: center;">$'.number_format($total,2).'</td>
+                    <td style="text-align: center;vertical-align:middle;">$'.number_format($total,2).'</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -3657,7 +3709,6 @@ class QuoteDetails extends CApplicationComponent{
                     'condition'=>'bank_id=:bankId and account_type_id=:accountTypeId',
                     'params'=>array('bankId'=>$bank['id'],'accountTypeId'=>$accountType['account_type_id'])
                 ));
-
 
                 foreach($accounts as $account){
                     $subitems[]=array('label'=>$account->bank->bank.' - '. substr($account->account_number,-3),'url' =>array('saldos','accountId'=>$account->id,'accountType'=>$account->account_type_id));

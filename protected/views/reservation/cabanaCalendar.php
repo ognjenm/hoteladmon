@@ -25,12 +25,11 @@
     $this->menu=array(
         array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
         array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
-        array('label'=>Yii::t('mx','Daily Report'),'icon'=>'icon-calendar','url'=>array('dailyReport')),
+        array('label'=>Yii::t('mx','Daily Report'),'icon'=>'icon-calendar','url'=>array('ExportDailyReport')),
     );
 
     $this->pageSubTitle=Yii::t('mx','Reservations');
     $this->pageIcon='icon-cogs';
-
 
     if(Yii::app()->user->hasFlash('success')):
         Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));

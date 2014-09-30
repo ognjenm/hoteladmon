@@ -117,7 +117,6 @@ return array(
                        'orientation'       => 'P', // landscape or portrait orientation
                    )*/
 
-
                 ),
                 'HTML2PDF' => array(
                     'librarySourcePath' => 'application.vendors.html2pdf.*',

@@ -29,7 +29,7 @@ class ReservationController extends Controller
                                  'undiscountedBudget','dayPassUndiscountedBudget',
                                  'GridReservation','overviewCalendar','SchedulerOverview',
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
-                                 'getInformation','dailyReport'
+                                 'getInformation','dailyReport','exportDailyReport'
                 ),
                 'users'=>array('@'),
             ),
@@ -48,6 +48,10 @@ class ReservationController extends Controller
             'tabla'=>$tabla,
         ));
 
+    }
+
+    public function actionExportDailyReport(){
+        Yii::app()->quoteUtil->exportDailyReport();
     }
 
     public function actionGetInformation(){
