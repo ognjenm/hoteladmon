@@ -1869,11 +1869,14 @@ class QuoteDetails extends CApplicationComponent{
 
     public function exportDailyReport(){
 
-        $stylesheet = file_get_contents(Yii::getPathOfAlias('webroot').'/themes/cocotheme/css/style.css');
+        $stylesheet = file_get_contents(Yii::getPathOfAlias('webroot').'/themes/cocotheme/css/table.css');
 
         $footer = '<div align="center">'.Yii::t('mx','Page').' {PAGENO} </div>';
-        $mpdf = Yii::app()->ePdf->mpdf('c','letter',8,'',10,10,30,20,10,10);
+        $mpdf = Yii::app()->ePdf->mpdf();
         $mpdf->SetDisplayMode('fullpage');
+        $mpdf->SetWatermarkText('COCOAVENTURA');
+        $mpdf->watermark_font = 'DejaVuSansCondensed';
+        $mpdf->showWatermarkText = true;
         $mpdf->mirrorMargins = 1;
         $mpdf->SetHTMLHeader($this->reportHeader());
         $mpdf->SetHTMLFooter($footer);
@@ -1933,26 +1936,26 @@ class QuoteDetails extends CApplicationComponent{
 
             $columnas[$x]=$cadena.'
                     <td>
-                    <p><strong>Caba&ntilde;a: </strong>'.$x.'</p>
-                    <p><strong>Cliente:</strong></p>
-                    <p><strong>Procedencia:</strong></p>
+                        <p><strong>Caba&ntilde;a: </strong>'.$x.'</p>
+                        <p><strong>Cliente:</strong></p>
+                        <p><strong>Procedencia:</strong></p>
                     </td>
                     <td></td>
                     <td>
-                    <p><strong>Adultos:</strong></p>
-                    <p><strong>Ni&ntilde;os:</strong></p>
-                    <p><strong>Mascotas:</strong></p>
+                        <p><strong>Adultos:</strong></p>
+                        <p><strong>Ni&ntilde;os:</strong></p>
+                        <p><strong>Mascotas:</strong></p>
                     </td>
-                    <td>$0.00</td>
-                    <td><p>0</p></td>
+                    <td style="text-align: center;vertical-align:middle;">$0.00</td>
+                    <td style="text-align: center;vertical-align:middle;"><p>0</p></td>
                     <td>
-                    <p><strong>Entra:</strong></p>
-                    <p><strong>Sale:</strong></p>
+                        <p><strong>Entra:</strong></p>
+                        <p><strong>Sale:</strong></p>
                     </td>
-                    <td>
-                    <p><strong>Total:</strong> $0.00</p>
-                    <p><strong>Anticipo:</strong> $0.00</p>
-                    <p><strong>Resta:</strong> $0.00</p>
+                    <td style="text-align: right;vertical-align:middle;">
+                        <p><strong>Total:</strong> $0.00</p>
+                        <p><strong>Anticipo:</strong> $0.00</p>
+                        <p><strong>Resta:</strong> $0.00</p>
                     </td>
                 </tr>';
         }
@@ -1969,7 +1972,6 @@ class QuoteDetails extends CApplicationComponent{
                 $room=(int)$room[1];
                 if($room==$x){
                     $columnas[$x]=$cadena.'
-
                                 <td>
                                     <p><strong>Caba&ntilde;a: </strong>'.$item['room'].'</p>
                                     <p><strong>Cliente:</strong> '.$item['customerId'].'</p>
@@ -1981,13 +1983,13 @@ class QuoteDetails extends CApplicationComponent{
                                     <p><strong>Ni&ntilde;os:</strong> '.$item['children'].'</p>
                                     <p><strong>Mascotas:</strong> '.$item['pets'].'</p>
                                 </td>
-                                <td>$'.number_format($item['saldo'],2).'</td>
-                                <td><p>'.$item['nights'].'</p></td>
+                                <td style="text-align: center;vertical-align:middle;">$'.number_format($item['saldo'],2).'</td>
+                                <td style="text-align: center;vertical-align:middle;"><p>'.$item['nights'].'</p></td>
                                 <td>
                                     <p><strong>Entra:</strong> '.$item['checkin'].'</p>
                                     <p><strong>Sale:</strong> '.$item['checkout'].'</p>
                                 </td>
-                                <td>
+                                <td style="text-align: right;vertical-align:middle;">
                                     <p><strong>Total:</strong> $'.number_format($item['price'],2).'</p>
                                     <p><strong>Anticipo:</strong> $'.number_format($item['anticipo'],2).'</p>
                                     <p><strong>Resta:</strong> $'.number_format($item['saldo'],2).'</p>
@@ -2009,7 +2011,7 @@ class QuoteDetails extends CApplicationComponent{
         }
 
         $tabledailyreport.='
-                <tr class="alt" style="background:#EEEEEE;">
+                <tr style="background:#EEEEEE;">
                     <td valign="middle" colspan="2" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
                     <td>
                     <p><strong>Adultos:</strong> '.$adultos.'</p>
@@ -2022,7 +2024,17 @@ class QuoteDetails extends CApplicationComponent{
                     <td></td>
                     <td></td>
                     <td></td>
-                </tr>';
+                </tr>
+                 <tr>
+                    <td valign="middle" colspan="7" rowspan="1" style="text-align: center;vertical-align:middle;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td valign="middle" colspan="7" rowspan="1" style="text-align: center;vertical-align:middle;">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td valign="middle" colspan="7" rowspan="1" style="text-align: center;vertical-align:middle;">&nbsp;</td>
+                </tr>
+                ';
 
         $tabledailyreport.='</tbody></table>';
 

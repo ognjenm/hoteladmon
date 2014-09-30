@@ -27,4 +27,15 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
 ?>
 
-<?php echo $tabla; ?>
+<?php
+
+$this->widget('bootstrap.widgets.TbCKEditor',array(
+    'name'=>'ckeditor',
+    'value'=>$tabla,
+    'editorOptions'=>array(
+        'height'=>'400'
+    ),
+
+) );
+
+?>
