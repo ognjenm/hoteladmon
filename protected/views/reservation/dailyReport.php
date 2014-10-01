@@ -25,7 +25,75 @@ $this->widget('bootstrap.widgets.TbAlert', array(
     ),
 ));
 
+
+Yii::app()->clientScript->registerScript('reportDaily', '
+
+     $("#updateReport").click(function(){
+
+            var datex=$("#date").val();
+
+             $.ajax({
+                url: "'.CController::createUrl('/reservation/getDailyReport').'",
+                data: {date: datex},
+                dataType: "json",
+                type: "POST",
+                beforeSend: function() {
+                    $("#maindiv").addClass("loading");
+                }
+            })
+
+            .done(function(data) {
+                CKEDITOR.instances.ckeditor.updateElement();
+                CKEDITOR.instances.ckeditor.setData(data.report);
+             })
+
+            .fail(function() { bootbox.alert("error"); })
+            .always(function() { $("#maindiv").removeClass("loading"); });
+
+            return false;
+     });
+
+');
+
 ?>
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+    'id'=>'dailyReport-form',
+    'enableAjaxValidation'=>false,
+    'type'=>'inline',
+    'htmlOptions'=>array('class'=>'well')
+    //'class'=>'well'
+)); ?>
+
+    <?php $this->widget(
+        'bootstrap.widgets.TbDatePicker',
+        array('name' => 'date',
+            'htmlOptions' => array('placeholder'=>Yii::t('mx','Date')),
+            'options'=>array(
+                'format'=>'dd-M-yyyy',
+                'autoclose' => true,
+            )
+        )
+    );
+    ?>
+        <?php
+
+        $this->widget('bootstrap.widgets.TbButton', array(
+            'id'=>'updateReport',
+            'url' => $this->createUrl('reservation/getDailyReport'),
+            'buttonType'=>'button',
+            'type'=>'primary',
+            'icon'=>'icon-ok',
+            'label'=>'ok',
+        ));
+
+        ?>
+
+
+
+<?php $this->endWidget(); ?>
+
+<div id="maindiv">
 
 <?php
 
@@ -33,9 +101,13 @@ $this->widget('bootstrap.widgets.TbCKEditor',array(
     'name'=>'ckeditor',
     'value'=>$tabla,
     'editorOptions'=>array(
-        'height'=>'400'
+        'height'=>'400',
+        'contentsCss'=> Yii::app()->theme->baseUrl.'/css/ckeditor.css',
+        //'stylesSet'=> '[]'
     ),
 
 ) );
 
 ?>
+
+</div>

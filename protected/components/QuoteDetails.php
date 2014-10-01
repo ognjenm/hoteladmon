@@ -1886,35 +1886,44 @@ class QuoteDetails extends CApplicationComponent{
     }
 
 
-    public function dailyReport(){
-        $counter=0;
+    public function dailyReport($date=null){
+
+        if($date==null){
+            $fecha1=date('Y-m-d');
+        }else{
+            $fecha1=$this->ToEnglishDateFromFormatdMyyyy($date);
+            $fecha1=date('Y-m-d',strtotime($fecha1));
+        }
+
         $total=0;
         $adultos=0;
         $niños=0;
         $mascotas=0;
         $columnas=array();
 
-        $sql="SELECT customer_reservations.id as customerId,reservation.checkin,reservation.checkout,reservation.nights,rooms.room,
-        customers.first_name,customers.last_name,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price,
-        payments.amount as anticipo,reservation.price-payments.amount as saldo
+        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,reservation.checkin,reservation.checkout,reservation.nights,rooms.room,
+        customers.first_name,customers.last_name,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price
         FROM customer_reservations
-        inner join reservation on customer_reservations.id=reservation.customer_reservation_id
-        inner join customers on customer_reservations.customer_id=customers.id
-        inner join rooms on reservation.room_id=rooms.id
-        INNER JOIN payments ON payments.customer_reservation_id=customer_reservations.id
-        where (reservation.statux=:estado or reservation.statux=:estado2) and reservation.checkin like '2014-09-29%' order by customer_reservations.id";
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        INNER JOIN rooms on reservation.room_id=rooms.id
+        INNER JOIN payments on customer_reservations.id=payments.customer_reservation_id
+        WHERE (reservation.statux=:estado or reservation.statux=:estado2) and reservation.checkin like :date1 order by customer_reservations.id";
 
         $connection=Yii::app()->db;
         $command=$connection->createCommand($sql);
         $command->bindValue(":estado", 'RESERVED' , PDO::PARAM_STR);
         $command->bindValue(":estado2", 'OCCUPIED' , PDO::PARAM_STR);
-        //$command->bindValue(":date1", '2014-03-01%' , PDO::PARAM_STR);
-        //$command->bindValue(":date2", '2014-03-01 59:59:59' , PDO::PARAM_STR);
-        //$rowCount=$command->execute();
+        $command->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
         $dataReader=$command->queryAll();
         //$connection->active=false;
         $tabledailyreport='
-            <table class="items table table-hover table-condensed table-bordered">
+            <p style="text-align:right">
+                <span style="font-size:14px">
+                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO:&nbsp;'.$fecha1.'</span></strong>
+                </span>
+            </p>
+            <table class="items table table-condensed table-striped">
                 <thead>
                     <tr>
                         <th>'.Yii::t('mx','Data').'</th>
@@ -1926,15 +1935,17 @@ class QuoteDetails extends CApplicationComponent{
                         <th>'.Yii::t('mx','Acounts').'</th>
                     </tr>
                 <thead>
+                 <tfoot>
+                    <tr><td colspan="7" rowspan="1">&nbsp;</td></tr>
+                    <tr><td colspan="7" rowspan="1">&nbsp;</td></tr>
+                </tfoot>
             <tbody>
         ';
 
         for($x=1;$x<=15;$x++){
 
-            if($x % 2==0) $cadena='<tr style="background:#EEEEEE;">';
-            else $cadena='<tr>';
-
-            $columnas[$x]=$cadena.'
+            $columnas[$x]='
+                <tr>
                     <td>
                         <p><strong>Caba&ntilde;a: </strong>'.$x.'</p>
                         <p><strong>Cliente:</strong></p>
@@ -1962,44 +1973,61 @@ class QuoteDetails extends CApplicationComponent{
 
         foreach($dataReader as $item){
 
-            //$tabledailyreport.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
             for($x=1;$x<=15;$x++){
-
-                if($x % 2==0) $cadena='<tr style="background:#EEEEEE;">';
-                else $cadena='<tr>';
-
                 $room=explode('-',$item['room']);
                 $room=(int)$room[1];
                 if($room==$x){
-                    $columnas[$x]=$cadena.'
+
+                    $pagos=0;
+                    $saldo=0;
+
+                    $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
+                    $command=Yii::app()->db->createCommand($sqlPayments);
+                    $command->bindValue(":customerReservationId", $item['customerId'] , PDO::PARAM_INT);
+                    $payments=$command->queryAll();
+                    //payments.amount as anticipo,reservation.price-payments.amount as saldo
+
+                    if($payments){
+
+                        foreach($payments as $pago){
+                            $pagos=$pagos+$pago['amount'];
+                        }
+
+                        $saldo=$item['price']-$pagos;
+                        $total=$total+$saldo;
+                    }
+
+
+                    $columnas[$x]='
+                    <tr>
                                 <td>
                                     <p><strong>Caba&ntilde;a: </strong>'.$item['room'].'</p>
                                     <p><strong>Cliente:</strong> '.$item['customerId'].'</p>
                                     <p><strong>Procedencia:</strong> '.$item['state'].'</p>
                                 </td>
-                                <td>'.$item['first_name'].' '.$item['last_name'].'</td>
+                                <td style="text-align: center;vertical-align:middle;">'.$item['first_name'].' '.$item['last_name'].'</td>
                                 <td>
                                     <p><strong>Adultos:</strong> '.$item['adults'].'</p>
                                     <p><strong>Ni&ntilde;os:</strong> '.$item['children'].'</p>
                                     <p><strong>Mascotas:</strong> '.$item['pets'].'</p>
                                 </td>
-                                <td style="text-align: center;vertical-align:middle;">$'.number_format($item['saldo'],2).'</td>
+                                <td style="text-align: center;vertical-align:middle;">$'.number_format($saldo,2).'</td>
                                 <td style="text-align: center;vertical-align:middle;"><p>'.$item['nights'].'</p></td>
-                                <td>
+                                <td style="text-align: center;vertical-align:middle;">
                                     <p><strong>Entra:</strong> '.$item['checkin'].'</p>
                                     <p><strong>Sale:</strong> '.$item['checkout'].'</p>
                                 </td>
                                 <td style="text-align: right;vertical-align:middle;">
                                     <p><strong>Total:</strong> $'.number_format($item['price'],2).'</p>
-                                    <p><strong>Anticipo:</strong> $'.number_format($item['anticipo'],2).'</p>
-                                    <p><strong>Resta:</strong> $'.number_format($item['saldo'],2).'</p>
+                                    <p><strong>Anticipo:</strong> $'.number_format($pagos,2).'</p>
+                                    <p><strong>Resta:</strong> $'.number_format($saldo,2).'</p>
                                 </td>
-                            </tr>';
+                    </tr>';
+
                 }
 
             }
 
-            $total.=$item['anticipo'];
             $adultos=$adultos+$item['adults'];
             $niños=$niños+$item['children'];
             $mascotas=$mascotas+$item['pets'];
@@ -2024,15 +2052,6 @@ class QuoteDetails extends CApplicationComponent{
                     <td></td>
                     <td></td>
                     <td></td>
-                </tr>
-                 <tr>
-                    <td valign="middle" colspan="7" rowspan="1" style="text-align: center;vertical-align:middle;">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td valign="middle" colspan="7" rowspan="1" style="text-align: center;vertical-align:middle;">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td valign="middle" colspan="7" rowspan="1" style="text-align: center;vertical-align:middle;">&nbsp;</td>
                 </tr>
                 ';
 

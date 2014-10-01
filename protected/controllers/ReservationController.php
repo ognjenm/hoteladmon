@@ -29,7 +29,8 @@ class ReservationController extends Controller
                                  'undiscountedBudget','dayPassUndiscountedBudget',
                                  'GridReservation','overviewCalendar','SchedulerOverview',
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
-                                 'getInformation','dailyReport','exportDailyReport'
+                                 'getInformation','dailyReport','exportDailyReport',
+                                 'getDailyReport'
                 ),
                 'users'=>array('@'),
             ),
@@ -38,6 +39,29 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionGetDailyReport(){
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            if(isset($_POST['date'])){
+
+                $date=$_POST['date'];
+
+                echo CJSON::encode(array(
+                    'report'=>Yii::app()->quoteUtil->dailyReport($date)
+                ));
+
+            }else{
+                echo CJSON::encode(array(
+                    'report'=>'Seleccione una fecha'
+                ));
+            }
+
+            Yii::app()->end();
+        }
+
     }
 
     public function actionDailyReport(){

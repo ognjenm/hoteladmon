@@ -12,6 +12,7 @@ CKEDITOR.editorConfig = function( config ) {
     config.extraPlugins = 'print';
     config.contentsCss = 'calibri.css';
     config.font_names = 'Calibri/calibri;' + config.font_names;
+    config.extraPlugins = 'stylesheetparser';
 
     config.toolbar=[
         ["Print","Source","Copy","SelectAll","DocProps","-","PasteText","PasteFromWord"],
