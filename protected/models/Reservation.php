@@ -644,8 +644,8 @@ class Reservation extends CActiveRecord
                             var index=$(this).attr("id");
                             index=index.substring(24,26);
 
-                            $("#Reservation_checkin").val($("#FBReservation_checkin").val()+" 15:00");
-                            $("#Reservation_checkout").val($("#FBReservation_checkout").val()+" 13:00");
+                            //$("#Reservation_checkin"+index).val($("#FBReservation_checkin").val()+" 15:00");
+                            //$("#Reservation_checkout"+index).val($("#FBReservation_checkout").val()+" 13:00");
 
                             $.ajax({
                                     url: "'.CController::createUrl('/roomsType/getAccommodationType').'",
@@ -680,8 +680,8 @@ class Reservation extends CActiveRecord
 
                             if(serviceType=="DAYPASS"){
 
-                                $("#Reservation_checkin").val($("#FBReservation_checkin").val()+" 09:00");
-                                $("#Reservation_checkout").val($("#FBReservation_checkout").val()+" 18:00");
+                                $("#Reservation_checkin").val($("#FBReservation_checkin"+index).val()+" 09:00");
+                                $("#Reservation_checkout").val($("#FBReservation_checkout"+index).val()+" 18:00");
 
                                 $.ajax({
                                     url: "'.CController::createUrl('/reservation/getRoomCapacity').'",
@@ -770,7 +770,8 @@ class Reservation extends CActiveRecord
                         'timeOnlyTitle'=>Yii::t('mx','Choose Time'),
                         'hour'=>15,
                         'minute'=>00,
-                        'hourMin'=>10,
+                        'hourMin'=>9,
+                        'minDate'=>0
                     ),
                     'htmlOptions' => array(
                         'class' => 'input-medium',
@@ -793,7 +794,7 @@ class Reservation extends CActiveRecord
                         'hour'=>13,
                         'minute'=>00,
                         'hourMin'=>13,
-                        'hourMax'=>16,
+                        'hourMax'=>18
                     ),
                     'htmlOptions' => array(
                         'class' => 'input-medium',

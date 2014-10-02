@@ -1,13 +1,3 @@
-<?php
-/**
- * Created by  chinux
- * Date: 8/7/13
- * Time: 6:16 PM
- * email: chinuxe@gmail.com
- */
-
-?>
-
 <?php echo $form->render(); ?>
 
     <div id="reserv" style="display:none;">
@@ -31,9 +21,9 @@
                 'data' => $reservation->findAll('customer_reservation_id=:groupId', array(':groupId'=>$model->id)),
                 'hideCopyTemplate'=>false,
                 'options'=>array('clearInputs'=>false),
-                'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin']),
-                'jsBeforeClone'=>$formConfig,
-                'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkout']),
+                'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),
+                //'jsBeforeClone'=>$formConfig,
+                //'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkout']),
             ));
 
         ?>

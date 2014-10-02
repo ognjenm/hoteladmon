@@ -37,6 +37,12 @@
 
         $('#yw12').hide();
 
+         var startDateTextBox1 = $('#FBReservation_checkin');
+         var endDateTextBox1= $('#FBReservation_checkout');
+
+         var startDateTextBox = $('#Reservation_checkin');
+         var endDateTextBox = $('#Reservation_checkout');
+
     ");
 
 

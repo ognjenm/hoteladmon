@@ -42,6 +42,21 @@ class FBReservation extends CFormModel{
                         'dateFormat'=>Yii::app()->format->dateFormat,
                         'changeYear' => true,
                         'changeMonth' => true,
+                        'minDate'=>0,
+                        'onClose'=>'js:function(dateText, inst) {
+                            if (endDateTextBox1.val() != "") {
+                                var testStartDate = startDateTextBox1.datetimepicker("getDate");
+                                var testEndDate = endDateTextBox1.datetimepicker("getDate");
+                                if (testStartDate > testEndDate)
+                                    endDateTextBox1.datetimepicker("setDate", testStartDate);
+                            }
+                            else {
+                                endDateTextBox1.val(dateText);
+                            }
+                        }',
+                        'onSelect'=>'js:function (selectedDateTime){
+                            endDateTextBox1.datetimepicker("option", "minDate", startDateTextBox1.datetimepicker("getDate") );
+                        }'
                         /*'beforeShowDay'=> 'js:function(date) {
                             var day = date.getDate();
                             var f=new Date();
@@ -67,12 +82,29 @@ class FBReservation extends CFormModel{
                         'dateFormat'=>Yii::app()->format->dateFormat,
                         'changeYear' => true,
                         'changeMonth' => true,
+                        'minDate'=>0,
+                        'onClose'=>'js:function(dateText, inst) {
+                            if (startDateTextBox1.val() != "") {
+                                var testStartDate = startDateTextBox1.datetimepicker("getDate");
+                                var testEndDate = endDateTextBox1.datetimepicker("getDate");
+                                if (testStartDate > testEndDate)
+                                    startDateTextBox1.datetimepicker("setDate", testEndDate);
+                            }
+                            else {
+                                startDateTextBox1.val(dateText);
+                            }
+                        }',
+                        'onSelect'=>'js:function (selectedDateTime){
+                            startDateTextBox1.datetimepicker("option", "maxDate", endDateTextBox1.datetimepicker("getDate") );
+                        }'
+
                         /*'beforeShowDay'=> 'js:function(date) {
                             var day = date.getDate();
                             var f=new Date();
                             fechaActual=f.getDate();
                             if (day < fechaActual) {
                                 return {0: false}
+                                return [false, "somecssclass"]
                             } else {
                                 return {0: true}
                             }

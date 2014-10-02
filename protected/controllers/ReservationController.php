@@ -488,7 +488,9 @@ class ReservationController extends Controller
                 $model->price_early_checkin=Yii::app()->quoteUtil->getEarlyCheckin($model->checkin_hour,$model->totalpax);
                 $model->price_late_checkout=Yii::app()->quoteUtil->getLateCheckOut($model->checkout_hour,$model->totalpax);
 
-                if($model->pets > 2) $pricepets=100*($model->pets-2);
+                //if($model->pets > 2) $pricepets=100*($model->pets-2);
+                $mascotas=(int)$model->pets;
+                $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
 
 
                 if($model->service_type=="CABANA"){  //cotizacion para cabaña
@@ -650,8 +652,10 @@ class ReservationController extends Controller
                 $model->price_early_checkin=Yii::app()->quoteUtil->getEarlyCheckin($model->checkin_hour,$model->totalpax);
                 $model->price_late_checkout=Yii::app()->quoteUtil->getLateCheckOut($model->checkout_hour,$model->totalpax);
 
-                if($model->pets > 2) $pricepets=100*($model->pets-2);
+                //if($model->pets > 2) $pricepets=100*($model->pets-2);
 
+                $mascotas=(int)$model->pets;
+                $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
 
                 if($model->service_type=="CABANA"){  //cotizacion para cabaña
 

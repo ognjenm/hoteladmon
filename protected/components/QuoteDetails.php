@@ -300,6 +300,15 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+    public function pricePets($mascotas=0){
+
+        $pricepets=0;
+        if($mascotas > 2) $pricepets=100*($mascotas-2);
+
+        return $pricepets;
+
+    }
+
     public function getTotalPrice($models,$discount=false) {
 
         $totalPrice=0;
@@ -614,7 +623,9 @@ class QuoteDetails extends CApplicationComponent{
             $inicio=strtotime($item->checkin);
             $fin=strtotime($item->checkout);
 
-            if($item->pets > 2) $pricepets=100*($item->pets-2);
+            //if($item->pets > 2) $pricepets=100*($item->pets-2);
+            $mascotas=(int)$item->pets;
+            $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
 
             for($x=$inicio;$x<$fin;$x+=86400):
                 $day=date("d", $x);
@@ -1020,7 +1031,9 @@ class QuoteDetails extends CApplicationComponent{
             $inicio=strtotime($item->checkin);
             $fin=strtotime($item->checkout);
 
-            if($item->pets > 2) $pricepets=100*($item->pets-2);
+            //if($item->pets > 2) $pricepets=100*($item->pets-2);
+            $mascotas=(int)$item->pets;
+            $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
 
             for($x=$inicio;$x<$fin;$x+=86400):
                 $day=date("d", $x);
@@ -1901,19 +1914,22 @@ class QuoteDetails extends CApplicationComponent{
         $mascotas=0;
         $columnas=array();
 
-        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,reservation.checkin,reservation.checkout,reservation.nights,rooms.room,
+        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,reservation.*,rooms.room,
         customers.first_name,customers.last_name,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price
         FROM customer_reservations
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
         INNER JOIN rooms on reservation.room_id=rooms.id
-        INNER JOIN payments on customer_reservations.id=payments.customer_reservation_id
-        WHERE (reservation.statux=:estado or reservation.statux=:estado2) and reservation.checkin like :date1 order by customer_reservations.id";
+        WHERE (reservation.statux=:estado or reservation.statux=:estado2 or reservation.statux=:estado3) and reservation.checkin like :date1 order by customer_reservations.id";
+
+
+        //INNER JOIN payments on customer_reservations.id=payments.customer_reservation_id
 
         $connection=Yii::app()->db;
         $command=$connection->createCommand($sql);
         $command->bindValue(":estado", 'RESERVED' , PDO::PARAM_STR);
         $command->bindValue(":estado2", 'OCCUPIED' , PDO::PARAM_STR);
+        $command->bindValue(":estado3", 'PRE-RESERVED' , PDO::PARAM_STR);
         $command->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
         $dataReader=$command->queryAll();
         //$connection->active=false;
@@ -1988,15 +2004,13 @@ class QuoteDetails extends CApplicationComponent{
                     //payments.amount as anticipo,reservation.price-payments.amount as saldo
 
                     if($payments){
-
                         foreach($payments as $pago){
                             $pagos=$pagos+$pago['amount'];
                         }
-
-                        $saldo=$item['price']-$pagos;
-                        $total=$total+$saldo;
                     }
 
+                    $saldo=$item['price']-$pagos;
+                    $total=$total+$saldo;
 
                     $columnas[$x]='
                     <tr>
