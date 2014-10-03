@@ -309,6 +309,15 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+    public function getTotalDiscountCabanas($total=0){
+
+        $discountCabana=CabanaDiscount::model()->getDiscount($total);
+        if($discountCabana) $discountCabana=($total*$discountCabana->discount)/100;
+
+        return $discountCabana;
+
+    }
+
     public function getTotalPrice($models,$discount=false) {
 
         $totalPrice=0;
@@ -1914,8 +1923,8 @@ class QuoteDetails extends CApplicationComponent{
         $mascotas=0;
         $columnas=array();
 
-        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,reservation.*,rooms.room,
-        customers.first_name,customers.last_name,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price
+        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,customer_reservations.see_discount,reservation.*,rooms.room,
+        customers.first_name,customers.last_name,customers.country,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price
         FROM customer_reservations
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
@@ -1940,51 +1949,18 @@ class QuoteDetails extends CApplicationComponent{
                 </span>
             </p>
             <table class="items table table-condensed table-striped">
-                <thead>
-                    <tr>
-                        <th>'.Yii::t('mx','Data').'</th>
-                        <th>'.Yii::t('mx','Name').'</th>
-                        <th># '.Yii::t('mx','People').'</th>
-                        <th>'.Yii::t('mx','Debe').'</th>
-                        <th>'.Yii::t('mx','Nights').'</th>
-                        <th>'.Yii::t('mx','Dates').'</th>
-                        <th>'.Yii::t('mx','Acounts').'</th>
-                    </tr>
-                <thead>
                  <tfoot>
-                    <tr><td colspan="7" rowspan="1">&nbsp;</td></tr>
-                    <tr><td colspan="7" rowspan="1">&nbsp;</td></tr>
+                    <tr><td colspan="10" rowspan="1">&nbsp;</td></tr>
+                    <tr><td colspan="10" rowspan="1">&nbsp;</td></tr>
                 </tfoot>
             <tbody>
         ';
 
         for($x=1;$x<=15;$x++){
-
             $columnas[$x]='
                 <tr>
-                    <td>
-                        <p><strong>Caba&ntilde;a: </strong>'.$x.'</p>
-                        <p><strong>Cliente:</strong></p>
-                        <p><strong>Procedencia:</strong></p>
-                    </td>
-                    <td></td>
-                    <td>
-                        <p><strong>Adultos:</strong></p>
-                        <p><strong>Ni&ntilde;os:</strong></p>
-                        <p><strong>Mascotas:</strong></p>
-                    </td>
-                    <td style="text-align: center;vertical-align:middle;">$0.00</td>
-                    <td style="text-align: center;vertical-align:middle;"><p>0</p></td>
-                    <td>
-                        <p><strong>Entra:</strong></p>
-                        <p><strong>Sale:</strong></p>
-                    </td>
-                    <td style="text-align: right;vertical-align:middle;">
-                        <p><strong>Total:</strong> $0.00</p>
-                        <p><strong>Anticipo:</strong> $0.00</p>
-                        <p><strong>Resta:</strong> $0.00</p>
-                    </td>
-                </tr>';
+			        <td colspan="10">Caba&ntilde;a:'.$x.'</td>
+		        </tr>';
         }
 
         foreach($dataReader as $item){
@@ -1996,6 +1972,11 @@ class QuoteDetails extends CApplicationComponent{
 
                     $pagos=0;
                     $saldo=0;
+
+                    $pricepets=$this->pricePets((int)$item['pets']);
+                    $discoutCabanas=($item['see_discount']==1) ? $this->getTotalDiscountCabanas($item['price']) : 0;
+                    $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
+                    $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
 
                     $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
                     $command=Yii::app()->db->createCommand($sqlPayments);
@@ -2009,33 +1990,62 @@ class QuoteDetails extends CApplicationComponent{
                         }
                     }
 
+                    if($item['see_discount']==1){
+                        $discoutCabanas= $this->getTotalDiscountCabanas($item['price']);
+                        $saldo=$item['price'];
+                    }
+
                     $saldo=$item['price']-$pagos;
                     $total=$total+$saldo;
 
                     $columnas[$x]='
                     <tr>
-                                <td>
-                                    <p><strong>Caba&ntilde;a: </strong>'.$item['room'].'</p>
-                                    <p><strong>Cliente:</strong> '.$item['customerId'].'</p>
-                                    <p><strong>Procedencia:</strong> '.$item['state'].'</p>
-                                </td>
-                                <td style="text-align: center;vertical-align:middle;">'.$item['first_name'].' '.$item['last_name'].'</td>
-                                <td>
-                                    <p><strong>Adultos:</strong> '.$item['adults'].'</p>
-                                    <p><strong>Ni&ntilde;os:</strong> '.$item['children'].'</p>
-                                    <p><strong>Mascotas:</strong> '.$item['pets'].'</p>
-                                </td>
-                                <td style="text-align: center;vertical-align:middle;">$'.number_format($saldo,2).'</td>
-                                <td style="text-align: center;vertical-align:middle;"><p>'.$item['nights'].'</p></td>
-                                <td style="text-align: center;vertical-align:middle;">
-                                    <p><strong>Entra:</strong> '.$item['checkin'].'</p>
-                                    <p><strong>Sale:</strong> '.$item['checkout'].'</p>
-                                </td>
-                                <td style="text-align: right;vertical-align:middle;">
-                                    <p><strong>Total:</strong> $'.number_format($item['price'],2).'</p>
-                                    <p><strong>Anticipo:</strong> $'.number_format($pagos,2).'</p>
-                                    <p><strong>Resta:</strong> $'.number_format($saldo,2).'</p>
-                                </td>
+                        <td>Caba&ntilde;a:'.$item['room'].'</td>
+                        <td>Id:'.$item['customerId'].'</td>
+                        <td>Adultos:'.$item['adults'].'</td>
+                        <td>Noches Tot:'.$item['nights'].'</td>
+                        <td>Prec x noch Ta</td>
+                        <td>Prec x noch TB</td>
+                        <td>Tot noch TA</td>
+                        <td>Tot noch TB</td>
+                        <td>Early check-in</td>
+                        <td>Late check-out</td>
+                    </tr>
+                    <tr>
+                        <td>Checkin:'.$item['checkin'].'</td>
+                        <td>Nombre:'.$item['first_name'].' '.$item['last_name'].'</td>
+                        <td>Menores 10a:'.$item['children'].'</td>
+                        <td>Noches TA:'.$item['nigth_ta'].'</td>
+                        <td>'.$item['price_ta'].'</td>
+                        <td>'.$item['price_tb'].'</td>
+                        <td>'.$tot_noch_ta.'</td>
+                        <td>'.$tot_noch_tb.'</td>
+                        <td>'.$item['price_early_checkin'].'</td>
+                        <td>'.$item['price_late_checkout'].'</td>
+                    </tr>
+                    <tr>
+                        <td>Checkout:'.$item['checkout'].'</td>
+                        <td>Pais:'.$item['country'].'</td>
+                        <td>Mascotas:'.$item['pets'].'</td>
+                        <td>Noches TB:'.$item['nigth_tb'].'</td>
+                        <td>Prec x noch masco</td>
+                        <td>Subtotal</td>
+                        <td>Decs</td>
+                        <td>Total</td>
+                        <td>Anticipo</td>
+                        <td>Debe</td>
+                    </tr>
+                    <tr>
+                        <td>Estatus:'.$item['statux'].'</td>
+                        <td>Estado:'.$item['state'].'</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>'.$pricepets.'</td>
+                        <td>'.$item['price'].'</td>
+                        <td>'.$discoutCabanas.'</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
                     </tr>';
 
                 }
@@ -2054,18 +2064,13 @@ class QuoteDetails extends CApplicationComponent{
 
         $tabledailyreport.='
                 <tr style="background:#EEEEEE;">
-                    <td valign="middle" colspan="2" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
+                    <td valign="middle" colspan="8" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
                     <td>
-                    <p><strong>Adultos:</strong> '.$adultos.'</p>
-
-                    <p><strong>Ni&ntilde;os:</strong> '.$niños.'</p>
-
-                    <p><strong>Mascotas:</strong> '.$mascotas.'</p>
+                        <p><strong>Adultos:</strong> '.$adultos.'</p>
+                        <p><strong>Ni&ntilde;os:</strong> '.$niños.'</p>
+                        <p><strong>Mascotas:</strong> '.$mascotas.'</p>
                     </td>
                     <td style="text-align: center;vertical-align:middle;">$'.number_format($total,2).'</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
                 </tr>
                 ';
 
