@@ -1992,61 +1992,63 @@ class QuoteDetails extends CApplicationComponent{
 
                     if($item['see_discount']==1){
                         $discoutCabanas= $this->getTotalDiscountCabanas($item['price']);
-                        $saldo=$item['price'];
+                        $saldo=$item['price']-$discoutCabanas-$pagos;
+                    }else{
+
+                        $saldo=$item['price']-$pagos;
                     }
 
-                    $saldo=$item['price']-$pagos;
                     $total=$total+$saldo;
 
                     $columnas[$x]='
+
                     <tr>
-                        <td>Caba&ntilde;a:'.$item['room'].'</td>
-                        <td>Id:'.$item['customerId'].'</td>
-                        <td>Adultos:'.$item['adults'].'</td>
-                        <td>Noches Tot:'.$item['nights'].'</td>
-                        <td>Prec x noch Ta</td>
-                        <td>Prec x noch TB</td>
-                        <td>Tot noch TA</td>
-                        <td>Tot noch TB</td>
-                        <td>Early check-in</td>
-                        <td>Late check-out</td>
-                    </tr>
-                    <tr>
-                        <td>Checkin:'.$item['checkin'].'</td>
-                        <td>Nombre:'.$item['first_name'].' '.$item['last_name'].'</td>
-                        <td>Menores 10a:'.$item['children'].'</td>
-                        <td>Noches TA:'.$item['nigth_ta'].'</td>
-                        <td>'.$item['price_ta'].'</td>
-                        <td>'.$item['price_tb'].'</td>
-                        <td>'.$tot_noch_ta.'</td>
-                        <td>'.$tot_noch_tb.'</td>
-                        <td>'.$item['price_early_checkin'].'</td>
-                        <td>'.$item['price_late_checkout'].'</td>
-                    </tr>
-                    <tr>
-                        <td>Checkout:'.$item['checkout'].'</td>
-                        <td>Pais:'.$item['country'].'</td>
-                        <td>Mascotas:'.$item['pets'].'</td>
-                        <td>Noches TB:'.$item['nigth_tb'].'</td>
-                        <td>Prec x noch masco</td>
-                        <td>Subtotal</td>
-                        <td>Decs</td>
-                        <td>Total</td>
-                        <td>Anticipo</td>
-                        <td>Debe</td>
-                    </tr>
-                    <tr>
-                        <td>Estatus:'.$item['statux'].'</td>
-                        <td>Estado:'.$item['state'].'</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>'.$pricepets.'</td>
-                        <td>'.$item['price'].'</td>
-                        <td>'.$discoutCabanas.'</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                        <td>&nbsp;</td>
-                    </tr>';
+                        <td>
+                            <p>Caba&ntilde;a: '.$item['room'].'</p>
+                            <p>Checkin: '.$item['checkin'].'</p>
+                            <p>Checkout: '.$item['checkout'].'</p>
+                            <p>Estatus: '.$item['statux'].'</p>
+                        </td>
+                        <td>
+                            <p>Id: '.$item['customerId'].'</p>
+                            <p>Nombre: '.$item['first_name'].' '.$item['last_name'].'</p>
+                            <p>Pais: '.$item['country'].'</p>
+                            <p>Estado: '.$item['state'].'</p>
+                        </td>
+                        <td>
+                            <p>Adultos: '.$item['adults'].'</p>
+                            <p>Menores 10a: '.$item['children'].'</p>
+                            <p>Mascotas:'.$item['pets'].'</p>
+                        </td>
+                        <td>
+                            <p>Noches Tot: '.$item['nights'].'</p>
+                            <p>Noches TA: '.$item['nigth_ta'].'</p>
+                            <p>Noches TB: '.$item['nigth_tb'].'</p>
+                        </td>
+                        <td>
+                            <p>Prec x noch TA: '.$item['price_ta'].'</p>
+                            <p>Prec x noch TB: '.$item['price_tb'].'</p>
+                            <p>Prec x noch Masc: '.$pricepets.'</p>
+                        </td>
+                        <td>
+                            <p>Tot noch TA: '.$tot_noch_ta.'</p>
+                            <p>Tot noch TB: '.$tot_noch_tb.'</p>
+                        </td>
+                        <td>
+                            <p>Early check-in: '.$item['price_early_checkin'].'</p>
+                            <p>Late check-out: '.$item['price_late_checkout'].'</p>
+                        </td>
+		            </tr>
+		            <tr>
+		                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
+                            <p style="text-align:right"><strong>Subtotal: '.$item['price'].'</strong></p>
+                            <p style="text-align:right"><strong>Anticipo: '.$pagos.'</strong></p>
+                            <p style="text-align:right"><strong>Descuento: '.$discoutCabanas.'</strong></p>
+                            <p style="text-align:right"><strong>Debe: '.$saldo.'</strong></p>
+		                </td>
+		            </tr>
+
+                    ';
 
                 }
 
@@ -2064,7 +2066,7 @@ class QuoteDetails extends CApplicationComponent{
 
         $tabledailyreport.='
                 <tr style="background:#EEEEEE;">
-                    <td valign="middle" colspan="8" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
+                    <td valign="middle" colspan="5" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
                     <td>
                         <p><strong>Adultos:</strong> '.$adultos.'</p>
                         <p><strong>Ni&ntilde;os:</strong> '.$niños.'</p>
