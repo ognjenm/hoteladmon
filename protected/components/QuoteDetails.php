@@ -1959,6 +1959,7 @@ class QuoteDetails extends CApplicationComponent{
 
 
         $grupo=null;
+        $subtotal=0;
 
         foreach($dataReader as $item){
 
@@ -1995,12 +1996,16 @@ class QuoteDetails extends CApplicationComponent{
             if($item['see_discount']==1){
                 $discoutCabanas= $this->getTotalDiscountCabanas($item['total']);
                 $saldo=$item['total']-$discoutCabanas-$pagosCliente;
+                //$subtotal=$item['total']+$discoutCabanas;
             }else{
                 $saldo=$item['total']-$pagosCliente;
+                //$subtotal=$item['total'];
             }
 
             if($grupoant != $grupo){
                 $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
+            }else{
+                $subtotal=$subtotal+$item['price'];
             }
 
 
@@ -2053,7 +2058,7 @@ class QuoteDetails extends CApplicationComponent{
                 $tabledailyreport.='
                      <tr>
 		                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
-                            <p style="text-align:right"><strong>Subtotal: '.$item['total'].'</strong></p>
+                            <p style="text-align:right"><strong>Subtotal: '.$subtotal.'</strong></p>
                             <p style="text-align:right"><strong>Anticipo: '.$pagosCliente.'</strong></p>
                             <p style="text-align:right"><strong>Descuento: '.$discoutCabanas.'</strong></p>
                             <p style="text-align:right"><strong>Debe: '.$saldo.'</strong></p>
@@ -2062,6 +2067,7 @@ class QuoteDetails extends CApplicationComponent{
                 ';
 
                 $counter=0;
+                $subtotal=0;
             }
 
             $adultos=$adultos+$item['adults'];

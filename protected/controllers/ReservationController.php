@@ -523,6 +523,7 @@ class ReservationController extends Controller
                             $model->nigth_tb,'BAJA'
                         );
                     }
+
                     if($model->nigth_ta > 0){
                         $model->price_ta=Yii::app()->quoteUtil->getPriceTent(
                             $model->adults,$model->children,
@@ -574,12 +575,14 @@ class ReservationController extends Controller
                     $model->room_id=0;
 
                     if($model->nigth_tb > 0){
+
                         $model->price_ta=Yii::app()->quoteUtil->getPriceDaypass(
                             $model->adults,$model->children,
                             $model->service_type,$model->room_type_id,
                             'ALTA'
                         );
                     }
+
                     if($model->nigth_ta > 0){
                         $model->price_tb=Yii::app()->quoteUtil->getPriceDaypass(
                             $model->adults,$model->children,
