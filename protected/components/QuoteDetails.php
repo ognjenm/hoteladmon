@@ -1922,9 +1922,10 @@ class QuoteDetails extends CApplicationComponent{
         $niños=0;
         $mascotas=0;
         $columnas=array();
+        $counter=0;
 
-        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,customer_reservations.see_discount,reservation.*,rooms.room,
-        customers.first_name,customers.last_name,customers.country,customers.state,reservation.adults,reservation.children,reservation.pets,reservation.price
+        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,customer_reservations.see_discount,customer_reservations.total,
+        reservation.*,rooms.room,customers.first_name,customers.last_name,customers.country,customers.state
         FROM customer_reservations
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
@@ -1956,52 +1957,54 @@ class QuoteDetails extends CApplicationComponent{
             <tbody>
         ';
 
-        for($x=1;$x<=15;$x++){
-            $columnas[$x]='
-                <tr>
-			        <td colspan="10">Caba&ntilde;a:'.$x.'</td>
-		        </tr>';
-        }
+
+        $grupo=null;
 
         foreach($dataReader as $item){
 
-            for($x=1;$x<=15;$x++){
-                $room=explode('-',$item['room']);
-                $room=(int)$room[1];
-                if($room==$x){
+            $totalReservation=Reservation::model()->count(
+                'customer_reservation_id=:customerReservationId',
+                array('customerReservationId'=>$item['customerId'])
+            );
 
-                    $pagos=0;
-                    $saldo=0;
+            $grupoant=$grupo;
+            $grupo=$item['customerId'];
 
-                    $pricepets=$this->pricePets((int)$item['pets']);
-                    $discoutCabanas=($item['see_discount']==1) ? $this->getTotalDiscountCabanas($item['price']) : 0;
-                    $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
-                    $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
+            $room=explode('-',$item['room']);
+            $room=(int)$room[1];
 
-                    $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
-                    $command=Yii::app()->db->createCommand($sqlPayments);
-                    $command->bindValue(":customerReservationId", $item['customerId'] , PDO::PARAM_INT);
-                    $payments=$command->queryAll();
-                    //payments.amount as anticipo,reservation.price-payments.amount as saldo
+            $pagosCliente=0;
+            $saldo=0;
 
-                    if($payments){
-                        foreach($payments as $pago){
-                            $pagos=$pagos+$pago['amount'];
-                        }
-                    }
+            $pricepets=$this->pricePets((int)$item['pets']);
+            $discoutCabanas=($item['see_discount']==1) ? $this->getTotalDiscountCabanas($item['price']) : 0;
+            $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
+            $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
 
-                    if($item['see_discount']==1){
-                        $discoutCabanas= $this->getTotalDiscountCabanas($item['price']);
-                        $saldo=$item['price']-$discoutCabanas-$pagos;
-                    }else{
+            $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
+            $command=Yii::app()->db->createCommand($sqlPayments);
+            $command->bindValue(":customerReservationId", $item['customerId'] , PDO::PARAM_INT);
+            $payments=$command->queryAll();
 
-                        $saldo=$item['price']-$pagos;
-                    }
+            if($payments){
+                foreach($payments as $pago){
+                    $pagosCliente=$pagosCliente+$pago['amount'];
+                }
+            }
 
-                    $total=$total+$saldo;
+            if($item['see_discount']==1){
+                $discoutCabanas= $this->getTotalDiscountCabanas($item['total']);
+                $saldo=$item['total']-$discoutCabanas-$pagosCliente;
+            }else{
+                $saldo=$item['total']-$pagosCliente;
+            }
 
-                    $columnas[$x]='
+            if($grupoant != $grupo){
+                $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
+            }
 
+
+            $tabledailyreport.='
                     <tr>
                         <td>
                             <p>Caba&ntilde;a: '.$item['room'].'</p>
@@ -2039,19 +2042,26 @@ class QuoteDetails extends CApplicationComponent{
                             <p>Late check-out: '.$item['price_late_checkout'].'</p>
                         </td>
 		            </tr>
-		            <tr>
+                    ';
+
+            $counter++;
+
+            if($counter == $totalReservation){
+
+                $total=$total+$saldo;
+
+                $tabledailyreport.='
+                     <tr>
 		                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
-                            <p style="text-align:right"><strong>Subtotal: '.$item['price'].'</strong></p>
-                            <p style="text-align:right"><strong>Anticipo: '.$pagos.'</strong></p>
+                            <p style="text-align:right"><strong>Subtotal: '.$item['total'].'</strong></p>
+                            <p style="text-align:right"><strong>Anticipo: '.$pagosCliente.'</strong></p>
                             <p style="text-align:right"><strong>Descuento: '.$discoutCabanas.'</strong></p>
                             <p style="text-align:right"><strong>Debe: '.$saldo.'</strong></p>
 		                </td>
 		            </tr>
+                ';
 
-                    ';
-
-                }
-
+                $counter=0;
             }
 
             $adultos=$adultos+$item['adults'];
@@ -2059,10 +2069,6 @@ class QuoteDetails extends CApplicationComponent{
             $mascotas=$mascotas+$item['pets'];
         }
 
-
-        foreach($columnas as $columna){
-            $tabledailyreport.=$columna;
-        }
 
         $tabledailyreport.='
                 <tr style="background:#EEEEEE;">
