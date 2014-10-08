@@ -253,6 +253,33 @@ class QuoteDetails extends CApplicationComponent{
         return $fecha;
     }
 
+    public function toSpanishDateFromDb($date){
+
+        $anio = substr($date,0,4);
+        $mes   = substr($date, 5, 3);
+        $dia = substr($date, 9,2);
+
+        switch ($mes) {
+            case 'Jan': $mes='Ene'; break;
+            case 'Feb': $mes='Feb'; break;
+            case 'Mar': $mes='Mar'; break;
+            case 'Apr': $mes='Abr'; break;
+            case 'May': $mes='May'; break;
+            case 'Jun': $mes='Jun'; break;
+            case 'Jul': $mes='Jul'; break;
+            case 'Aug': $mes='Ago'; break;
+            case 'Sep': $mes='Sep'; break;
+            case 'Oct': $mes='Oct'; break;
+            case 'Nov': $mes='Nov'; break;
+            case 'Dec': $mes='Dic'; break;
+        }
+
+        $fecha = $dia.'-'.$mes.'-'.$anio;
+
+        return $fecha;
+
+    }
+
     public function toSpanishDateDescription($date){
 
         $anio = substr($date,0,4);
@@ -1924,16 +1951,13 @@ class QuoteDetails extends CApplicationComponent{
         $columnas=array();
         $counter=0;
 
-        $sql="SELECT DISTINCT(customer_reservations.id) as customerId,customer_reservations.see_discount,customer_reservations.total,
-        reservation.*,rooms.room,customers.first_name,customers.last_name,customers.country,customers.state
+        $sql="SELECT DISTINCT(customer_reservations.id) as customerReservationId,customer_reservations.see_discount,
+        reservation.*,rooms.room,customers.id as customerId,customers.first_name,customers.last_name,customers.country,customers.state
         FROM customer_reservations
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
         INNER JOIN rooms on reservation.room_id=rooms.id
         WHERE (reservation.statux=:estado or reservation.statux=:estado2 or reservation.statux=:estado3) and reservation.checkin like :date1 order by customer_reservations.id";
-
-
-        //INNER JOIN payments on customer_reservations.id=payments.customer_reservation_id
 
         $connection=Yii::app()->db;
         $command=$connection->createCommand($sql);
@@ -1946,7 +1970,7 @@ class QuoteDetails extends CApplicationComponent{
         $tabledailyreport='
             <p style="text-align:right">
                 <span style="font-size:14px">
-                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO:&nbsp;'.$fecha1.'</span></strong>
+                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO:&nbsp;'.$date.'</span></strong>
                 </span>
             </p>
             <table class="items table table-condensed table-striped">
@@ -1961,18 +1985,27 @@ class QuoteDetails extends CApplicationComponent{
         $grupo=null;
         $subtotal=0;
 
+        for($x=1;$x<=15;$x++) $columnas[$x]=false;
+
         foreach($dataReader as $item){
 
             $totalReservation=Reservation::model()->count(
                 'customer_reservation_id=:customerReservationId',
-                array('customerReservationId'=>$item['customerId'])
+                array('customerReservationId'=>$item['customerReservationId'])
             );
 
             $grupoant=$grupo;
-            $grupo=$item['customerId'];
+            $grupo=$item['customerReservationId'];
 
             $room=explode('-',$item['room']);
             $room=(int)$room[1];
+
+            for($x=1;$x<=15;$x++){
+                if($room==$x){
+                    $columnas[$x]=true;
+                }
+            }
+
 
             $pagosCliente=0;
             $saldo=0;
@@ -1984,7 +2017,7 @@ class QuoteDetails extends CApplicationComponent{
 
             $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
             $command=Yii::app()->db->createCommand($sqlPayments);
-            $command->bindValue(":customerReservationId", $item['customerId'] , PDO::PARAM_INT);
+            $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
             $payments=$command->queryAll();
 
             if($payments){
@@ -1993,29 +2026,26 @@ class QuoteDetails extends CApplicationComponent{
                 }
             }
 
-            if($item['see_discount']==1){
-                $discoutCabanas= $this->getTotalDiscountCabanas($item['total']);
-                $saldo=$item['total']-$discoutCabanas-$pagosCliente;
-                //$subtotal=$item['total']+$discoutCabanas;
-            }else{
-                $saldo=$item['total']-$pagosCliente;
-                //$subtotal=$item['total'];
-            }
-
             if($grupoant != $grupo){
                 $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
-            }else{
-                $subtotal=$subtotal+$item['price'];
             }
+
+            $startDate=explode(" ",$item['checkin']);
+            $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
+            $horaEntrada=$startDate[1];
+
+            $endDate=explode(" ",$item['checkout']);
+            $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
+            $horaSalida=$endDate[1];
 
 
             $tabledailyreport.='
                     <tr>
                         <td>
                             <p>Caba&ntilde;a: '.$item['room'].'</p>
-                            <p>Checkin: '.$item['checkin'].'</p>
-                            <p>Checkout: '.$item['checkout'].'</p>
-                            <p>Estatus: '.$item['statux'].'</p>
+                            <p>Checkin: '.$horaEntrada.' '.$fechaEntrada.'</p>
+                            <p>Checkout: '.$horaSalida.' '.$fechaSalida.'</p>
+                            <p>Estatus: '.Yii::t('mx',$item['statux']).'</p>
                         </td>
                         <td>
                             <p>Id: '.$item['customerId'].'</p>
@@ -2034,34 +2064,45 @@ class QuoteDetails extends CApplicationComponent{
                             <p>Noches TB: '.$item['nigth_tb'].'</p>
                         </td>
                         <td>
-                            <p>Prec x noch TA: '.$item['price_ta'].'</p>
-                            <p>Prec x noch TB: '.$item['price_tb'].'</p>
-                            <p>Prec x noch Masc: '.$pricepets.'</p>
+                            <p>Prec x noch TA: $'.number_format($item['price_ta'],2).'</p>
+                            <p>Prec x noch TB: $'.number_format($item['price_tb'],2).'</p>
+                            <p>Prec x noch Masc: $'.number_format($pricepets,2).'</p>
                         </td>
                         <td>
-                            <p>Tot noch TA: '.$tot_noch_ta.'</p>
-                            <p>Tot noch TB: '.$tot_noch_tb.'</p>
+                            <p>Tot noch TA: $'.number_format($tot_noch_ta,2).'</p>
+                            <p>Tot noch TB: $'.number_format($tot_noch_tb,2).'</p>
                         </td>
                         <td>
-                            <p>Early check-in: '.$item['price_early_checkin'].'</p>
-                            <p>Late check-out: '.$item['price_late_checkout'].'</p>
+                            <p>Early check-in: $'.number_format($item['price_early_checkin'],2).'</p>
+                            <p>Late check-out: $'.number_format($item['price_late_checkout'],2).'</p>
                         </td>
 		            </tr>
                     ';
 
             $counter++;
 
+            if($counter<=$totalReservation){
+                $subtotal=$subtotal+$item['price'];
+            }
+
             if($counter == $totalReservation){
+
+                if($item['see_discount']==1){
+                    $discoutCabanas= $this->getTotalDiscountCabanas($subtotal);
+                    $saldo=$subtotal-$discoutCabanas-$pagosCliente;
+                }else{
+                    $saldo=$subtotal-$pagosCliente;
+                }
 
                 $total=$total+$saldo;
 
                 $tabledailyreport.='
                      <tr>
 		                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
-                            <p style="text-align:right"><strong>Subtotal: '.$subtotal.'</strong></p>
-                            <p style="text-align:right"><strong>Anticipo: '.$pagosCliente.'</strong></p>
-                            <p style="text-align:right"><strong>Descuento: '.$discoutCabanas.'</strong></p>
-                            <p style="text-align:right"><strong>Debe: '.$saldo.'</strong></p>
+                            <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
+                            <p style="text-align:right"><strong>Anticipo: $'.number_format($pagosCliente,2).'</strong></p>
+                            <p style="text-align:right"><strong>Descuento: $'.number_format($discoutCabanas,2).'</strong></p>
+                            <p style="text-align:right"><strong>Debe: $'.number_format($saldo,2).'</strong></p>
 		                </td>
 		            </tr>
                 ';
@@ -2073,6 +2114,13 @@ class QuoteDetails extends CApplicationComponent{
             $adultos=$adultos+$item['adults'];
             $niños=$niños+$item['children'];
             $mascotas=$mascotas+$item['pets'];
+
+        }
+
+        for($i=1;$i<=15;$i++){
+            if($columnas[$i] ==false){
+                $tabledailyreport.='<tr><td colspan="7">Caba&ntilde;a:'.$i.'</td></tr>';
+            }
         }
 
 
@@ -2281,6 +2329,7 @@ class QuoteDetails extends CApplicationComponent{
                         <th>'.Yii::t('mx','Payment Type').'</th>
                         <th>'.Yii::t('mx','Cheq').'</th>
                         <th>'.Yii::t('mx','Date').'</th>
+                        <th>'.Yii::t('mx','Rid To').'</th>
                         <th>'.Yii::t('mx','Rid To').'</th>
                         <th>'.Yii::t('mx','Concept').'</th>
                         <th>'.Yii::t('mx','Person').'</th>
