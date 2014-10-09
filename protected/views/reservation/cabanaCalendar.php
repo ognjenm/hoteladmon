@@ -44,24 +44,38 @@
         ),
     ));
 
+
+   /* Yii::app()->clientScript->registerScript("estatus", "
+
+    $('#available').click(function(){
+        if($(this).is(':checked')){
+            alert('activo');
+        } else {
+            alert('inactivo');
+        }
+    });
+
+    ");
+   */
+
 ?>
 <table border="0" cellpadding="1" cellspacing="1" style="width: 800px;">
     <tbody>
     <tr>
-        <td><span class="dhx_cal_event_line event_AVAILABLE"><?php echo Yii::t('mx','AVAILABLE'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_BUDGET-SUBMITTED"><?php echo Yii::t('mx','BUDGET-SUBMITTED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_PRE-RESERVED"><?php echo Yii::t('mx','PRE-RESERVED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_RESERVED-PENDING"><?php echo Yii::t('mx','RESERVED-PENDING'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_RESERVED"><?php echo Yii::t('mx','RESERVED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CANCELLED"><?php echo Yii::t('mx','CANCELLED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('available',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_AVAILABLE"><?php echo Yii::t('mx','AVAILABLE'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('budget-submitted',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_BUDGET-SUBMITTED"><?php echo Yii::t('mx','BUDGET-SUBMITTED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('pre-reserved',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_PRE-RESERVED"><?php echo Yii::t('mx','PRE-RESERVED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('reserved-pending',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_RESERVED-PENDING"><?php echo Yii::t('mx','RESERVED-PENDING'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('reserved',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_RESERVED"><?php echo Yii::t('mx','RESERVED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('canceled',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CANCELLED"><?php echo Yii::t('mx','CANCELLED'); ?></span></span></td>
     </tr>
     <tr>
-        <td><span class="dhx_cal_event_line event_NO-SHOW"><?php echo Yii::t('mx','NO-SHOW'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_OCCUPIED"><?php echo Yii::t('mx','OCCUPIED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_ARRIVAL"><?php echo Yii::t('mx','ARRIVAL'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CHECKIN"><?php echo Yii::t('mx','CHECKIN'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CHECKOUT"><?php echo Yii::t('mx','CHECKOUT'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_DIRTY"><?php echo Yii::t('mx','DIRTY'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('no-show',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_NO-SHOW"><?php echo Yii::t('mx','NO-SHOW'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('occupied',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_OCCUPIED"><?php echo Yii::t('mx','OCCUPIED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('arrival',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_ARRIVAL"><?php echo Yii::t('mx','ARRIVAL'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('checkin',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CHECKIN"><?php echo Yii::t('mx','CHECKIN'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('checkout',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CHECKOUT"><?php echo Yii::t('mx','CHECKOUT'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('dirty',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_DIRTY"><?php echo Yii::t('mx','DIRTY'); ?></span></span></td>
     </tr>
     </tbody>
 </table>
@@ -84,6 +98,41 @@
 </body>
 
 <script type="text/javascript" charset="utf-8">
+
+    function estatus()
+    {
+        var sList = "";
+
+        $('input[type=checkbox]').each(function () {
+
+            if(this.checked){
+                var sThisVal=this.id;
+                sList += (sList=="" ? sThisVal : "," + sThisVal);
+            }
+
+        });
+
+        $.ajax({
+            url: "<?php echo CController::createUrl('/reservation/scheduler_cabana_update'); ?>",
+            data: { estatus: sList },
+            type: "POST",
+            dataType: "json",
+            beforeSend: function() {  }
+        })
+
+            .done(function(data) {
+                if(data.ok==true){
+                    scheduler.load(data.reservations);
+                }
+            })
+
+            .fail(function(data) { bootbox.alert(data); })
+            .always(function() { });
+
+
+    }
+
+
 
  function init(){
      var url = "<?php echo $this->createUrl('scheduler_cabana'); ?>";
@@ -117,6 +166,8 @@
              .fail(function() { alert( "error" ); })
 
      });
+
+
 
      scheduler.templates.event_bar_text = function(start,end,ev){
          return ev.text+": "+ev.room;
@@ -167,8 +218,8 @@
 
      scheduler.init("scheduler_cabanas",null,"month");
      scheduler.load(url);
-     var dp = new dataProcessor(url);
-     dp.init(scheduler);
+     //var dp = new dataProcessor(url);
+     //dp.init(scheduler);
  }
 
 

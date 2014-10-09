@@ -902,9 +902,14 @@ class Reservation extends CActiveRecord
     }
 
 
-    /*public function beforeSave(){
+    public function beforeSave(){
 
-        $checkin=$this->checkin.' '.$this->checkin_hour;
+        $this->price_ta= str_replace(",","",$this->price_ta);
+        $this->price_tb= str_replace(",","",$this->price_tb);
+        $this->price_early_checkin= str_replace(",","",$this->price_early_checkin);
+        $this->price_late_checkout= str_replace(",","",$this->price_late_checkout);
+
+        /*$checkin=$this->checkin.' '.$this->checkin_hour;
         $checkout=$this->checkout.' '.$this->checkin_hour;
 
         $this->checkin=Yii::app()->quoteUtil->toEnglishDateTime($checkin);
@@ -912,11 +917,11 @@ class Reservation extends CActiveRecord
 
         $this->checkin= date("Y-m-d H:i",strtotime($this->checkin));
         $this->checkout= date("Y-m-d H:i",strtotime($this->checkout));
-
+        */
 
        return parent::beforeSave();
 
-    }*/
+    }
 
     public function behaviors()
     {

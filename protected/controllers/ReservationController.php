@@ -30,7 +30,7 @@ class ReservationController extends Controller
                                  'GridReservation','overviewCalendar','SchedulerOverview',
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
                                  'getInformation','dailyReport','exportDailyReport',
-                                 'getDailyReport'
+                                 'getDailyReport','scheduler_cabana_update'
                 ),
                 'users'=>array('@'),
             ),
@@ -409,15 +409,47 @@ class ReservationController extends Controller
                //$scheduler->set_options("rooms", $list);
 
 
-        $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,reservation.description,
-        customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name,customers.last_name,rooms.room,
-        concat(customers.first_name,' ',customers.last_name) as text FROM customer_reservations inner join reservation on
-        customer_reservations.id=reservation.customer_reservation_id inner join customers on
-        customer_reservations.customer_id=customers.id inner join rooms on reservation.room_id=rooms.id";
+        $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,
+        reservation.description,customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name,
+        customers.last_name,rooms.room,concat(customers.first_name,' ',customers.last_name) as text
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        INNER JOIN rooms on reservation.room_id=rooms.id
+        WHERE reservation.statux='CANCELLED' or reservation.statux='RESERVED' or reservation.statux='RESERVED-PENDING' or reservation.statux='PRE-RESERVED'";
 
         $scheduler->render_sql($sql, "id","start_date,end_date,text,statux,room,customerReservationId");
 
     }
+
+    public function actionScheduler_cabana_update(){
+
+        $cn = Yii::app()->quoteUtil->conexion();
+        $scheduler = new SchedulerConnector($cn,'PDO');
+        $conditions='';
+
+        $res=array('ok'=>false);
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            $estados=explode(",",$_POST['estatus']);
+
+            foreach($estados as $item){
+                $conditions.="reservation.statux='".$item."' or ";
+            }
+
+
+            $res=array('ok'=>true,'reservations'=>$conditions);
+
+            echo CJSON::encode($res);
+
+            Yii::app()->end();
+
+        }
+
+    }
+
+
 
     public function actionScheduler_camped(){
         $cn = Yii::app()->quoteUtil->conexion();
@@ -1388,10 +1420,8 @@ class ReservationController extends Controller
 
             foreach($reservations as $item){
                 $item->statux=$status;
-
                 $item->checkin=Yii::app()->quoteUtil->toEnglishDateTime($item->checkin);
                 $item->checkout=Yii::app()->quoteUtil->toEnglishDateTime($item->checkout);
-
                 $item->checkin= date("Y-m-d H:i",strtotime($item->checkin));
                 $item->checkout= date("Y-m-d H:i",strtotime($item->checkout));
 
