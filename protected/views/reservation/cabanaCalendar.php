@@ -121,9 +121,9 @@
         })
 
             .done(function(data) {
-                if(data.ok==true){
-                    scheduler.load(data.reservations);
-                }
+                //bootbox.alert(data.data);
+                scheduler.clearAll();
+                scheduler.load(data.data,"json");
             })
 
             .fail(function(data) { bootbox.alert(data); })
@@ -217,7 +217,8 @@
 
 
      scheduler.init("scheduler_cabanas",null,"month");
-     scheduler.load(url);
+     //scheduler.setLoadMode("month");
+     scheduler.load(url,"json");
      //var dp = new dataProcessor(url);
      //dp.init(scheduler);
  }

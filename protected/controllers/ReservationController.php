@@ -404,7 +404,7 @@ class ReservationController extends Controller
                //$list = new OptionsConnector($cn,'PDO');
                //$list->render_table("rooms","id","id(value),room(label)");
 
-               $scheduler = new SchedulerConnector($cn,'PDO');
+               $scheduler = new JSONSchedulerConnector($cn,'PDO');
 
                //$scheduler->set_options("rooms", $list);
 
@@ -425,27 +425,30 @@ class ReservationController extends Controller
     public function actionScheduler_cabana_update(){
 
         $cn = Yii::app()->quoteUtil->conexion();
-        $scheduler = new SchedulerConnector($cn,'PDO');
+        $scheduler = new JSONSchedulerConnector($cn,'PDO');
         $conditions='';
 
-        $res=array('ok'=>false);
-
-        if(Yii::app()->request->isAjaxRequest){
-
             $estados=explode(",",$_POST['estatus']);
+            $totalestados=count($estados);
+            $c=1;
 
-            foreach($estados as $item){
-                $conditions.="reservation.statux='".$item."' or ";
+            for($i=0;$i<$totalestados;$i++){
+                if($c==$totalestados) $conditions.="reservation.statux='".$estados[$i]."'";
+                else $conditions.="reservation.statux='".$estados[$i]."' or ";
+                $c++;
             }
 
+            $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,
+            reservation.description,customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name,
+            customers.last_name,rooms.room,concat(customers.first_name,' ',customers.last_name) as text
+            FROM customer_reservations
+            INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+            INNER JOIN customers on customer_reservations.customer_id=customers.id
+            INNER JOIN rooms on reservation.room_id=rooms.id
+            WHERE ".$conditions;
 
-            $res=array('ok'=>true,'reservations'=>$conditions);
+            $scheduler->render_sql($sql, "id","start_date,end_date,text,statux,room,customerReservationId");
 
-            echo CJSON::encode($res);
-
-            Yii::app()->end();
-
-        }
 
     }
 
