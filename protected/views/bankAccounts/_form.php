@@ -20,6 +20,7 @@
         'prompt'=>Yii::t('mx','Select')
     )); ?>
 
+    <?php echo $form->textFieldRow($model,'account_name',array('class'=>'span5','maxlength'=>500)); ?>
 
 	<?php echo $form->textFieldRow($model,'account_number',array('class'=>'span5','maxlength'=>100)); ?>
 

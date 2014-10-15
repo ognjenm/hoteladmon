@@ -1957,7 +1957,8 @@ class QuoteDetails extends CApplicationComponent{
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
         INNER JOIN rooms on reservation.room_id=rooms.id
-        WHERE (reservation.statux=:estado or reservation.statux=:estado2 or reservation.statux=:estado3) and reservation.checkin like :date1 order by customer_reservations.id";
+        WHERE (reservation.statux=:estado or reservation.statux=:estado2 or reservation.statux=:estado3)
+         and reservation.checkin like :date1 order by customer_reservations.id";
 
         $connection=Yii::app()->db;
         $command=$connection->createCommand($sql);

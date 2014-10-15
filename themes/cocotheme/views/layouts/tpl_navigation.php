@@ -100,7 +100,7 @@
                         array('label'=>Yii::t('mx','Concept of payments'), 'url'=>array('/conceptPayments')),
                         array('label'=>Yii::t('mx','Type Check'), 'url'=>array('/typeCheck')),
                         array('label'=>Yii::t('mx','Invoices'), 'url'=>array('/directInvoice')),
-                        array('label'=>Yii::t('mx','Purchese Orders'), 'url'=>array('/purchaseOrder')),
+                        array('label'=>Yii::t('mx','Purchase Order'), 'url'=>array('/purchaseOrder')),
                     )
                 ),
 

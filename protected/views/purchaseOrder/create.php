@@ -1,7 +1,7 @@
 <?php
 
     $this->breadcrumbs=array(
-        'Purchase Order'=>array('index'),
+        Yii::t('mx','Purchase Order')=>array('index'),
         Yii::t('mx','Create'),
     );
 

@@ -1258,7 +1258,6 @@ class ReservationController extends Controller
                 $reservationHistory->customer_reservation_id=$_POST['Reservation']['u__'][0]['customer_reservation_id'];
                 $reservationHistory->save();
 
-
                 if(!empty($_POST['Reservation']['service_type'][0])) $tope=count($_POST['Reservation']['service_type']);
 
                 for($i=0;$i<$tope;$i++){
