@@ -1651,7 +1651,8 @@ class QuoteDetails extends CApplicationComponent{
         $reservation->price_early_checkin=$this->getEarlyCheckin($reservation->checkin_hour,$reservation->totalpax);
         $reservation->price_late_checkout=$this->getLateCheckOut($reservation->checkout_hour,$reservation->totalpax);
 
-        if($attributes['pets'] > 2) $pricepets=100*($attributes['pets']-2);
+        $mascotas=(int)$attributes['pets'];
+        $pricepets=$this->pricePets($mascotas);
 
         if($attributes['service_type']=="CABANA"){  //cotizacion para cabaña
 
@@ -1801,7 +1802,9 @@ class QuoteDetails extends CApplicationComponent{
             $reservation->price_early_checkin=$this->getEarlyCheckin($reservation->checkin_hour,$reservation->totalpax);
             $reservation->price_late_checkout=$this->getLateCheckOut($reservation->checkout_hour,$reservation->totalpax);
 
-            if($item['pets'] > 2) $pricepets=100*($item['pets']-2);
+            $mascotas=(int)$item['pets'];
+            $pricepets=$this->pricePets($mascotas);
+
 
             if($item['service_type']=="CABANA"){  //cotizacion para cabaña
 
@@ -1912,6 +1915,8 @@ class QuoteDetails extends CApplicationComponent{
 
             $reservation->save();
 
+            return $reservation;
+
         }
 
     }
@@ -1967,6 +1972,28 @@ class QuoteDetails extends CApplicationComponent{
         $command->bindValue(":estado3", 'PRE-RESERVED' , PDO::PARAM_STR);
         $command->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
         $dataReader=$command->queryAll();
+
+
+        $sql2="SELECT DISTINCT(customer_reservations.id) as customerReservationId,customer_reservations.see_discount,
+        reservation.*,rooms.room,customers.id as customerId,customers.first_name,customers.last_name,customers.country,customers.state
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        INNER JOIN rooms on reservation.room_id=rooms.id
+        WHERE (reservation.statux=:estado or reservation.statux=:estado2 or reservation.statux=:estado3)
+        AND :date1 BETWEEN checkin AND checkout order by customer_reservations.id";
+
+        $connection=Yii::app()->db;
+        $command2=$connection->createCommand($sql2);
+        $command2->bindValue(":estado", 'RESERVED' , PDO::PARAM_STR);
+        $command2->bindValue(":estado2", 'OCCUPIED' , PDO::PARAM_STR);
+        $command2->bindValue(":estado3", 'PRE-RESERVED' , PDO::PARAM_STR);
+        $command2->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
+        $dataReader2=$command2->queryAll();
+
+
+        $dataReader3=array_merge($dataReader,$dataReader2);
+
         //$connection->active=false;
         $tabledailyreport='
             <p style="text-align:right">
@@ -1988,7 +2015,7 @@ class QuoteDetails extends CApplicationComponent{
 
         for($x=1;$x<=15;$x++) $columnas[$x]=false;
 
-        foreach($dataReader as $item){
+        foreach($dataReader3 as $item){
 
             $totalReservation=Reservation::model()->count(
                 'customer_reservation_id=:customerReservationId',

@@ -399,15 +399,11 @@ class ReservationController extends Controller
     }
 
     public function actionScheduler_cabana(){
-               $cn = Yii::app()->quoteUtil->conexion();
-
-               //$list = new OptionsConnector($cn,'PDO');
-               //$list->render_table("rooms","id","id(value),room(label)");
-
-               $scheduler = new JSONSchedulerConnector($cn,'PDO');
-
-               //$scheduler->set_options("rooms", $list);
-
+        $cn = Yii::app()->quoteUtil->conexion();
+        //$list = new OptionsConnector($cn,'PDO');
+        //$list->render_table("rooms","id","id(value),room(label)");
+        $scheduler = new JSONSchedulerConnector($cn,'PDO');
+        //$scheduler->set_options("rooms", $list);
 
         $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,
         reservation.description,customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name,
@@ -437,6 +433,7 @@ class ReservationController extends Controller
                 else $conditions.="reservation.statux='".$estados[$i]."' or ";
                 $c++;
             }
+
 
             $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,
             reservation.description,customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name,
@@ -1246,6 +1243,8 @@ class ReservationController extends Controller
         $attributes=array();
         $model=array();
         $tope=0;
+        $deleteItems=array();
+        $grandTotal=0;
 
         if(Yii::app()->request->isAjaxRequest){
 
@@ -1276,20 +1275,30 @@ class ReservationController extends Controller
 
                 }
 
-                if($attributes != null){
-                    Yii::app()->quoteUtil->reservationAdd($attributes);
-                }
+               $allExistingPk = isset($_POST['Reservation']['pk__']) ? $_POST['Reservation']['pk__'] : null;
+
+               if($attributes != null) $model[]=Yii::app()->quoteUtil->reservationAdd($attributes);
 
                foreach($_POST['Reservation']['u__'] as $idx => $attributes){
                    $model[]=Yii::app()->quoteUtil->reservationUpdate($attributes);
+                   if (is_array($allExistingPk)) unset($allExistingPk[$idx]);
                }
 
-                if($model !=null){
-                    //'table'=>Yii::app()->quoteUtil->getTableCotizacion($model)
-                    $res=array('ok'=>true);
-                }
+                if($model !=null) $res=array('ok'=>true);
+
+                if (is_array($allExistingPk))
+                    foreach ($allExistingPk as $idx => $delPks)
+                        Reservation::model()->deleteByPk($delPks);
+
+                $customerReservationId=(int)$_POST['Reservation']['u__'][0]['customer_reservation_id'];
+                $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
+                $grandTotal=Yii::app()->quoteUtil->getTotalPrice($model,$customerReservation->see_discount);
+                $customerReservation->total=$grandTotal;
+                $customerReservation->save();
+
 
             }
+
             echo CJSON::encode($res);
             Yii::app()->end();
         }

@@ -117,13 +117,12 @@
             data: { estatus: sList },
             type: "POST",
             dataType: "json",
-            beforeSend: function() {  }
+            beforeSend: function() {}
         })
 
             .done(function(data) {
-                //bootbox.alert(data.data);
                 scheduler.clearAll();
-                scheduler.load(data.data,"json");
+                scheduler.parse(data.data,"json");
             })
 
             .fail(function(data) { bootbox.alert(data); })
