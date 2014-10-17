@@ -31,7 +31,10 @@
                         .done(function(data) {
 
                             if(data.ok==true){
-                                $("#PurchaseOrder_article_id").html(data.articles);
+
+                                if(index > 1) $("#PurchaseOrderItems_article_id"+index).html(data.articles);
+                                else $("#PurchaseOrderItems_article_id").html(data.articles);
+
                             }
 
                         })
@@ -46,60 +49,6 @@
 
     <?php echo CHtml::label(Yii::t('mx','Articles'),'name_article'); ?>
 
-    <?php $this->widget('bootstrap.widgets.TbSelect2', array(
-        'model'=>$model,
-        'attribute'=>'article_id',
-        'data' =>array(''=>Yii::t('mx','Select')),
-        'options' => array(
-            'allowClear' => true,
-        ),
-        'events' =>array(
-            'change'=>'js:function(e){
-
-                        $.ajax({
-                            url: "'.CController::createUrl('/articles/GetAttributesArticle').'",
-                            data: { articleId: $(this).val() },
-                            type: "POST",
-                            dataType: "json",
-                            beforeSend: function() {}
-                        })
-
-                        .done(function(data) {
-
-                            provider= $("#PurchaseOrder_provider_id").val();
-                            providerTexto= $("#PurchaseOrder_provider_id option:selected").html();
-
-                            if(index==1){
-                                    $("#provider").val(providerTexto);
-                                    $("#PurchaseOrderItems_provider_id").val(provider);
-                                    $("#PurchaseOrderItems_article_id").val(data.id);
-                                    $("#PurchaseOrderItems_price").val(data.price);
-                                    $("#PurchaseOrderItems_unit_measure_id").val(data.unit_measure_id);
-                                    $("#PurchaseOrderItems_color").val(data.color);
-                                    $("#PurchaseOrderItems_presentation").val(data.presentation);
-                                    $("#PurchaseOrderItems_order").val(index);
-
-
-                            }else{
-                                    $("#provider"+index).val(providerTexto);
-                                    $("#PurchaseOrderItems_provider_id"+index).val(provider);
-                                    $("#PurchaseOrderItems_article_id"+index).val(data.id);
-                                    $("#PurchaseOrderItems_price"+index).val(data.price);
-                                    $("#PurchaseOrderItems_unit_measure_id"+index).val(data.unit_measure_id);
-                                    $("#PurchaseOrderItems_color"+index).val(data.color);
-                                    $("#PurchaseOrderItems_presentation"+index).val(data.presentation);
-                                    $("#PurchaseOrderItems_order"+index).val(index);
-                            }
-
-                        })
-
-                        .fail(function() { bootbox.alert("Error"); })
-                        .always(function() {});
-                    }'
-        ),
-
-    ));
-    ?>
 
     <?php $this->widget('ext.jqrelcopy.JQRelcopy',array(
         'id' => 'copylink',
@@ -122,11 +71,11 @@
             <thead>
             <tr>
                 <th>Order</th>
-                <th style="text-align: center">Proveedor</th>
+                <th style="text-align: center">Articulo</th>
                 <th style="text-align: center">Cantidad</th>
                 <th style="text-align: center">Precio Unitario</th>
-                <th style="text-align: center">Unidad De Medida</th>
-                <th style="text-align: center">Color</th>
+                <!--<th style="text-align: center">Unidad De Medida</th>
+                <th style="text-align: center">Color</th> !-->
                 <th style="text-align: center">Presentacion</th>
                 <th style="text-align: center">Remove</th>
             </tr>
@@ -162,20 +111,59 @@
                     <?php //echo $form->textField($items,"order[]",array('class'=>'span12','readonly'=>'readonly')); ?>
                     <?php //echo CHtml::image(Yii::app()->theme->baseUrl."/images/updown2.gif",'',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'provider_id[]',array()); ?>
-                    <?php echo CHtml::activeHiddenField($items,'article_id[]',array()); ?>
+                    <?php echo CHtml::activeHiddenField($items,'note[]',array()); ?>
                 </td>
-                <td><?php echo CHtml::textField('provider','',array('id'=>'provider','placeholder'=>Yii::t('mx','Proveedor'))); ?>
-                </td>
-                <td><?php echo $form->textField($items,"quantity[]",array('placeholder'=>Yii::t('mx','Cantidad'))); ?></td>
-                <td><?php echo $form->textField($items,"price[]",array('placeholder'=>Yii::t('mx','Price'))); ?></td>
-                <td><?php echo $form->dropDownList($items,'unit_measure_id[]',UnitsMeasurement::model()->listAll(),array(
-                        'prompt'=>Yii::t('mx','Unit Of Measure'),
-                        'class'=>'span12'
+                <td width="300px">
+
+                    <?php echo $form->dropDownList($items,'article_id[]',array(),array(
+                        'class'=>'span12',
+                        'prompt'=>Yii::t('mx','Select'),
+                        'onchange'=>'
+                            $.ajax({
+                                    url: "'.CController::createUrl('/articles/GetAttributesArticle').'",
+                                    data: { articleId: $(this).val() },
+                                    type: "POST",
+                                    dataType: "json",
+                                    beforeSend: function() {}
+                                })
+
+                                .done(function(data) {
+
+                                    provider= $("#PurchaseOrder_provider_id").val();
+
+                                    if(index==1){
+                                            $("#PurchaseOrderItems_provider_id").val(provider);
+                                            $("#PurchaseOrderItems_price").val(data.price);
+                                            $("#PurchaseOrderItems_presentation").val(data.presentation);
+                                            $("#PurchaseOrderItems_order").val(index);
+
+                                    }else{
+                                            $("#PurchaseOrderItems_provider_id"+index).val(provider);
+                                            $("#PurchaseOrderItems_price"+index).val(data.price);
+                                            $("#PurchaseOrderItems_presentation"+index).val(data.presentation);
+                                            $("#PurchaseOrderItems_order"+index).val(index);
+                                    }
+
+                                })
+
+                                .fail(function() { bootbox.alert("Error"); })
+                                .always(function() {});
+                        '
                     )); ?>
+
+
+                    <?php //echo CHtml::textField('provider','',array('id'=>'provider','placeholder'=>Yii::t('mx','Proveedor'))); ?>
                 </td>
-                <td><?php echo $form->textField($items,"color[]",array('placeholder'=>Yii::t('mx','Color'))); ?></td>
-                <td><?php echo $form->textField($items,"presentation[]",array('placeholder'=>Yii::t('mx','Presentation'))); ?></td>
-                <td>
+                <td width="100px"><?php echo $form->textField($items,"quantity[]",array('placeholder'=>Yii::t('mx','Cantidad'),'class'=>'span12')); ?></td>
+                <td width="100px"><?php echo $form->textField($items,"price[]",array('placeholder'=>Yii::t('mx','Price'),'class'=>'span12')); ?></td>
+                <!--<td><?php //echo $form->dropDownList($items,'unit_measure_id[]',UnitsMeasurement::model()->listAll(),array(
+                        //'prompt'=>Yii::t('mx','Unit Of Measure'),
+                        //'class'=>'span12'
+                    //)); ?>
+                </td>
+                <td><?php //echo $form->textField($items,"color[]",array('placeholder'=>Yii::t('mx','Color'))); ?></td>!-->
+                <td><?php echo $form->textField($items,"presentation[]",array('placeholder'=>Yii::t('mx','Presentation'),'class'=>'span12')); ?></td>
+                <td width="50">
                     <?php
 
                         $this->widget('bootstrap.widgets.TbButton', array(

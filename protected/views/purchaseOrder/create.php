@@ -54,9 +54,13 @@
 
             var nuevaFila='<tr class="copy newcopy'+ index +'" id="t'+(index+1)+'" style="cursor: move">'+
                             '<td style="width: 50px;" class=""></td>'+
-                            '<td colspan="6">' +
+                            '<td colspan="4">' +
+                                '<input type="hidden" value="" name="PurchaseOrderItems[provider_id][]" id="PurchaseOrderItems_provider_id' + index + '"/>'+
+                                '<input type="hidden" value="" name="PurchaseOrderItems[article_id][]" id="PurchaseOrderItems_article_id' + index + '"/>'+
+                                '<input type="hidden" value="" name="PurchaseOrderItems[quantity][]" id="PurchaseOrderItems_quantity' + index + '"/>'+
+                                '<input type="hidden" value="" name="PurchaseOrderItems[price][]" id="PurchaseOrderItems_price' + index + '"/>'+
+                                '<input type="hidden" value="" name="PurchaseOrderItems[presentation][]" id="PurchaseOrderItems_presentation' + index + '"/>'+
                                 '<textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + index + '"></textarea>' +
-                                '<input id="provider2" placeholder="Proveedor" type="hidden" value="" name="provider"/>'+
                             '</td>'+
                             '<td><a class="btn btn-danger" onclick="$(this).parents().get(1).remove(); index--; return false;" href="#"><i class="icon-remove icon-white"></i></a></td>'+
                           "</tr>";
