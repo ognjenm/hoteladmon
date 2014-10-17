@@ -89,9 +89,7 @@
                                     $("#PurchaseOrderItems_color"+index).val(data.color);
                                     $("#PurchaseOrderItems_presentation"+index).val(data.presentation);
                                     $("#PurchaseOrderItems_order"+index).val(index);
-
                             }
-
 
                         })
 
@@ -122,7 +120,6 @@
 
         <table id="table-2" class="items table table-hover table-condensed table-bordered">
             <thead>
-
             <tr>
                 <th>Order</th>
                 <th style="text-align: center">Proveedor</th>
@@ -162,7 +159,7 @@
             <tbody>
             <tr class="copy" id="t">
                 <td style="width: 50px;">
-                    <?php echo $form->textField($items,"order[]",array('class'=>'span12','readonly'=>'readonly')); ?>
+                    <?php //echo $form->textField($items,"order[]",array('class'=>'span12','readonly'=>'readonly')); ?>
                     <?php //echo CHtml::image(Yii::app()->theme->baseUrl."/images/updown2.gif",'',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'provider_id[]',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'article_id[]',array()); ?>

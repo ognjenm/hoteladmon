@@ -2171,7 +2171,7 @@ class QuoteDetails extends CApplicationComponent{
     }
 
 
-    public function reservationTable(){
+    public function reservationTable($fullName=null){
         $tabledailyreport='';
         $counter=0;
         $grupo=null;
@@ -2180,15 +2180,41 @@ class QuoteDetails extends CApplicationComponent{
         $count=0;
         $model=array();
 
-        $sql="SELECT customer_reservations.id as customerReservationID,customer_reservations.see_discount,reservation.*,
-        customers.first_name,customers.state FROM customer_reservations inner join reservation on
-        customer_reservations.id=reservation.customer_reservation_id inner join customers on
-        customer_reservations.customer_id=customers.id where substr(checkin,1,10)>=CURDATE() and substr(checkout,1,10)>=CURDATE()
-        order by reservation.checkin";
+        if($fullName){
 
-        $connection=Yii::app()->db;
-        $command=$connection->createCommand($sql);
-        $dataReader=$command->queryAll();
+            $sql="SELECT customer_reservations.id as customerReservationID,customer_reservations.see_discount,reservation.*,
+            customers.first_name,customers.last_name,customers.state
+            FROM customer_reservations
+            INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+            INNER JOIN customers on customer_reservations.customer_id=customers.id
+            WHERE substr(checkin,1,10)>=CURDATE() and substr(checkout,1,10)>=CURDATE() and
+            concat(customers.first_name,' ',customers.last_name) LIKE :fullName
+            ORDER BY reservation.checkin";
+
+            $connection=Yii::app()->db;
+            $command=$connection->createCommand($sql);
+            $command->bindValue(":fullName", $fullName."%" , PDO::PARAM_STR);
+            $dataReader=$command->queryAll();
+
+
+        }else{
+            $sql="SELECT customer_reservations.id as customerReservationID,customer_reservations.see_discount,reservation.*,
+                customers.first_name,customers.last_name,customers.state
+                FROM customer_reservations
+                INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+                INNER JOIN customers on customer_reservations.customer_id=customers.id
+                WHERE substr(checkin,1,10)>=CURDATE() and substr(checkout,1,10)>=CURDATE()
+                ORDER BY reservation.checkin";
+
+            $connection=Yii::app()->db;
+            $command=$connection->createCommand($sql);
+            $dataReader=$command->queryAll();
+
+        }
+
+
+
+
 
         $reservationTable='
         <div style="width:100%; height:500px; overflow: scroll;"  id="reservations-grid" class="grid-view">
@@ -2248,7 +2274,7 @@ class QuoteDetails extends CApplicationComponent{
                 $payment=Yii::app()->createUrl('/payments/index',array('id'=>$item['customerReservationID']));
 
                 $reservationTable.='<tr>
-                <td colspan="17" align="center" bgcolor="#EEEEEE"><strong>'.$item['first_name'].' - '.$item['state'].'</strong>
+                <td colspan="17" align="center" bgcolor="#EEEEEE"><strong>'.$item['first_name'].' '.$item['last_name'].' - '.$item['state'].'</strong>
                     <div class="pull-right">
 
                         <a style="margin-right:10px;" class="view" title="'.Yii::t('mx','Details Reservation').'" rel="tooltip" href="'.$view.'">

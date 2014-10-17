@@ -76,10 +76,7 @@
     /*]]>*/
 </style>
 
-<div class="filter" style="display:none">
-    <?php echo $formFilter->render(); ?>
-</div>
-
+<?php echo $formFilter->render(); ?>
 <div class="inner" id="reservation-grid-inner">
 
     <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
@@ -107,16 +104,14 @@
 
     ));?>
 
-    <?php
+    <div id="reservationsContainer"><?php echo Yii::app()->quoteUtil->reservationTable(); ?></div>
+    <div id="reservationsFilter"></div>
 
-    echo Yii::app()->quoteUtil->reservationTable();
-
-?>
-
-<?php $this->endWidget();?>
-
+    <?php $this->endWidget();?>
 
 </div>
+
+
 
 
 

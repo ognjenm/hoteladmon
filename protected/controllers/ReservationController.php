@@ -30,7 +30,7 @@ class ReservationController extends Controller
                                  'GridReservation','overviewCalendar','SchedulerOverview',
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
                                  'getInformation','dailyReport','exportDailyReport',
-                                 'getDailyReport','scheduler_cabana_update'
+                                 'getDailyReport','scheduler_cabana_update','filter'
                 ),
                 'users'=>array('@'),
             ),
@@ -39,6 +39,16 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionFilter(){
+
+        if(Yii::app()->request->isAjaxRequest){
+            if(isset($_POST['Reservation']['first_name'])){
+                $fullName=$_POST['Reservation']['first_name'];
+                echo Yii::app()->quoteUtil->reservationTable($fullName);
+            }
+        }
     }
 
     public function actionGetDailyReport(){
@@ -1287,15 +1297,15 @@ class ReservationController extends Controller
                 if($model !=null) $res=array('ok'=>true);
 
                 if (is_array($allExistingPk))
-                    foreach ($allExistingPk as $idx => $delPks)
-                        Reservation::model()->deleteByPk($delPks);
+                    foreach($allExistingPk as $idx => $delPks)
+                        Reservation::model()->deleteByPk($delPks['id']);
+
 
                 $customerReservationId=(int)$_POST['Reservation']['u__'][0]['customer_reservation_id'];
                 $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
                 $grandTotal=Yii::app()->quoteUtil->getTotalPrice($model,$customerReservation->see_discount);
                 $customerReservation->total=$grandTotal;
                 $customerReservation->save();
-
 
             }
 
@@ -1330,7 +1340,7 @@ class ReservationController extends Controller
 
         $formFilter = TbForm::createForm($reservation->getFormFilter(),$reservation,
             array('htmlOptions'=>array('class'=>'well'),
-                'type'=>'horizontal',
+                'type'=>'inline',
             )
         );
 

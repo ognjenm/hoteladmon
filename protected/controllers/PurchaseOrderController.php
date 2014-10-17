@@ -149,14 +149,14 @@ class PurchaseOrderController extends Controller
 
             $tope=count($_POST['PurchaseOrderItems']['provider_id']);
 
-            foreach ($_POST['PurchaseOrderItems'] as $index=>$row) {
+            /*foreach ($_POST['PurchaseOrderItems'] as $index=>$row) {
                 print_r($_POST['PurchaseOrderItems'][$index]);
                 echo "<br>";
                 echo "<br>";
 
-            }
+            }*/
 
-            /*for($i=0;$i<$tope;$i++){
+            for($i=0;$i<$tope;$i++){
                 $data=array();
                 $datax=array();
 
@@ -199,7 +199,7 @@ class PurchaseOrderController extends Controller
                     $lista->purchase_order_id=$model->id;
                     $lista->save();
                 }*/
-            //}
+            }
 
            //Yii::app()->user->setFlash('success','Success');
            //$this->redirect(array('view','id'=>$model->id));

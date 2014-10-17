@@ -114,7 +114,7 @@ class Reservation extends CActiveRecord
             'price_late_checkout' => Yii::t('mx','Price').' Late Checkout',
             'price' =>Yii::t('mx','Price'),
             'description' =>Yii::t('mx','Description'),
-            'first_name'=>Yii::t('mx','First Name'),
+            'first_name'=>'',    //Yii::t('mx','First Name'),
             'roomName'=>Yii::t('mx','Cabana'),
             'service_type'=>Yii::t('mx','Service Type'),
         );
@@ -339,10 +339,10 @@ class Reservation extends CActiveRecord
                 "first_name"=>array(
                     'label'=>'',
                     'type' => 'select2',
-                    'data'=>Customers::model()->listCustomers(),
+                    'data'=>Customers::model()->listAllName(),
                     'prompt'=>Yii::t('mx','Search'),
                 ),
-                "checkin" => array(
+               /* "checkin" => array(
                     'type'=>'date',
                     'prepend'=>'<i class="icon-calendar"></i>',
                     'options'=>array(
@@ -373,16 +373,29 @@ class Reservation extends CActiveRecord
                     'class' => 'input-medium',
                     'items'=>$this->listStatus(),
                     'prompt'=>Yii::t('mx','Select')
-                ),
+                ),*/
 
             ),
             'buttons' => array(
                 'filter' => array(
-                    'type' => 'submit',
+                    'type' => 'ajaxSubmit',
                     'label' => Yii::t('mx','Filter'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-filter',
-                    'url'=>Yii::app()->createUrl('/reservation/index'),
+                    'url'=>Yii::app()->createUrl('/reservation/filter'),
+                    'ajaxOptions' => array(
+                        'type'=>'POST',
+                        'beforeSend' => 'function() {
+                            $("#reservation-grid-inner").addClass("loading");
+                         }',
+                        'complete' => 'function() {
+                             $("#reservation-grid-inner").removeClass("loading");
+                        }',
+                        'success' =>'function(data){
+                                $("#reservationsFilter").html(data);
+                                $("#reservationsContainer").hide();
+                        }',
+                    ),
 
                 ),
             )

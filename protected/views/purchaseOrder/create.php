@@ -53,8 +53,11 @@
         $("#textoz").click(function(){
 
             var nuevaFila='<tr class="copy newcopy'+ index +'" id="t'+(index+1)+'" style="cursor: move">'+
-                            '<td style="width: 50px;" class="">'+'<input class="span12" readonly="readonly" name="PurchaseOrderItems[order][]" id="PurchaseOrderItems_order' + (index+1) + '" type="text"/>'+'</td>'+
-                            '<td colspan="6"><textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + index + '"></textarea></td>'+
+                            '<td style="width: 50px;" class=""></td>'+
+                            '<td colspan="6">' +
+                                '<textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + index + '"></textarea>' +
+                                '<input id="provider2" placeholder="Proveedor" type="hidden" value="" name="provider"/>'+
+                            '</td>'+
                             '<td><a class="btn btn-danger" onclick="$(this).parents().get(1).remove(); index--; return false;" href="#"><i class="icon-remove icon-white"></i></a></td>'+
                           "</tr>";
 
