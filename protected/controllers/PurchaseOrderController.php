@@ -8,6 +8,7 @@ class PurchaseOrderController extends Controller
 	 */
 	public $layout='//layouts/column2';
 
+
 	/**
 	 * @return array action filters
 	 */
@@ -25,6 +26,7 @@ class PurchaseOrderController extends Controller
 	 */
 	public function accessRules()
 	{
+
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -44,7 +46,7 @@ class PurchaseOrderController extends Controller
         $grupo=null;
         $total=0;
         $table='
-            <table class="items table table-hover table-condensed table-bordered">
+            <table class="items table">
                 <thead>
                     <tr>
                         <th>'.Yii::t('mx','Quantity').'</th>
@@ -116,12 +118,12 @@ class PurchaseOrderController extends Controller
                 }
             }
 
-
-
             $counter++;
             $total.=$item->amount;
 
         }
+
+        $table.='</tbody></table>';
 
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
@@ -139,6 +141,7 @@ class PurchaseOrderController extends Controller
         Yii::import('ext.jqrelcopy.JQRelcopy');
 		$model=new PurchaseOrder;
         $items=new PurchaseOrderItems;
+        $total=0;
 
 		if(isset($_POST['PurchaseOrder']))
 		{
@@ -149,16 +152,8 @@ class PurchaseOrderController extends Controller
 
             $tope=count($_POST['PurchaseOrderItems']['provider_id']);
 
-            foreach ($_POST['PurchaseOrderItems'] as $index=>$row) {
-                print_r($_POST['PurchaseOrderItems'][$index]);
-                echo "<br>";
-                echo "<br>";
-
-            }
-
-            /*for($i=0;$i<$tope;$i++){
+            for($i=0;$i<$tope;$i++){
                 $data=array();
-                $datax=array();
 
                 foreach ($_POST['PurchaseOrderItems'] as $id=>$values){
 
@@ -166,37 +161,24 @@ class PurchaseOrderController extends Controller
                         $anexo=array($id=>$values);
                         $data=array_merge($data,$anexo);
                     }else{
-                        $anexo=array($id=>$values[$id]);
+                        $anexo=array($id=>$values[$i]);
                         $data=array_merge($data,$anexo);
                     }
                 }
 
-                print_r($datax);
-                echo "<br>";
-                echo "<br>";
-                print_r($data);
-                echo "<br>";
-                echo "<br>";
-            */
-
-               /*if($model->save()){
+               if($model->save()){
                     $lista=New PurchaseOrderItems;
                     $lista->attributes=$data;
                     $lista->purchase_order_id=$model->id;
                     $lista->amount=(int)$lista->quantity*$lista->price;
+                    $total=$total+$lista->amount;
                     $lista->save();
                 }
 
-                if(!empty($datax)){
-                    $lista=New PurchaseOrderItems;
-                    $lista->attributes=$datax;
-                    $lista->purchase_order_id=$model->id;
-                    $lista->save();
-                }*/
-            //}
+            }
 
-           //Yii::app()->user->setFlash('success','Success');
-           //$this->redirect(array('view','id'=>$model->id));
+           Yii::app()->user->setFlash('success','Success');
+           $this->redirect(array('view','id'=>$model->id));
 
 
 		}

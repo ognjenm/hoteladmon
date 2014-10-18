@@ -47,8 +47,6 @@
     ));
     ?>
 
-    <?php echo CHtml::label(Yii::t('mx','Articles'),'name_article'); ?>
-
 
     <?php $this->widget('ext.jqrelcopy.JQRelcopy',array(
         'id' => 'copylink',
@@ -67,15 +65,13 @@
         'htmlContentOptions'=>array('class'=>'box-content nopadding'),
     ));?>
 
-        <table id="table-2" class="items table table-hover table-condensed table-bordered">
+        <table id="table-2" class="items table table-hover table-condensed">
             <thead>
             <tr>
                 <th>Order</th>
                 <th style="text-align: center">Articulo</th>
                 <th style="text-align: center">Cantidad</th>
                 <th style="text-align: center">Precio Unitario</th>
-                <!--<th style="text-align: center">Unidad De Medida</th>
-                <th style="text-align: center">Color</th> !-->
                 <th style="text-align: center">Presentacion</th>
                 <th style="text-align: center">Remove</th>
             </tr>
@@ -95,10 +91,10 @@
                         ?>
 
                         <?php  $this->widget('bootstrap.widgets.TbButton', array(
-                            'id'=>'textoz',
+                            'id'=>'ButtonText',
                             'type'=>'primary',
                             'icon'=>'icon-plus icon-white',
-                            'label'=>Yii::t('mx','Text'),
+                            'label'=>Yii::t('mx','Note'),
                         ));
                         ?>
 
@@ -108,8 +104,6 @@
             <tbody>
             <tr class="copy" id="t">
                 <td style="width: 50px;">
-                    <?php //echo $form->textField($items,"order[]",array('class'=>'span12','readonly'=>'readonly')); ?>
-                    <?php //echo CHtml::image(Yii::app()->theme->baseUrl."/images/updown2.gif",'',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'provider_id[]',array()); ?>
                     <?php echo CHtml::activeHiddenField($items,'note[]',array()); ?>
                 </td>
@@ -151,17 +145,9 @@
                         '
                     )); ?>
 
-
-                    <?php //echo CHtml::textField('provider','',array('id'=>'provider','placeholder'=>Yii::t('mx','Proveedor'))); ?>
                 </td>
                 <td width="100px"><?php echo $form->textField($items,"quantity[]",array('placeholder'=>Yii::t('mx','Cantidad'),'class'=>'span12')); ?></td>
                 <td width="100px"><?php echo $form->textField($items,"price[]",array('placeholder'=>Yii::t('mx','Price'),'class'=>'span12')); ?></td>
-                <!--<td><?php //echo $form->dropDownList($items,'unit_measure_id[]',UnitsMeasurement::model()->listAll(),array(
-                        //'prompt'=>Yii::t('mx','Unit Of Measure'),
-                        //'class'=>'span12'
-                    //)); ?>
-                </td>
-                <td><?php //echo $form->textField($items,"color[]",array('placeholder'=>Yii::t('mx','Color'))); ?></td>!-->
                 <td><?php echo $form->textField($items,"presentation[]",array('placeholder'=>Yii::t('mx','Presentation'),'class'=>'span12')); ?></td>
                 <td width="50">
                     <?php
@@ -179,6 +165,7 @@
                     ?>
                 </td>
             </tr>
+
             </tbody>
         </table>
 

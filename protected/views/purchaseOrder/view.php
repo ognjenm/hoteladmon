@@ -1,5 +1,6 @@
-    <?php
-$this->breadcrumbs=array(
+<?php
+
+    $this->breadcrumbs=array(
         Yii::t('mx','Purchase Order')=>array('index'),
          Yii::t('mx','View'),
     );
@@ -31,18 +32,17 @@ $this->breadcrumbs=array(
 
 ?>
 
-    <?php
+<?php
 
-    echo $table;
+    $this->widget('bootstrap.widgets.TbCKEditor',array(
+        'name'=>'ckeditor',
+        'value'=>$table,
+        'editorOptions'=>array(
+            'height'=>'400',
+            'contentsCss'=> Yii::app()->theme->baseUrl.'/css/ckeditor.css',
+            'contenteditable'=>true
+        ),
 
-        /*$this->widget('bootstrap.widgets.TbDetailView',array(
-                'data'=>$model,
-                'attributes'=>array(
-                    'id',
-                    'user_id',
-                    'datex',
-                    'total',
-                ),
-           ));*/
+    ) );
 
-    ?>
+?>
