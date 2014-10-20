@@ -45,8 +45,13 @@ class PurchaseOrderController extends Controller
         $counter=0;
         $grupo=null;
         $total=0;
-        $table='
-            <table class="items table">
+        $table=Yii::app()->quoteUtil->reportHeader().'
+            <p style="text-align:right">
+                <span style="font-size:14px">
+                    <strong><span style="font-family:arial,helvetica,sans-serif">Orden de compra</span></strong>
+                </span>
+            </p>
+            <table class="items table table-condensed table-striped">
                 <thead>
                     <tr>
                         <th>'.Yii::t('mx','Quantity').'</th>
@@ -62,6 +67,9 @@ class PurchaseOrderController extends Controller
                         <th>'.Yii::t('mx','Total').'</th>
                     </tr>
                 <thead>
+                <tfoot>
+                    <tr><td colspan="11" rowspan="1">Total;</td></tr>
+                </tfoot>
             <tbody>
         ';
 
@@ -76,13 +84,17 @@ class PurchaseOrderController extends Controller
 
                 $grupoant=$grupo;
                 $grupo=$item->provider_id;
+                $addressProvider=Providers::model()->fullAddress($item->provider_id);
 
                 if($grupoant != $grupo){
                     if($grupo!=0){
                         $table.='
                         <tr>
                             <td colspan="11" align="center" bgcolor="#CCCCCC">
-                                <strong>'.Providers::model()->CompanyByPk($item->provider_id).'</strong>
+                            <br>
+                                <strong>'.Providers::model()->CompanyByPk($item->provider_id).': </strong>.'.$addressProvider.'
+                                <br>
+                                <br>
                             </td>
                         </tr>';
                     }
@@ -174,6 +186,9 @@ class PurchaseOrderController extends Controller
                     $total=$total+$lista->amount;
                     $lista->save();
                 }
+
+                $model->total=$total;
+                $model->save();
 
             }
 

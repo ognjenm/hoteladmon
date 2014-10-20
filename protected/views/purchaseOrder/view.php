@@ -35,12 +35,11 @@
 <?php
 
     $this->widget('bootstrap.widgets.TbCKEditor',array(
-        'name'=>'ckeditor',
+        'name'=>'ckeditor1',
         'value'=>$table,
         'editorOptions'=>array(
             'height'=>'400',
-            'contentsCss'=> Yii::app()->theme->baseUrl.'/css/ckeditor.css',
-            'contenteditable'=>true
+            'contentsCss'=> Yii::app()->theme->baseUrl.'/css/reportsTable.css',
         ),
 
     ) );

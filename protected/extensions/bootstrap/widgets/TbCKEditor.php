@@ -62,12 +62,18 @@ class TbCKEditor extends CInputWidget
 	{
 		Yii::app()->bootstrap->registerAssetJs('ckeditor/ckeditor.js');
 
-
 		$options = !empty($this->editorOptions) ? CJavaScript::encode($this->editorOptions) : '{}';
+
+        $JavaScript = "CKEDITOR.replace(";
+        $JavaScript .= CJavaScript::encode($id);
+        $JavaScript .= empty($options) ? '' : ', '.CJavaScript::encode($this->editorOptions);
+        $JavaScript .= ");";
 
 		Yii::app()->clientScript->registerScript(
 			__CLASS__ . '#' . $this->getId(),
-			"CKEDITOR.replace( '$id', $options);"
+            $JavaScript
 		);
+
+
 	}
 }

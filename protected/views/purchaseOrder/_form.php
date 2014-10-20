@@ -113,6 +113,10 @@
                         'class'=>'span12',
                         'prompt'=>Yii::t('mx','Select'),
                         'onchange'=>'
+
+                            var indice=$(this).attr("id");
+                            var index2=indice.substring(29,31);
+
                             $.ajax({
                                     url: "'.CController::createUrl('/articles/GetAttributesArticle').'",
                                     data: { articleId: $(this).val() },
@@ -129,13 +133,11 @@
                                             $("#PurchaseOrderItems_provider_id").val(provider);
                                             $("#PurchaseOrderItems_price").val(data.price);
                                             $("#PurchaseOrderItems_presentation").val(data.presentation);
-                                            $("#PurchaseOrderItems_order").val(index);
 
                                     }else{
-                                            $("#PurchaseOrderItems_provider_id"+index).val(provider);
-                                            $("#PurchaseOrderItems_price"+index).val(data.price);
-                                            $("#PurchaseOrderItems_presentation"+index).val(data.presentation);
-                                            $("#PurchaseOrderItems_order"+index).val(index);
+                                            $("#PurchaseOrderItems_provider_id"+index2).val(provider);
+                                            $("#PurchaseOrderItems_price"+index2).val(data.price);
+                                            $("#PurchaseOrderItems_presentation"+index2).val(data.presentation);
                                     }
 
                                 })

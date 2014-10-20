@@ -12,6 +12,22 @@
 
     <?php echo $form->errorSummary($model); ?>
 
+<?php echo CHtml::label(Yii::t('mx','User'),'',array()); ?>
+
+    <?php $this->widget('bootstrap.widgets.TbSelect2', array(
+        'model'=>$model,
+        'attribute'=>'user_id',
+        'data' =>Employees::model()->listAll(),
+        'options' => array(
+            'allowClear' => true,
+        ),
+        'htmlOptions' => array(
+            'placeholder' =>Yii::t('mx','Select'),
+        ),
+    ));
+    ?>
+
+
     <?php $this->widget('bootstrap.widgets.TbTabs',
             array(  'id'=>'wizardReservation',
                 'type' => 'tabs',

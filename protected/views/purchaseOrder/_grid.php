@@ -31,10 +31,10 @@
             'filter'=>$model,
             'columns'=>array(
                 'datex',
-                array(
+                /*array(
                     'name'=>'provider_id',
-                    //'value'=>'$data->purchaseOrderItems->provider_id'
-                ),
+                    'value'=>'$data->purchaseOrderItems->provider_id'
+                ),*/
                 'total',
                 array(
                     'class'=>'bootstrap.widgets.TbButtonColumn',

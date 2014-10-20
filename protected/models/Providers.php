@@ -400,6 +400,23 @@ class Providers extends CActiveRecord
 
     }
 
+    public function fullAddress($id){
+
+        $address="";
+        $provider=$this->model()->findByPk($id);
+
+        if($provider){
+            $address=$provider->work_street." ";
+            $address.=$provider->work_neighborhood." ";
+            $address.=$provider->work_city.", ";
+            $address.=$provider->work_region.", ";
+            $address.=$provider->work_country.", ";
+            $address.=$provider->work_zip;
+        }
+
+        return $address;
+    }
+
     public function behaviors()
     {
         return array(

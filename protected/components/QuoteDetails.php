@@ -3918,7 +3918,7 @@ class QuoteDetails extends CApplicationComponent{
         $header = '
             <table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family: serif; font-size: 9pt; color: #000088;">
                 <tr>
-                    <td width="50%">'.CHtml::image(Yii::getPathOfAlias('webroot').'/images/logo.jpg','',array('width'=>'100px','height'=>'50px')).'</td>
+                    <td width="50%">'.CHtml::image(Yii::app()->theme->baseUrl.'/images/logo.jpg','',array('width'=>'100px','height'=>'50px')).'</td>
                     <td width="50%" style="text-align: right;">'.$this->toSpanishDateTime(date("Y-M-d H:i")).'</td>
                 </tr>
             </table>
