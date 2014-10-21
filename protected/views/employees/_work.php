@@ -19,6 +19,7 @@
         <?php echo $form->textFieldRow($model,'cedula',array('class'=>'span5','maxlength'=>50)); ?>
         <?php echo $form->datepickerRow($model, 'real_ingress',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->ingress_ss,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true
@@ -27,17 +28,47 @@
         ?>
         <?php echo $form->datepickerRow($model, 'ingress_ss',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->ingress_ss,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
-                'autoclose'=>true
+                'autoclose'=>true,
+
             ),
         ));
         ?>
-        <?php echo $form->textFieldRow($model,'payment_type',array('class'=>'span5','maxlength'=>50)); ?>
+
+        <?php //echo $form->textFieldRow($model,'day_rest',array('class'=>'span5','maxlength'=>20)); ?>
+
+        <?php echo $form->dropDownListRow($model,'day_rest',array(
+            'LUNES'=>'LUNES',
+            'MARTES'=>'MARTES',
+            'MIERCOLES'=>'MIERCOLES',
+            'JUEVES'=>'JUEVES',
+            'VIERNES'=>'VIERNES',
+            'SABADO'=>'SABADO',
+            'DOMINGO'=>'DOMINGO',
+        ),array(
+            'class'=>'span5',
+            'prompt'=>Yii::t('mx','Select')
+        )); ?>
+
+        <?php echo $form->dropDownListRow($model,'payment_type',array(
+            'SEMANAL'=>'SEMANAL',
+            'QUINCENAL'=>'QUINCENAL',
+            'MENSUAL'=>'MENSUAL',
+        ),array(
+            'class'=>'span5',
+            'prompt'=>Yii::t('mx','Select')
+        )); ?>
+
+        <?php echo $form->textFieldRow($model,'salary',array('class'=>'span12','prepend'=>'$',)); ?>
+
+
     </div>
     <div class="span6">
         <?php echo $form->datepickerRow($model, 'output_date_r',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->output_date_r,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true
@@ -46,6 +77,7 @@
         ?>
         <?php echo $form->datepickerRow($model, 'output_date_ss',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->output_date_ss,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true
@@ -68,6 +100,7 @@
 
         <?php echo $form->datepickerRow($model, 'contract_start',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->contract_start,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true
@@ -76,6 +109,7 @@
         ?>
         <?php echo $form->datepickerRow($model, 'contract_end',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->contract_end,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true
@@ -85,16 +119,20 @@
 
         <?php echo $form->textFieldRow($model,'contract_duration',array('class'=>'span5','maxlength'=>20)); ?>
         <?php echo $form->textFieldRow($model,'test_period',array('class'=>'span5','maxlength'=>20)); ?>
+
         <?php echo $form->datepickerRow($model, 'start_test_period',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->start_test_period,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true
             ),
         ));
         ?>
+
         <?php echo $form->datepickerRow($model, 'end_test_period',array(
             'prepend'=>'<i class="icon-calendar"></i>',
+            'value'=>$model->isNewRecord ? date('d-M-Y') : $model->end_test_period,
             'options'=>array(
                 'format'=>'dd-M-yyyy',
                 'autoclose'=>true

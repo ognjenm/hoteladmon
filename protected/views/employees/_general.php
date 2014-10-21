@@ -78,6 +78,11 @@
             //'class'=>'span4',
         ));
         ?>
+
+        <?php echo $form->textFieldRow($model,'civil_status',array('class'=>'span12','maxlength'=>50)); ?>
+        <?php echo $form->textFieldRow($model,'nationality',array('class'=>'span12','maxlength'=>50)); ?>
+
+
         <div class="control-group ">
             <?php echo $form->label($model,'email',array('class'=>'control-label')); ?>
             <span class="required">*</span>

@@ -181,13 +181,14 @@
                     'visible'=>Yii::app()->user->isSuperAdmin
                 ),
 
-                array(  'label' =>Yii::t('mx','Contracts'),
+                array('label' =>Yii::t('mx','Contracts'),
                     'url' => '#',
                     //'visible'=>Yii::app()->user->isSuperAdmin,
                     'items' => array(
                         array('label'=>Yii::t('mx','Contracts'), 'url'=>array('/contractInformation')),
                         array('label'=>Yii::t('mx','Services'), 'url'=>array('/services'),'visible'=>Yii::app()->user->isSuperAdmin),
                         array('label'=>Yii::t('mx','Property Types'), 'url'=>array('/propertyTypes'),'visible'=>Yii::app()->user->isSuperAdmin),
+                        array('label'=>Yii::t('mx','Contracts Employees'), 'url'=>array('/contractEmployees')),
                     )
                 ),
                 array(  'label' =>Yii::t('mx','Notes'),

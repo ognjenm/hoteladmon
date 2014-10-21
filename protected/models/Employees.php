@@ -8,30 +8,29 @@ class Employees extends CActiveRecord
 		return 'employees';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
+
 	public function rules()
 	{
-
+		// NOTE: you should only define rules for those attributes that
+		// will receive user inputs.
 		return array(
 			array('user_id, n_degrees, n_minuts, w_degrees, w_minuts, zone', 'numerical', 'integerOnly'=>true),
-			array('outside_number, internal_number, contract_duration, test_period, initials, nickname, work_zip, home_zip, postal_zip', 'length', 'max'=>20),
+			array('outside_number, internal_number, contract_duration, test_period, initials, nickname, work_zip, home_zip, postal_zip, day_rest', 'length', 'max'=>20),
 			array('reference', 'length', 'max'=>200),
 			array('company, organization, url_work', 'length', 'max'=>150),
 			array('rfc, curp, nss, telephone_work1, telephone_work2, telephone_home1, telephone_home2, cell_phone, car_phone, pager, additional_telephone, fax_work, fax_home, isdn, preferred_telephone, telex', 'length', 'max'=>25),
-			array('key_voter, n_card, cedula, payment_type, department, job_title, role, account_number, latitude, longitude', 'length', 'max'=>50),
+			array('key_voter, n_card, cedula, payment_type, department, job_title, role, account_number, latitude, longitude, civil_status, nationality', 'length', 'max'=>50),
 			array('name_wife, name_father, name_mother, first_name, middle_name, last_name, work_street, work_neighborhood, home_street, postal_street, email, email_work, email_home', 'length', 'max'=>100),
 			array('have_contract', 'length', 'max'=>1),
 			array('prefix, suffix', 'length', 'max'=>255),
 			array('full_name', 'length', 'max'=>300),
 			array('education_title, work_city, work_region, work_country, home_city, home_region, home_country, postal_city, postal_region, postal_country, municipality', 'length', 'max'=>30),
 			array('note', 'length', 'max'=>3000),
-			array('n_seconds, w_seconds', 'length', 'max'=>10),
+			array('n_seconds, w_seconds, salary', 'length', 'max'=>10),
 			array('birthday, real_ingress, ingress_ss, name_children, comments, output_date_r, output_date_ss, contract_start, contract_end, start_test_period, end_test_period', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, outside_number, internal_number, reference, company, birthday, rfc, curp, nss, key_voter, n_card, cedula, real_ingress, ingress_ss, payment_type, name_wife, name_children, name_father, name_mother, comments, output_date_r, output_date_ss, have_contract, contract_start, contract_end, contract_duration, test_period, start_test_period, end_test_period, user_id, initials, first_name, middle_name, last_name, prefix, suffix, full_name, education_title, nickname, organization, department, job_title, note, telephone_work1, telephone_work2, telephone_home1, telephone_home2, cell_phone, car_phone, pager, additional_telephone, fax_work, fax_home, isdn, preferred_telephone, telex, work_street, work_neighborhood, work_city, work_region, work_country, work_zip, home_street, home_zip, home_city, home_region, home_country, postal_street, postal_zip, postal_city, postal_region, postal_country, url_work, role, email, email_work, email_home, account_number, n_degrees, n_minuts, n_seconds, w_degrees, w_minuts, w_seconds, municipality, latitude, longitude, zone', 'safe', 'on'=>'search'),
+			array('id, outside_number, internal_number, reference, company, birthday, rfc, curp, nss, key_voter, n_card, cedula, real_ingress, ingress_ss, payment_type, name_wife, name_children, name_father, name_mother, comments, output_date_r, output_date_ss, have_contract, contract_start, contract_end, contract_duration, test_period, start_test_period, end_test_period, user_id, initials, first_name, middle_name, last_name, prefix, suffix, full_name, education_title, nickname, organization, department, job_title, note, telephone_work1, telephone_work2, telephone_home1, telephone_home2, cell_phone, car_phone, pager, additional_telephone, fax_work, fax_home, isdn, preferred_telephone, telex, work_street, work_neighborhood, work_city, work_region, work_country, work_zip, home_street, home_zip, home_city, home_region, home_country, postal_street, postal_zip, postal_city, postal_region, postal_country, url_work, role, email, email_work, email_home, account_number, n_degrees, n_minuts, n_seconds, w_degrees, w_minuts, w_seconds, municipality, latitude, longitude, zone, salary, day_rest, civil_status, nationality', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -43,46 +42,43 @@ class Employees extends CActiveRecord
 
 		return array(
             'assignments' => array(self::HAS_MANY, 'Assignment', 'employeed_id'),
-        );
+		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
 	public function attributeLabels()
 	{
 		return array(
 			'id' => 'ID',
-			'outside_number' => Yii::t('mx','Outside Number'),
-			'internal_number' => Yii::t('mx','Internal Number'),
-			'reference' => Yii::t('mx','Reference'),
-			'company' => Yii::t('mx','Company'),
-			'birthday' => Yii::t('mx','Birthday'),
-			'rfc' => Yii::t('mx','Rfc'),
-			'curp' => Yii::t('mx','Curp'),
-			'nss' => Yii::t('mx','Social Security Number'),
-			'key_voter' => Yii::t('mx','Key Voter'),
-			'n_card' => Yii::t('mx','Voter Card Number'),
-			'cedula' => Yii::t('mx','Cedula'),
-			'real_ingress' => Yii::t('mx','Real Ingress'),
-			'ingress_ss' => Yii::t('mx','Ingress Social Security'),
-			'payment_type' => Yii::t('mx','Payment Type'),
-			'name_wife' => Yii::t('mx','Name Wife'),
-			'name_children' => Yii::t('mx','Name Children'),
-			'name_father' => Yii::t('mx','Name Father'),
-			'name_mother' => Yii::t('mx','Name Mother'),
-			'comments' => Yii::t('mx','Comments'),
-			'output_date_r' => Yii::t('mx','Output Date Real'),
-			'output_date_ss' => Yii::t('mx','Ouput Date Social Security'),
-			'have_contract' => Yii::t('mx','Have Contract'),
-			'contract_start' => Yii::t('mx','Contract Start'),
-			'contract_end' => Yii::t('mx','Contract End'),
-			'contract_duration' => Yii::t('mx','Contract Duration'),
-			'test_period' => Yii::t('mx','Test Period'),
-			'start_test_period' => Yii::t('mx','Start Test Period'),
-			'end_test_period' => Yii::t('mx','End Test Period'),
-			'user_id' => Yii::t('mx','User'),
-			'initials' => Yii::t('mx','Initials'),
+            'outside_number' => Yii::t('mx','Outside Number'),
+            'internal_number' => Yii::t('mx','Internal Number'),
+            'reference' => Yii::t('mx','Reference'),
+            'company' => Yii::t('mx','Company'),
+            'birthday' => Yii::t('mx','Birthday'),
+            'rfc' => Yii::t('mx','Rfc'),
+            'curp' => Yii::t('mx','Curp'),
+            'nss' => Yii::t('mx','Social Security Number'),
+            'key_voter' => Yii::t('mx','Key Voter'),
+            'n_card' => Yii::t('mx','Voter Card Number'),
+            'cedula' => Yii::t('mx','Cedula'),
+            'real_ingress' => Yii::t('mx','Real Ingress'),
+            'ingress_ss' => Yii::t('mx','Ingress Social Security'),
+            'payment_type' => Yii::t('mx','Payment Type'),
+            'name_wife' => Yii::t('mx','Name Wife'),
+            'name_children' => Yii::t('mx','Name Children'),
+            'name_father' => Yii::t('mx','Name Father'),
+            'name_mother' => Yii::t('mx','Name Mother'),
+            'comments' => Yii::t('mx','Comments'),
+            'output_date_r' => Yii::t('mx','Output Date Real'),
+            'output_date_ss' => Yii::t('mx','Ouput Date Social Security'),
+            'have_contract' => Yii::t('mx','Have Contract'),
+            'contract_start' => Yii::t('mx','Contract Start'),
+            'contract_end' => Yii::t('mx','Contract End'),
+            'contract_duration' => Yii::t('mx','Contract Duration'),
+            'test_period' => Yii::t('mx','Test Period'),
+            'start_test_period' => Yii::t('mx','Start Test Period'),
+            'end_test_period' => Yii::t('mx','End Test Period'),
+            'user_id' => Yii::t('mx','User'),
+            'initials' => Yii::t('mx','Initials'),
             'first_name' => Yii::t('mx','First Name'),
             'middle_name' => Yii::t('mx','Middle Name'),
             'last_name' => Yii::t('mx','Last Name'),
@@ -148,13 +144,17 @@ class Employees extends CActiveRecord
             'full_name2'=>Yii::t('mx','Full Name'),
             'search'=>Yii::t('mx','Search by company, full name, suffix or note'),
             'zone' => Yii::t('mx','Zone'),
+            'salary' => Yii::t('mx','Salary'),
+			'day_rest' => Yii::t('mx','Day Of Rest'),
+			'civil_status' => Yii::t('mx','Civil Status'),
+			'nationality' => Yii::t('mx','Nationality'),
 		);
 	}
 
 
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
+
 
 		$criteria=new CDbCriteria;
 
@@ -246,6 +246,10 @@ class Employees extends CActiveRecord
 		$criteria->compare('latitude',$this->latitude,true);
 		$criteria->compare('longitude',$this->longitude,true);
 		$criteria->compare('zone',$this->zone);
+		$criteria->compare('salary',$this->salary,true);
+		$criteria->compare('day_rest',$this->day_rest,true);
+		$criteria->compare('civil_status',$this->civil_status,true);
+		$criteria->compare('nationality',$this->nationality,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -254,15 +258,15 @@ class Employees extends CActiveRecord
 
     public function afterFind() {
 
-        $this->birthday=date("d-M-Y",strtotime($this->birthday));
-        $this->real_ingress=date("d-M-Y",strtotime($this->real_ingress));
-        $this->ingress_ss=date("d-M-Y",strtotime($this->ingress_ss));
-        $this->output_date_r=date("d-M-Y",strtotime($this->output_date_r));
-        $this->output_date_ss=date("d-M-Y",strtotime($this->output_date_ss));
-        $this->contract_start=date("d-M-Y",strtotime($this->contract_start));
-        $this->contract_end=date("d-M-Y",strtotime($this->contract_end));
-        $this->start_test_period=date("d-M-Y",strtotime($this->start_test_period));
-        $this->end_test_period=date("d-M-Y",strtotime($this->end_test_period));
+        $this->birthday=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->birthday)));
+        $this->real_ingress=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->real_ingress)));
+        $this->ingress_ss=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->ingress_ss)));
+        $this->output_date_r=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->output_date_r)));
+        $this->output_date_ss=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->output_date_ss)));
+        $this->contract_start=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->contract_start)));
+        $this->contract_end=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->contract_end)));
+        $this->start_test_period=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->start_test_period)));
+        $this->end_test_period=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->end_test_period)));
 
 
         return  parent::afterFind();
@@ -336,9 +340,7 @@ class Employees extends CActiveRecord
         );
     }
 
-
-
-    public static function model($className=__CLASS__)
+	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}

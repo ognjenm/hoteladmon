@@ -67,9 +67,6 @@ class PurchaseOrderController extends Controller
                         <th>'.Yii::t('mx','Total').'</th>
                     </tr>
                 <thead>
-                <tfoot>
-                    <tr><td colspan="11" rowspan="1">Total;</td></tr>
-                </tfoot>
             <tbody>
         ';
 
@@ -131,11 +128,18 @@ class PurchaseOrderController extends Controller
             }
 
             $counter++;
-            $total.=$item->amount;
+            $total+=$item->amount;
 
         }
 
-        $table.='</tbody></table>';
+        $table.='</tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="10" rowspan="1"><h3 style="text-align: right;">'.Yii::t('mx','Total').':</h3></td>
+                        <td><h3  style="text-align: right;">'.'$'.number_format($total,2).' MX</h3></td>
+                    </tr>
+                </tfoot>
+        </table>';
 
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),

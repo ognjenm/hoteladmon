@@ -762,7 +762,13 @@ return array(
     'Data'=>'Datos',
     'People'=>'Personas',
     'Dates'=>'Fechas',
-    'Acounts'=>'Cuentas'
+    'Acounts'=>'Cuentas',
+    'Civil Status'=>'Estado Civil',
+    'Nationality'=>'Nacionalidad',
+    'Salary'=>'Sueldo',
+    'Day Of Rest'=>'Día de descanso',
+    'Contract Employees'=>'Contratos de empleados',
+    'Contracts Employees'=>'Contratos de empleados'
 
 
 
