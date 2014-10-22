@@ -30,12 +30,12 @@
             'dataProvider'=>$provider,
             'filter'=>$model,
             'columns'=>array(
-                		'id',
-		'employee_id',
-		'contract_type',
-		'object',
-		'need',
-		'date_signing_contract',
+                'date_signing_contract',
+                array(
+                    'name'=>'employee_id',
+                    'value'=>'Employees::model()->getFullName($data->employee_id)'
+                ),
+                'contract_type',
                 array(
                     'class'=>'bootstrap.widgets.TbButtonColumn',
                     'deleteConfirmation' =>Yii::t('mx','Do you really want to delete this item?'),

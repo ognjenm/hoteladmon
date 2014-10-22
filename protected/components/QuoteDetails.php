@@ -4015,4 +4015,64 @@ class QuoteDetails extends CApplicationComponent{
         return $imageResized;
     }
 
+    function calculate_age($birthday){
+        list($ano,$mes,$dia) = explode("-",$birthday);
+        $ano_diferencia  = date("Y") - $ano;
+        $mes_diferencia = date("m") - $mes;
+        $dia_diferencia   = date("d") - $dia;
+        if ($dia_diferencia < 0 || $mes_diferencia < 0)
+            $ano_diferencia--;
+        return $ano_diferencia;
+    }
+
+    public function generate_contract_employee($employee_id,$date_signing_contract){
+
+        $employee=Employees::model()->findByPk($employee_id);
+        $fullName=Employees::model()->getFullName($employee->id);
+        $fullAddress=Employees::model()->getFullAddress($employee->id);
+
+        $string=Contract::model()->findByPk(3);
+        $string=$string->content;
+
+        $age=$this->ToEnglishDateFromFormatdMyyyy($employee->birthday);
+        $age=$this->calculate_age(date("Y-m-d",strtotime($age)));
+
+        $salary=$this->numtoletras($employee->salary);
+        $salary=number_format($employee->salary,2).' ('.$salary.')';
+
+        $date_signing=date('Y-M-d',strtotime($date_signing_contract));
+        $date_signing=$this->toSpanishDateDescription($date_signing);
+
+        $contract_start=date('Y-M-d',strtotime($employee->contract_start));
+        $contract_start=$this->toSpanishDateDescription($contract_start);
+
+        $contract_end=date('Y-M-d',strtotime($employee->contract_start));
+        $contract_end=$this->toSpanishDateDescription($contract_end);
+
+        $replace=array(
+            '{FULL_NAME}'=>strtoupper($fullName),
+            '{NATIONALITY}'=>strtoupper($employee->nationality),
+            '{CIVIL_STATUS}'=>strtoupper($employee->civil_status),
+            '{AGE}'=>$age,
+            '{ADDRESS}'=>strtoupper($fullAddress),
+            '{JOB_TITLE}'=>strtoupper($employee->job_title),
+            '{SALARY}'=>$salary,
+            '{PAYMENT_TYPE}'=>strtoupper($employee->payment_type),
+            '{DAY_REST}'=>strtoupper($employee->day_rest),
+            '{CONTRACT_DURATION}'=>$employee->contract_duration,
+            '{TEST_PERIOD}'=>strtoupper($employee->test_period),
+            '{CONTRACT_START}'=>strtoupper($contract_start),
+            '{CONTRACT_END}'=>strtoupper($contract_end),
+            '{END_TEST_PERIOD}'=>strtoupper($employee->end_test_period),
+            '{DATE_SIGNING_CONTRACT}'=>strtoupper($date_signing)
+        );
+
+        return $this->str_replace_assoc($replace,$string);
+
+    }
+
+    public function str_replace_assoc(array $replace, $subject) {
+        return str_replace(array_keys($replace), array_values($replace), $subject);
+    }
+
 }

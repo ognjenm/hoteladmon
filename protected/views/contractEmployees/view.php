@@ -33,13 +33,20 @@
 
 
 
-            <?php $this->widget('bootstrap.widgets.TbDetailView',array(
-            'data'=>$model,
-            'attributes'=>array(
-                'employee_id',
-                'contract_type',
-                'object',
-                'need',
-                'date_signing_contract',
-            ),
-            )); ?>
+<div id="maindiv">
+
+    <?php
+
+    $this->widget('bootstrap.widgets.TbCKEditor',array(
+        'name'=>'ckeditor',
+        'value'=>$model->contract,
+        'editorOptions'=>array(
+            'width'=>'800',
+            'height'=>'500',
+        ),
+
+    ) );
+
+    ?>
+
+</div>

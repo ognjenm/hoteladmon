@@ -185,10 +185,11 @@
                     'url' => '#',
                     //'visible'=>Yii::app()->user->isSuperAdmin,
                     'items' => array(
-                        array('label'=>Yii::t('mx','Contracts'), 'url'=>array('/contractInformation')),
+                        array('label'=>Yii::t('mx','Format Contracts'), 'url'=>array('/contractInformation/gridContract'),'visible'=>Yii::app()->user->isSuperAdmin),
+                        array('label'=>Yii::t('mx','Contracts Lease'), 'url'=>array('/contractInformation')),
+                        array('label'=>Yii::t('mx','Contracts Employees'), 'url'=>array('/contractEmployees')),
                         array('label'=>Yii::t('mx','Services'), 'url'=>array('/services'),'visible'=>Yii::app()->user->isSuperAdmin),
                         array('label'=>Yii::t('mx','Property Types'), 'url'=>array('/propertyTypes'),'visible'=>Yii::app()->user->isSuperAdmin),
-                        array('label'=>Yii::t('mx','Contracts Employees'), 'url'=>array('/contractEmployees')),
                     )
                 ),
                 array(  'label' =>Yii::t('mx','Notes'),
