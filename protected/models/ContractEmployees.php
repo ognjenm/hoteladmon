@@ -95,12 +95,22 @@ class ContractEmployees extends CActiveRecord
 		));
 	}
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return ContractEmployees the static model class
-	 */
+    public function afterFind() {
+
+        $this->date_signing_contract=Yii::app()->quoteUtil->toSpanishDateFromDb(date('Y-M-d',strtotime($this->date_signing_contract)));
+
+        return  parent::afterFind();
+    }
+
+    public function beforeSave(){
+
+        $date_signing_contract=Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($this->date_signing_contract);
+        $this->date_signing_contract=date("Y-m-d",strtotime($date_signing_contract));
+
+        return parent::beforeSave();
+
+    }
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);

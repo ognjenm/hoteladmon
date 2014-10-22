@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="3094375873">
+    <data-source source="LOCAL" name="hoteladmon" uuid="83e56d2f-c9ae-450b-97ce-6317a17ee421">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/rsrtcpns_coco</jdbc-url>
+      <user-name>root</user-name>
+      <schema-pattern>rsrtcpns_coco.*</schema-pattern>
+      <default-schemas>rsrtcpns_coco.*</default-schemas>
+      <driver-properties>
+        <property name="zeroDateTimeBehavior" value="convertToNull" />
+        <property name="tinyInt1isBit" value="false" />
+      </driver-properties>
+      <libraries>
+        <library>
+          <url>file://$PROJECT_DIR$/protected/data/mysql-connector.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+  </component>
+</project>
+
