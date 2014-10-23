@@ -12,6 +12,22 @@
 
     <?php echo $form->errorSummary($model); ?>
 
+<?php echo CHtml::label(Yii::t('mx','User'),'',array()); ?>
+
+    <?php $this->widget('bootstrap.widgets.TbSelect2', array(
+        'model'=>$model,
+        'attribute'=>'user_id',
+        'data' =>CrugeUser1::model()-> listUserName(),
+        'options' => array(
+            'allowClear' => true,
+        ),
+        'htmlOptions' => array(
+            'placeholder' =>Yii::t('mx','Select'),
+        ),
+    ));
+    ?>
+
+
     <?php $this->widget('bootstrap.widgets.TbTabs',
             array(  'id'=>'wizardReservation',
                 'type' => 'tabs',
@@ -21,6 +37,10 @@
                     array('label' => Yii::t('mx','Coordinates'),'content' =>$this->renderPartial('_coordinates', array('model'=>$model,'form'=>$form,'zones'=>$zones),true)),
                     array('label' => Yii::t('mx','Tax Information'),'content' =>$this->renderPartial('_taxInformation', array('model'=>$model,'form'=>$form),true)),
                     array('label' => Yii::t('mx','Home Address and branches'),'content' =>$this->renderPartial('_addresses', array('model'=>$model,'form'=>$form),true)),
+
+                    array('label' => Yii::t('mx','Personal Information'),'content' =>$this->renderPartial('_personal', array('model'=>$model,'form'=>$form),true)),
+                    array('label' => Yii::t('mx','Work Information'),'content' =>$this->renderPartial('_work', array('model'=>$model,'form'=>$form),true)),
+
                 ),
             )
         );

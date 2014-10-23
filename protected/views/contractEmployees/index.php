@@ -1,6 +1,5 @@
     <?php
-
-    $this->breadcrumbs=array(
+$this->breadcrumbs=array(
         Yii::t('mx','Contract Employees')=>array('index'),
         Yii::t('mx','Manage'),
     );
@@ -15,7 +14,7 @@
     $this->pageIcon='icon-cogs';
 
     if(Yii::app()->user->hasFlash('success')):
-        Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
+    Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
     endif;
 
     $this->widget('bootstrap.widgets.TbAlert', array(

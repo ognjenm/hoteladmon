@@ -1,7 +1,7 @@
 <?php
 
     $this->breadcrumbs=array(
-        Yii::t('mx','Purchase Order')=>array('index'),
+        'Purchase Order'=>array('index'),
         Yii::t('mx','Create'),
     );
 
@@ -27,8 +27,20 @@
     $(document).ready(function() {
 
         $("#table-2").tableDnD({
-            onDragClass: "myDragClass"
+            onDragClass: "myDragClass",
+
+            onDrop: function(table, row) {
+
+                var rows = table.tBodies[0].rows;
+
+                for (var i=0; i<rows.length; i++) {
+                    if(i==0) $("#PurchaseOrderItems_order").val(i);
+                    else $("#PurchaseOrderItems_order"+i).val(i);
+                }
+            }
+
         });
+
 
         $("#table-2 tr").hover(function() {
             $(this.cells[0]).addClass('showDragHandle');
@@ -38,29 +50,20 @@
         });
 
 
-        $("#ButtonText").click(function(){
+        $("#textoz").click(function(){
 
             var nuevaFila='<tr class="copy newcopy'+ index +'" id="t'+(index+1)+'" style="cursor: move">'+
-                            '<td style="width: 50px;" class=""></td>'+
-                            '<td colspan="4">' +
-                                '<input type="hidden" value="0" name="PurchaseOrderItems[provider_id][]" id="PurchaseOrderItems_provider_id' + (index+1) + '"/>'+
-                                '<input type="hidden" value="0" name="PurchaseOrderItems[article_id][]" id="PurchaseOrderItems_article_id' + (index+1) + '"/>'+
-                                '<input type="hidden" name="PurchaseOrderItems[quantity][]" id="PurchaseOrderItems_quantity' + (index+1) + '"/>'+
-                                '<input type="hidden" name="PurchaseOrderItems[price][]" id="PurchaseOrderItems_price' + (index+1) + '"/>'+
-                                '<input type="hidden" name="PurchaseOrderItems[presentation][]" id="PurchaseOrderItems_presentation' + (index+1) + '"/>'+
-                                '<textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + (index+1) + '"></textarea>' +
-                            '</td>'+
-                            '<td width="50"><a class="btn btn-danger" onclick="$(this).parents().get(1).remove(); index--; return false;" href="#"><i class="icon-remove icon-white"></i></a></td>'+
+                            '<td style="width: 50px;" class="">'+'<input class="span12" readonly="readonly" name="PurchaseOrderItems[order][]" id="PurchaseOrderItems_order' + (index+1) + '" type="text"/>'+'</td>'+
+                            '<td colspan="6"><textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + index + '"></textarea></td>'+
+                            '<td><a class="btn btn-danger" onclick="$(this).parents().get(1).remove(); index--; return false;" href="#"><i class="icon-remove icon-white"></i></a></td>'+
                           "</tr>";
 
-            //$("#table-2").find('tbody').append(nuevaFila);
-            $("#table-2").append(nuevaFila);
+            $("#table-2").find('tbody').append(nuevaFila);
+            //$("#table-2").append(nuevaFila);
 
             index++;
 
         });
-
-
 
 
     });

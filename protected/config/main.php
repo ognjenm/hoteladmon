@@ -173,7 +173,7 @@ return array(
 
 
         'db'=>array(
-            'connectionString' => 'mysql:host=localhost;dbname=rsrtcpns_coco',
+            'connectionString' => 'mysql:host=localhost;dbname=chinoixeofadmon',
             'emulatePrepare' => true,
             'username' => 'rsrtcpns_cocos',
             'password' => 'wCtcz)c!7X,s',

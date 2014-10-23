@@ -17,29 +17,17 @@
     <?php echo CHtml::hiddenField('from',$from); ?>
 
 
-
     <?php $this->widget('bootstrap.widgets.TbCKEditor',array(
-        'name'=>'ckeditor',
-        'value'=>$cotizacion,
-        'editorOptions'=>array(
-            'height'=>'400',
-            'toolbar'=>'js:[
-                        ["Source","Copy","SelectAll","DocProps","-","PasteText","PasteFromWord"],
-                        ["Undo","Redo","-","RemoveFormat"],
-                        ["Bold","Italic","Underline","Strike","Subscript","Superscript"],
-                        ["NumberedList","BulletedList","-","Outdent","Indent"],
-                        ["JustifyLeft","JustifyCenter","JustifyRight","JustifyBlock"],
-                        ["Link","Unlink"],
-                        ["Image","Flash","Table","HorizontalRule","SpecialChar"],
-                        ["Format","Font","FontSize","Styles"],
-                        ["TextColor","BGColor"],
-                        ["Maximize","ShowBlocks"]
-                    ],'
-        ),
+            'name'=>'ckeditor',
+            'value'=>$cotizacion,
+            'editorOptions'=>array(
+                'height'=>'400',
+                //'contentsCss'=> Yii::app()->theme->baseUrl.'/css/ckeditor.css',
+            ),
 
-    ) ); ?>
+          ));
 
-
+    ?>
 
     <div class="form-actions">
         <?php

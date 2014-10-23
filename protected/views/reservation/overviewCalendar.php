@@ -184,6 +184,7 @@
             }
 
 
+
             return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +
                     "<b>Cliente:</b> "+ev.text+"<br/>" +
                     "<b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/>" +

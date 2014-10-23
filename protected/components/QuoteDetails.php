@@ -1998,7 +1998,7 @@ class QuoteDetails extends CApplicationComponent{
         $tabledailyreport='
             <p style="text-align:right">
                 <span style="font-size:14px">
-                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO:&nbsp;'.$date.'</span></strong>
+                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO:&nbsp;'.$fecha1.'</span></strong>
                 </span>
             </p>
             <table class="items table table-condensed table-striped">

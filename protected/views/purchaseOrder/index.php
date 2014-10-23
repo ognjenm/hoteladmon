@@ -1,6 +1,5 @@
     <?php
-
-    $this->breadcrumbs=array(
+$this->breadcrumbs=array(
         Yii::t('mx','Purchase Order')=>array('index'),
         Yii::t('mx','Manage'),
     );
