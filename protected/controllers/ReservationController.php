@@ -354,7 +354,6 @@ class ReservationController extends Controller
                '{RESPUESTA}','{TABLA-COTIZACION}',
                '{NOMBRE-USUARIO}',
                '{PUESTO-USUARIO}','{DIAS-LIMITE-PAGO}'
-
            );
 
            $replace=array(

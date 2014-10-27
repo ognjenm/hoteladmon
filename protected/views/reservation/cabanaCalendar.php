@@ -9,11 +9,12 @@
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_agenda_view.js');
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_minical.js');
     $cs->registerScriptFile($assets.'/locale/locale_'.$lenguaje.'.js');
-    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_timeline.js');
-    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_treetimeline.js');
+    //$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_timeline.js');
+    //$cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_treetimeline.js');
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_pdf.js');
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_active_links.js');
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_limit.js');
     $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
     $cs->registerCssFile($assets.'/dhtmlxscheduler_flat.css');
 
@@ -151,6 +152,7 @@
      scheduler.config.first_hour = 9;
      scheduler.config.time_step = 30;
      scheduler.config.dblclick_create = false;
+     scheduler.config.limit_time_select = true;
      scheduler.attachEvent("onDblClick", function (id, e){});
      scheduler.attachEvent("onClick", function (id, e){
 
@@ -203,8 +205,6 @@
          }
 
 
-
-
          return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +
              "<b>Cliente:</b> "+ev.text+"<br/>" +
              "<b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/>" +
@@ -220,6 +220,30 @@
      scheduler.load(url,"json");
      //var dp = new dataProcessor(url);
      //dp.init(scheduler);
+
+     var holidays = [new Date(2014, 11, 4), new Date(2014, 11, 7), new Date(2014, 11, 10)];
+     for (var i = 0; i < holidays.length; i++) {
+         var date = holidays[i];
+         var options = {
+             start_date: date,
+             end_date: scheduler.date.add(date, 1, "day"),
+             type: "dhx_time_block", /* creating events on those dates will be disabled - dates are blocked */
+             css: "holiday",
+             html: "Holiday"
+         };
+         scheduler.addMarkedTimespan(options);
+
+
+     }
+
+
+    scheduler.updateView();
+
+     scheduler.setCurrentView();
+
+     //http://docs.dhtmlx.com/scheduler/samples/09_api/07_highlighted_timespans_month_view.html
+
+
  }
 
 
