@@ -28,7 +28,7 @@ class SeasonsController extends Controller
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('admin','delete','index','view','create','update','calendar'),
+				'actions'=>array('admin','delete','index','view','create','update','calendar','getseasons'),
 				'users'=>array('@'),
 			),
 
@@ -37,6 +37,33 @@ class SeasonsController extends Controller
 			),
 		);
 	}
+
+    public function actionGetseasons(){
+
+        $res=array('ok'=>false);
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            $seasons=Seasons::model()->findAll();
+            $arraySeasons=array();
+
+            foreach($seasons as $item){
+                $start=strtotime($item->froom);
+                $end=strtotime($item->too);
+
+                for($i=$start;$i<=$end;$i+=86400){
+                    array_push($arraySeasons,array('fecha'=>date('Y-m-d',$i),'commemoration'=>$item->commemoration));
+                }
+            }
+
+            $res=array('seasons'=>$arraySeasons,'ok'=>true);
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
+
+
+    }
 
     public function actionCalendar()
     {

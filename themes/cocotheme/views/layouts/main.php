@@ -5,12 +5,12 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="language" content="en" />
     <link rel="shortcut icon" href="<?php echo Yii::app()->theme->baseUrl;?>/images/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/main.css" />
+    <?php Yii::app()->getClientScript()->registerCssFile(Yii::app()->theme->baseUrl.'/css/main.css'); ?>
     <?php Yii::app()->getClientScript()->registerCssFile(Yii::app()->theme->baseUrl.'/css/style.css'); ?>
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 
-<body class="custom-background">
+<body>
 
     <div class='notifications top-right'></div>
 
