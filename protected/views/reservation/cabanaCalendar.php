@@ -18,9 +18,6 @@
     $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
     $cs->registerCssFile($assets.'/dhtmlxscheduler_flat.css');
 
-    $csx = Yii::app()->clientScript;
-	$csx->scriptMap['bootstrap-combined.no-icons.min.css'] = false;
-
 
     $this->breadcrumbs=array(
         Yii::t('mx','Reservations')=>array('index'),
@@ -124,8 +121,6 @@
     }
 
 
-
-
      var url = "<?php echo $this->createUrl('scheduler_cabana'); ?>";
 
      var total=0;
@@ -145,7 +140,8 @@
      scheduler.config.dblclick_create = false;
      //scheduler.config.limit_time_select = true;
      scheduler.attachEvent("onDblClick", function (id, e){});
-     scheduler.attachEvent("onClick", function (id, e){
+
+    scheduler.attachEvent("onClick", function (id, e){
 
          $.ajax({
              url: "<?php echo CController::createUrl('/reservation/getCustomerId'); ?>",
@@ -214,22 +210,29 @@
 
          .done(function(data) {
 
-             data.seasons.forEach(function(item){
+             if(data.ok==true){
 
-                 var fecha=new Date(item.fecha);
-                 var commemoration=item.commemoration;
+                 data.seasons.forEach(function(item){
 
-                 var options = {
-                     start_date: fecha,
-                     end_date: scheduler.date.add(fecha, 1, "day"),
-                     type: "",
-                     css: "holiday",
-                     html: commemoration
-                 };
+                     var anio=item.anio;
+                     var mes=(item.mes-1);
+                     var dia=item.dia;
 
-                 scheduler.addMarkedTimespan(options);
+                     var fecha=new Date(anio,mes,dia);
+                     var commemoration=item.commemoration;
 
-             });
+                     var options = {
+                         start_date: fecha,
+                         end_date: scheduler.date.add(fecha, 1, "day"),
+                         type: "",
+                         css: "holiday",
+                         html: commemoration
+                     };
+
+                     scheduler.addMarkedTimespan(options);
+
+                 });
+             }
 
          })
 

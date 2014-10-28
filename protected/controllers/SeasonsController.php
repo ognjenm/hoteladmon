@@ -52,7 +52,13 @@ class SeasonsController extends Controller
                 $end=strtotime($item->too);
 
                 for($i=$start;$i<=$end;$i+=86400){
-                    array_push($arraySeasons,array('fecha'=>date('Y-m-d',$i),'commemoration'=>$item->commemoration));
+
+                    array_push($arraySeasons,array(
+                        'anio'=>date('Y',$i),
+                        'mes'=>date('m',$i),
+                        'dia'=>date('d',$i),
+                        'commemoration'=>$item->commemoration
+                    ));
                 }
             }
 

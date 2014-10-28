@@ -308,13 +308,12 @@ div.saving * {
 }
 
 .holiday {
-    background-color: #fadcd3;
+    background-color: #FFFF80;
     text-align: center;
     font-size: 10px;
     opacity: 0.8;
-    color: #ffffff;
+    color: #469cff;
 }
-
 
 .date {
     float:left;
