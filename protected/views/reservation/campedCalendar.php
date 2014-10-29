@@ -16,57 +16,58 @@
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
     $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
     $cs->registerCssFile($assets.'/dhtmlxscheduler_flat.css');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_limit.js');
 
-$this->breadcrumbs=array(
-    Yii::t('mx','Reservations')=>array('index'),
-    Yii::t('mx','Manage'),
-);
-
-
-$this->menu=array(
-    array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
-    array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
-);
-
-$this->pageSubTitle=Yii::t('mx','Reservations');
-$this->pageIcon='icon-cogs';
+    $this->breadcrumbs=array(
+        Yii::t('mx','Reservations')=>array('index'),
+        Yii::t('mx','Manage'),
+    );
 
 
-if(Yii::app()->user->hasFlash('success')):
-    Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
-endif;
+    $this->menu=array(
+        array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site/index')),
+        array('label'=>Yii::t('mx','Reservation'),'icon'=>'icon-check','url'=>array('create')),
+    );
 
-$this->widget('bootstrap.widgets.TbAlert', array(
-    'block'=>true,
-    'fade'=>true,
-    'closeText'=>'×',
-    'alerts'=>array(
-        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
-    ),
-));
+    $this->pageSubTitle=Yii::t('mx','Reservations');
+    $this->pageIcon='icon-cogs';
+
+
+    if(Yii::app()->user->hasFlash('success')):
+        Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
+    endif;
+
+    $this->widget('bootstrap.widgets.TbAlert', array(
+        'block'=>true,
+        'fade'=>true,
+        'closeText'=>'×',
+        'alerts'=>array(
+            'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+        ),
+    ));
 
 ?>
 
-<table border="0" cellpadding="1" cellspacing="1" style="width: 800px;">
-    <tbody>
-    <tr>
-        <td><span class="dhx_cal_event_line event_AVAILABLE"><?php echo Yii::t('mx','AVAILABLE'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_BUDGET-SUBMITTED"><?php echo Yii::t('mx','BUDGET-SUBMITTED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_PRE-RESERVED"><?php echo Yii::t('mx','PRE-RESERVED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_RESERVED-PENDING"><?php echo Yii::t('mx','RESERVED-PENDING'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_RESERVED"><?php echo Yii::t('mx','RESERVED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CANCELLED"><?php echo Yii::t('mx','CANCELLED'); ?></span></span></td>
-    </tr>
-    <tr>
-        <td><span class="dhx_cal_event_line event_NO-SHOW"><?php echo Yii::t('mx','NO-SHOW'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_OCCUPIED"><?php echo Yii::t('mx','OCCUPIED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_ARRIVAL"><?php echo Yii::t('mx','ARRIVAL'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CHECKIN"><?php echo Yii::t('mx','CHECKIN'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CHECKOUT"><?php echo Yii::t('mx','CHECKOUT'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_DIRTY"><?php echo Yii::t('mx','DIRTY'); ?></span></span></td>
-    </tr>
-    </tbody>
-</table>
+    <table border="0" cellpadding="1" cellspacing="1" style="width: 800px;">
+        <tbody>
+        <tr>
+            <td><?php echo CHtml::checkBox('available',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_AVAILABLE"><?php echo Yii::t('mx','AVAILABLE'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('budget-submitted',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_BUDGET-SUBMITTED"><?php echo Yii::t('mx','BUDGET-SUBMITTED'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('pre-reserved',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_PRE-RESERVED"><?php echo Yii::t('mx','PRE-RESERVED'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('reserved-pending',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_RESERVED-PENDING"><?php echo Yii::t('mx','RESERVED-PENDING'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('reserved',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_RESERVED"><?php echo Yii::t('mx','RESERVED'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('canceled',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CANCELLED"><?php echo Yii::t('mx','CANCELLED'); ?></span></span></td>
+        </tr>
+        <tr>
+            <td><?php echo CHtml::checkBox('no-show',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_NO-SHOW"><?php echo Yii::t('mx','NO-SHOW'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('occupied',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_OCCUPIED"><?php echo Yii::t('mx','OCCUPIED'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('arrival',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_ARRIVAL"><?php echo Yii::t('mx','ARRIVAL'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('checkin',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CHECKIN"><?php echo Yii::t('mx','CHECKIN'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('checkout',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CHECKOUT"><?php echo Yii::t('mx','CHECKOUT'); ?></span></span></td>
+            <td><?php echo CHtml::checkBox('dirty',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_DIRTY"><?php echo Yii::t('mx','DIRTY'); ?></span></span></td>
+        </tr>
+        </tbody>
+    </table>
 
 
 <div id="scheduler_camped" class="dhx_cal_container" style='width:100%; height:450px;'>
@@ -88,7 +89,44 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
 <script type="text/javascript" charset="utf-8">
 
+    function estatus()
+    {
+        var sList = "";
+
+        $('input[type=checkbox]').each(function () {
+
+            if(this.checked){
+                var sThisVal=this.id;
+                sList += (sList=="" ? sThisVal : "," + sThisVal);
+            }
+
+        });
+
+        $.ajax({
+            url: "<?php echo CController::createUrl('/reservation/schedulerCamped_update'); ?>",
+            data: { estatus: sList },
+            type: "POST",
+            dataType: "json",
+            beforeSend: function() {}
+        })
+
+            .done(function(data) {
+                scheduler.clearAll();
+                scheduler.parse(data.data,"json");
+            })
+
+            .fail(function(data) { bootbox.alert(data); })
+            .always(function() { });
+
+
+    }
+
     var url = "<?php echo $this->createUrl('scheduler_camped'); ?>";
+    var total=0;
+    var abono=0;
+    var saldo=0;
+    var customer=0;
+    var aux=0;
 
     scheduler.config.container_autoresize = true;
     scheduler.config.xml_date="%Y-%m-%d %H:%i";
@@ -126,22 +164,27 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
     scheduler.templates.tooltip_text = function(start, end,ev){
 
-        $.ajax({
-            url: "<?php echo CController::createUrl('/reservation/getInformation'); ?>",
-            data: { customerReservationId: ev.customerReservationId },
-            type: "POST",
-            dataType: "json",
-            beforeSend: function() {  }
-        })
+        aux=customer;
+        customer=ev.customerReservationId;
 
-            .done(function(data) {
-                total=data.total;
-                abono=data.abono;
-                saldo=data.saldo;
+        if(aux != customer){
+            $.ajax({
+                url: "<?php echo CController::createUrl('/reservation/getInformation'); ?>",
+                data: { customerReservationId: ev.customerReservationId },
+                type: "POST",
+                dataType: "json",
+                beforeSend: function() {  }
             })
 
-            .fail(function(data) { alert(data); })
-            .always(function() { });
+                .done(function(data) {
+                    total=data.total;
+                    abono=data.abono;
+                    saldo=data.saldo;
+                })
+
+                .fail(function(data) { alert(data); })
+                .always(function() { });
+        }
 
 
         return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +
@@ -153,8 +196,46 @@ $this->widget('bootstrap.widgets.TbAlert', array(
             "<b>Saldo:</b>$"+saldo+"<br/>";
     };
 
+    $.ajax({
+        url: "<?php echo CController::createUrl('/seasons/getSeasons'); ?>",
+        dataType: "json",
+        beforeSend: function() {}
+    })
+
+        .done(function(data) {
+
+            if(data.ok==true){
+
+                data.seasons.forEach(function(item){
+
+                    var anio=item.anio;
+                    var mes=(item.mes-1);
+                    var dia=item.dia;
+
+                    var fecha=new Date(anio,mes,dia);
+                    var commemoration=item.commemoration;
+
+                    var options = {
+                        start_date: fecha,
+                        end_date: scheduler.date.add(fecha, 1, "day"),
+                        type: "",
+                        css: "holiday",
+                        html: commemoration
+                    };
+
+                    scheduler.addMarkedTimespan(options);
+
+                });
+            }
+
+        })
+
+        .fail(function(data) { bootbox.alert(data); })
+        .always(function() {});
+
     scheduler.init("scheduler_camped",null,"month");
-    scheduler.load(url);
+    scheduler.load(url,"json");
+    scheduler.setCurrentView();
 
 </script>
 

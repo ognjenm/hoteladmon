@@ -179,8 +179,8 @@
                 'beforeSend' => 'function() {$(".update").addClass("saving");  }',
                 'complete' => 'function() { $(".update").removeClass("saving"); }',
                 'success' =>'function(data){
-                            if(data.ok==true) window.location.reload();
-                            else $("#required-because").show();
+                            //if(data.ok==true) window.location.reload();
+                            //else $("#required-because").show();
                 }',
             ),
         )); ?>
@@ -514,7 +514,7 @@
 <div class="modal-body">
     <?php
 
-    $this->widget('bootstrap.widgets.TbExtendedGridView',array(
+    $this->widget('bootstrap.widgets.TbGridView',array(
         'id'=>'First-Contact',
         'type' => 'hover condensed striped',
         'emptyText' => Yii::t('mx','There are no data to display'),
@@ -530,7 +530,7 @@
             'stamp',
             array(
                 'name'=>'user_id',
-                'value'=>'$data->users->username'
+                'value'=>'$data->users["username"]'
             ),
         ),
     ));
@@ -581,7 +581,7 @@
             'stamp',
             array(
                 'name'=>'user_id',
-                'value'=>'$data->users->username'
+                'value'=>'$data->users["username"]'
             ),
         ),
     ));
@@ -641,7 +641,7 @@
             'stamp',
             array(
                 'name'=>'user_id',
-                'value'=>'$data->users->username'
+                'value'=>'$data->users["username"]'
             ),
         ),
     ));

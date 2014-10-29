@@ -1765,9 +1765,12 @@ class QuoteDetails extends CApplicationComponent{
         $reservation->checkin=$reservation->checkin.' '.$reservation->checkin_hour;
         $reservation->checkout=$reservation->checkout.' '.$reservation->checkout_hour;
 
-        $reservation->save();
+        if($reservation->save()){
+            return $models;
+        }else{
+            return false;
+        }
 
-        return $models;
 
     }
 

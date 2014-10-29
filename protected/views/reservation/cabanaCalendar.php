@@ -222,14 +222,16 @@
                      var commemoration=item.commemoration;
 
                      var options = {
+                         //days: "fullweek",
                          start_date: fecha,
                          end_date: scheduler.date.add(fecha, 1, "day"),
-                         type: "",
+                         //type: "default",
                          css: "holiday",
                          html: commemoration
                      };
 
                      scheduler.addMarkedTimespan(options);
+                     //scheduler.markTimespan(options);
 
                  });
              }

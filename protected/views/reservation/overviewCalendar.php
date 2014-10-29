@@ -24,6 +24,8 @@
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_active_links.js');
     $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_tooltip.js');
     $cs->registerCssFile($assets.'/dhtmlxscheduler.css');
+    $cs->registerScriptFile($assets.'/ext/dhtmlxscheduler_limit.js');
+    $cs->registerCssFile($assets.'/dhtmlxscheduler_flat.css');
 
     $this->breadcrumbs=array(
         Yii::t('mx','Reservations')=>array('index'),
@@ -57,20 +59,20 @@
 <table border="0" cellpadding="1" cellspacing="1" style="width: 800px;">
     <tbody>
     <tr>
-        <td><span class="dhx_cal_event_line event_AVAILABLE"><?php echo Yii::t('mx','AVAILABLE'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_BUDGET-SUBMITTED"><?php echo Yii::t('mx','BUDGET-SUBMITTED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_PRE-RESERVED"><?php echo Yii::t('mx','PRE-RESERVED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_RESERVED-PENDING"><?php echo Yii::t('mx','RESERVED-PENDING'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_RESERVED"><?php echo Yii::t('mx','RESERVED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CANCELLED"><?php echo Yii::t('mx','CANCELLED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('available',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_AVAILABLE"><?php echo Yii::t('mx','AVAILABLE'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('budget-submitted',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_BUDGET-SUBMITTED"><?php echo Yii::t('mx','BUDGET-SUBMITTED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('pre-reserved',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_PRE-RESERVED"><?php echo Yii::t('mx','PRE-RESERVED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('reserved-pending',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_RESERVED-PENDING"><?php echo Yii::t('mx','RESERVED-PENDING'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('reserved',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_RESERVED"><?php echo Yii::t('mx','RESERVED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('canceled',true,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CANCELLED"><?php echo Yii::t('mx','CANCELLED'); ?></span></span></td>
     </tr>
     <tr>
-        <td><span class="dhx_cal_event_line event_NO-SHOW"><?php echo Yii::t('mx','NO-SHOW'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_OCCUPIED"><?php echo Yii::t('mx','OCCUPIED'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_ARRIVAL"><?php echo Yii::t('mx','ARRIVAL'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CHECKIN"><?php echo Yii::t('mx','CHECKIN'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_CHECKOUT"><?php echo Yii::t('mx','CHECKOUT'); ?></span></span></td>
-        <td><span class="dhx_cal_event_line event_DIRTY"><?php echo Yii::t('mx','DIRTY'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('no-show',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_NO-SHOW"><?php echo Yii::t('mx','NO-SHOW'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('occupied',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_OCCUPIED"><?php echo Yii::t('mx','OCCUPIED'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('arrival',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_ARRIVAL"><?php echo Yii::t('mx','ARRIVAL'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('checkin',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CHECKIN"><?php echo Yii::t('mx','CHECKIN'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('checkout',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_CHECKOUT"><?php echo Yii::t('mx','CHECKOUT'); ?></span></span></td>
+        <td><?php echo CHtml::checkBox('dirty',false,array('onclick'=>'estatus()')); ?><span class="dhx_cal_event_line event_DIRTY"><?php echo Yii::t('mx','DIRTY'); ?></span></span></td>
     </tr>
     </tbody>
 </table>
@@ -99,7 +101,36 @@
 
 <script type="text/javascript" charset="utf-8">
 
-    function init() {
+    function estatus()
+    {
+        var sList = "";
+
+        $('input[type=checkbox]').each(function () {
+
+            if(this.checked){
+                var sThisVal=this.id;
+                sList += (sList=="" ? sThisVal : "," + sThisVal);
+            }
+
+        });
+
+        $.ajax({
+            url: "<?php echo CController::createUrl('/reservation/schedulerOverview_update'); ?>",
+            data: { estatus: sList },
+            type: "POST",
+            dataType: "json",
+            beforeSend: function() {}
+        })
+
+            .done(function(data) {
+                scheduler.clearAll();
+                scheduler.parse(data.data,"json");
+            })
+
+            .fail(function(data) { bootbox.alert(data); })
+            .always(function() { });
+
+    }
 
         var rooms = <?php Rooms::model()->getRoomsJson(); ?>;
         var data = "<?php echo $this->createUrl('schedulerOverview'); ?>";
@@ -117,6 +148,7 @@
         scheduler.config.multi_day = true;
         brief_mode = true;
         scheduler.config.active_link_view = "day";
+        scheduler.skin="flat";
 
         scheduler.createTimelineView({
             section_autoheight: false,
@@ -184,7 +216,6 @@
             }
 
 
-
             return  "<b>Cliente Id:</b> "+ev.customerReservationId+"<br/>" +
                     "<b>Cliente:</b> "+ev.text+"<br/>" +
                     "<b>Check In:</b> "+scheduler.templates.tooltip_date_format(start)+"<br/>" +
@@ -194,12 +225,13 @@
                     "<b>Saldo:</b>$"+saldo+"<br/>";
         };
 
+
         scheduler.init('scheduler_here',null,"timeline");
-        scheduler.load(data);
+        scheduler.load(data,"json");
         //var dp = new dataProcessor(url);
         //dp.init(scheduler);
 
-    }
+
 </script>
 
 

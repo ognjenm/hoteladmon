@@ -30,7 +30,8 @@ class ReservationController extends Controller
                                  'GridReservation','overviewCalendar','SchedulerOverview',
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
                                  'getInformation','dailyReport','exportDailyReport',
-                                 'getDailyReport','scheduler_cabana_update','filter'
+                                 'getDailyReport','scheduler_cabana_update','filter',
+                                 'schedulerOverview_update'
                 ),
                 'users'=>array('@'),
             ),
@@ -391,17 +392,20 @@ class ReservationController extends Controller
     {
         $cn = Yii::app()->quoteUtil->conexion();
 
-        $list = new OptionsConnector($cn,'PDO');
-        $list->render_table("rooms","id","id(value),room(label)");
+        //$list = new OptionsConnector($cn,'PDO');
+        //$list->render_table("rooms","id","id(value),room(label)");
 
-        $scheduler = new SchedulerConnector($cn,'PDO');
-        $scheduler->set_options("rooms", $list);
+        $scheduler = new JSONSchedulerConnector($cn,'PDO');
+        //$scheduler->set_options("rooms", $list);
 
-        $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,reservation.description,
-        reservation.room_id as section_id,concat(customers.first_name,' ',customers.last_name) as text,rooms.room, customers.id as customerId,
-        customer_reservations.id as customerReservationId, FORMAT(customer_reservations.total,2) as total FROM customer_reservations inner join reservation on
-        customer_reservations.id=reservation.customer_reservation_id inner join customers on
-        customer_reservations.customer_id=customers.id inner join rooms on reservation.room_id=rooms.id";
+        $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,
+        reservation.description,reservation.room_id as section_id,concat(customers.first_name,' ',customers.last_name) as text,
+        rooms.room, customers.id as customerId,customer_reservations.id as customerReservationId, FORMAT(customer_reservations.total,2) as total
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        INNER JOIN rooms on reservation.room_id=rooms.id
+        WHERE reservation.statux='CANCELLED' or reservation.statux='RESERVED' or reservation.statux='RESERVED-PENDING' or reservation.statux='PRE-RESERVED'";
 
         $scheduler->render_sql($sql, "id","start_date,end_date,text,section_id,description,statux,room,customerId,customerReservationId,total");
 
@@ -455,6 +459,35 @@ class ReservationController extends Controller
 
             $scheduler->render_sql($sql, "id","start_date,end_date,text,statux,room,customerReservationId");
 
+    }
+
+    public function actionSchedulerOverview_update(){
+
+        $cn = Yii::app()->quoteUtil->conexion();
+        $scheduler = new JSONSchedulerConnector($cn,'PDO');
+        $conditions='';
+
+        $estados=explode(",",$_POST['estatus']);
+        $totalestados=count($estados);
+        $c=1;
+
+        for($i=0;$i<$totalestados;$i++){
+            if($c==$totalestados) $conditions.="reservation.statux='".$estados[$i]."'";
+            else $conditions.="reservation.statux='".$estados[$i]."' or ";
+            $c++;
+        }
+
+        $sql="SELECT reservation.id,reservation.checkin as start_date,reservation.checkout as end_date,reservation.statux,
+        reservation.description,reservation.room_id as section_id,concat(customers.first_name,' ',customers.last_name) as text,
+        rooms.room, customers.id as customerId,customer_reservations.id as customerReservationId, FORMAT(customer_reservations.total,2) as total
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        INNER JOIN rooms on reservation.room_id=rooms.id
+        WHERE ".$conditions;
+
+        $scheduler->render_sql($sql, "id","start_date,end_date,text,section_id,description,statux,room,customerId,customerReservationId,total");
+
 
     }
 
@@ -462,12 +495,41 @@ class ReservationController extends Controller
 
     public function actionScheduler_camped(){
         $cn = Yii::app()->quoteUtil->conexion();
-        $scheduler = new SchedulerConnector($cn,'PDO');
+        $scheduler = new JSONSchedulerConnector($cn,'PDO');
 
-        $sql="SELECT reservation.id,reservation.service_type,reservation.checkin,reservation.checkout,reservation.statux,reservation.description,
-        customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name FROM customer_reservations inner join reservation on
-        customer_reservations.id=reservation.customer_reservation_id inner join customers on
-        customer_reservations.customer_id=customers.id where reservation.room_id=0";
+        $sql="SELECT reservation.id,reservation.service_type,reservation.checkin,reservation.checkout,reservation.statux,
+        reservation.description,customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        WHERE reservation.room_id=0 and (reservation.statux='CANCELLED' or reservation.statux='RESERVED' or reservation.statux='RESERVED-PENDING' or reservation.statux='PRE-RESERVED')";
+
+        $scheduler->render_sql($sql, "id","checkin,checkout,first_name,service_type,statux,customerReservationId");
+
+    }
+
+    public function actionSchedulerCamped_update(){
+        $cn = Yii::app()->quoteUtil->conexion();
+        $scheduler = new JSONSchedulerConnector($cn,'PDO');
+
+        $conditions='';
+
+        $estados=explode(",",$_POST['estatus']);
+        $totalestados=count($estados);
+        $c=1;
+
+        for($i=0;$i<$totalestados;$i++){
+            if($c==$totalestados) $conditions.="reservation.statux='".$estados[$i]."'";
+            else $conditions.="reservation.statux='".$estados[$i]."' or ";
+            $c++;
+        }
+
+        $sql="SELECT reservation.id,reservation.service_type,reservation.checkin,reservation.checkout,reservation.statux,
+        reservation.description,customer_reservations.id as customerReservationId,reservation.room_id,customers.first_name
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        WHERE reservation.room_id=0 and (".$conditions.")";
 
         $scheduler->render_sql($sql, "id","checkin,checkout,first_name,service_type,statux,customerReservationId");
 
@@ -978,7 +1040,8 @@ class ReservationController extends Controller
         $customerCreated=new CActiveDataProvider('CustomerAudit',array (
                 'criteria' => array (
                     'condition' => 'customer_id=:CustomerId and action=:action',
-                    'params'=>array('CustomerId'=>$customer->id,'action'=>'SET')
+                    'params'=>array('CustomerId'=>$customer->id,'action'=>'SET'),
+                    'with' => array('users')
                 ))
         );
 
@@ -1289,6 +1352,7 @@ class ReservationController extends Controller
                if($attributes != null) $model[]=Yii::app()->quoteUtil->reservationAdd($attributes);
 
                foreach($_POST['Reservation']['u__'] as $idx => $attributes){
+
                    $model[]=Yii::app()->quoteUtil->reservationUpdate($attributes);
                    if (is_array($allExistingPk)) unset($allExistingPk[$idx]);
                }
