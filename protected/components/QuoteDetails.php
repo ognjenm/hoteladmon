@@ -1622,19 +1622,14 @@ class QuoteDetails extends CApplicationComponent{
 
     public function reservationUpdate($attributes){
 
-        $pricepets=0;
         $priceLateCheckout=0;
-        $models=array();
+        $reservationId=(int)$attributes['id'];
 
-        $reservation=Reservation::model()->findByPk($attributes['id']);
-        $statux=$reservation->statux;
-        $description=$reservation->description;
+        $reservation=Reservation::model()->findByPk($reservationId);
         $reservation->attributes= $attributes;
-        $reservation->statux=$statux;
-        $reservation->description=$description;
 
-        $checkin= $this->toEnglishDateTime($attributes['checkin']);
-        $checkout= $this->toEnglishDateTime($attributes['checkout']);
+        $checkin= $this->toEnglishDateTime($reservation->checkin);
+        $checkout= $this->toEnglishDateTime($reservation->checkout);
 
         $reservation->checkin_hour=date("H:i",strtotime($checkin));
         $reservation->checkout_hour=date("H:i",strtotime($checkout));
@@ -1643,7 +1638,7 @@ class QuoteDetails extends CApplicationComponent{
         $reservation->checkout=date("Y-m-d",strtotime($checkout));
 
         $reservation->nights=$this->nights($reservation->checkin,$reservation->checkout);
-        $reservation->totalpax=$attributes['adults']+$attributes['children'];
+        $reservation->totalpax=$reservation->adults+$reservation->children;
 
         $reservation->nigth_ta=$this->getPeakSeason($reservation->checkin,$reservation->checkout);
         $reservation->nigth_tb=$this->getLowSeason($reservation->checkin,$reservation->checkout);
@@ -1651,239 +1646,26 @@ class QuoteDetails extends CApplicationComponent{
         $reservation->price_early_checkin=$this->getEarlyCheckin($reservation->checkin_hour,$reservation->totalpax);
         $reservation->price_late_checkout=$this->getLateCheckOut($reservation->checkout_hour,$reservation->totalpax);
 
-        $mascotas=(int)$attributes['pets'];
-        $pricepets=$this->pricePets($mascotas);
+        switch($reservation->service_type){
 
-        if($attributes['service_type']=="CABANA"){  //cotizacion para cabaña
+            case 'CABANA':
+                $reservation->room_id=$reservation->room_id;
+                $reservation->price=$this->getTotalPriceCabana($reservation);
+                break;
 
-            $reservation->room_id=$attributes['room_id'];
+            case 'TENT':
+                $reservation->room_id=$reservation->room_id;
+                $reservation->price=$this->getTotalPriceTent($reservation);
+                break;
 
-            if($reservation->nigth_tb > 0){
-                $reservation->price_tb=$this->getPriceCabana(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    $reservation->nigth_tb,'BAJA'
-                );
-            }
-
-            if($reservation->nigth_ta > 0){
-                $reservation->price_ta=$this->getPriceCabana(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    $reservation->nigth_ta,'ALTA'
-                );
-            }
-            $reservation->price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
-
-        }
-
-        if($attributes['service_type']=="TENT"){   //cotizacion para casa de campaña
-
-            $reservation->room_id=$attributes['room_id'];
-
-            if($reservation->nigth_tb > 0){
-                $reservation->price_tb=$this->getPriceTent(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    $reservation->nigth_tb,'BAJA'
-                );
-            }
-            if($reservation->nigth_ta > 0){
-                $reservation->price_ta=$this->getPriceTent(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    $reservation->nigth_ta,'ALTA'
-                );
-            }
-
-            $reservation->price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
-
-        }
-
-        if($attributes['service_type']=="CAMPED"){  //cotizacion acampado
-
-            $reservation->room_id=0;
-
-            if($reservation->nigth_tb > 0){
-                $reservation->price_tb=$this->getPriceCamped(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    $reservation->nigth_tb,'BAJA'
-                );
-            }
-
-            if($reservation->nigth_ta > 0){
-                $reservation->price_ta=$this->getPriceCamped(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    $reservation->nigth_ta,'ALTA'
-                );
-            }
-
-            $reservation->price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
-
-        }
-
-        if($attributes['service_type']=="DAYPASS"){  //cotizacion admision al parque
-
-            $reservation->nigth_ta=$this->getPeakSeasonDayPass($attributes['checkin']);
-            $reservation->nigth_tb=$this->getLowSeasonDayPass($attributes['checkin']);
-
-            $hora3 = strtotime($reservation->checkout_hour); //hora en que sale el pax
-            $hora4 = strtotime("18:00");  //hora en que sebe salir el pax
-            if( $hora3 > $hora4 ) $priceLateCheckout=50*$reservation->totalpax;
-
-            $reservation->price_early_checkin=0;
-            $reservation->price_late_checkout=$priceLateCheckout;
-            $reservation->room_id=0;
-
-            if($reservation->nigth_tb > 0){
-                $reservation->price_ta=$this->getPriceDaypass(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    'ALTA'
-                );
-            }
-            if($reservation->nigth_ta > 0){
-                $reservation->price_tb=$this->getPriceDaypass(
-                    $attributes['adults'],$attributes['children'],
-                    $attributes['service_type'],$attributes['room_type_id'],
-                    'BAJA'
-                );
-            }
-
-            $reservation->price=$reservation->price_ta+$reservation->price_tb+$pricepets+$reservation->price_late_checkout;
-
-        }
-
-        $models=array_merge($reservation->attributes,array(
-            'checkin_hour'=>$reservation->checkin_hour,
-            'checkout_hour'=>$reservation->checkout_hour,
-            'service_type'=>$reservation->service_type
-        ));
-
-        $reservation->checkin=$reservation->checkin.' '.$reservation->checkin_hour;
-        $reservation->checkout=$reservation->checkout.' '.$reservation->checkout_hour;
-
-        if($reservation->save()){
-            return $models;
-        }else{
-            return false;
-        }
-
-
-    }
-
-
-    public function reservationAdd($attributes){
-
-        $pricepets=0;
-        $priceLateCheckout=0;
-
-        foreach($attributes as $item){
-
-            $reservation=new Reservation;
-            $reservation->attributes= $item;
-            $reservation->customer_reservation_id=$item['customer_reservation_id'];
-            $reservation->statux=1;
-
-            $checkin= $this->toEnglishDateTime($item['checkin']);
-            $checkout= $this->toEnglishDateTime($item['checkout']);
-
-            $reservation->checkin_hour=date("H:i",strtotime($checkin));
-            $reservation->checkout_hour=date("H:i",strtotime($checkout));
-
-            $reservation->checkin=date("Y-m-d",strtotime($checkin));
-            $reservation->checkout=date("Y-m-d",strtotime($checkout));
-
-            $reservation->nights=$this->nights($reservation->checkin,$reservation->checkout);
-            $reservation->totalpax=$item['adults']+$item['children'];
-
-            $reservation->nigth_ta=$this->getPeakSeason($reservation->checkin,$reservation->checkout);
-            $reservation->nigth_tb=$this->getLowSeason($reservation->checkin,$reservation->checkout);
-
-            $reservation->price_early_checkin=$this->getEarlyCheckin($reservation->checkin_hour,$reservation->totalpax);
-            $reservation->price_late_checkout=$this->getLateCheckOut($reservation->checkout_hour,$reservation->totalpax);
-
-            $mascotas=(int)$item['pets'];
-            $pricepets=$this->pricePets($mascotas);
-
-
-            if($item['service_type']=="CABANA"){  //cotizacion para cabaña
-
-                $reservation->room_id=$item['room_id'];
-
-                if($reservation->nigth_tb > 0){
-                    $reservation->price_tb=$this->getPriceCabana(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        $reservation->nigth_tb,'BAJA'
-                    );
-                }
-
-                if($reservation->nigth_ta > 0){
-                    $reservation->price_ta=$this->getPriceCabana(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        $reservation->nigth_ta,'ALTA'
-                    );
-                }
-                $reservation->price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
-
-            }
-
-            if($item['service_type']=="TENT"){   //cotizacion para casa de campaña
-
-                $reservation->room_id=$item['room_id'];
-
-                if($reservation->nigth_tb > 0){
-                    $reservation->price_tb=$this->getPriceTent(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        $reservation->nigth_tb,'BAJA'
-                    );
-                }
-
-                if($reservation->nigth_ta > 0){
-                    $reservation->price_ta=$this->getPriceTent(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        $reservation->nigth_ta,'ALTA'
-                    );
-                }
-
-                $reservation->price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
-
-            }
-
-            if($item['service_type']=="CAMPED"){  //cotizacion acampado
-
+            case 'CAMPED':
                 $reservation->room_id=0;
+                $reservation->price=$this->getTotalPriceCamped($reservation);
+                break;
 
-                if($reservation->nigth_tb > 0){
-                    $reservation->price_tb=$this->getPriceCamped(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        $reservation->nigth_tb,'BAJA'
-                    );
-                }
-
-                if($reservation->nigth_ta > 0){
-                    $reservation->price_ta=$this->getPriceCamped(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        $reservation->nigth_ta,'ALTA'
-                    );
-                }
-
-                $reservation->price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
-
-            }
-
-            if($item['service_type']=="DAYPASS"){  //cotizacion admision al parque
-
-                $reservation->nigth_ta=$this->getPeakSeasonDayPass($item['checkin']);
-                $reservation->nigth_tb=$this->getLowSeasonDayPass($item['checkin']);
+            case 'DAYPASS':
+                $reservation->nigth_ta=$this->getPeakSeasonDayPass($reservation->checkin);
+                $reservation->nigth_tb=$this->getLowSeasonDayPass($reservation->checkin);
 
                 $hora3 = strtotime($reservation->checkout_hour); //hora en que sale el pax
                 $hora4 = strtotime("18:00");  //hora en que sebe salir el pax
@@ -1893,34 +1675,206 @@ class QuoteDetails extends CApplicationComponent{
                 $reservation->price_late_checkout=$priceLateCheckout;
                 $reservation->room_id=0;
 
-                if($reservation->nigth_tb > 0){
-                    $reservation->price_ta=$this->getPriceDaypass(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        'ALTA'
-                    );
-                }
-                if($reservation->nigth_ta > 0){
-                    $reservation->price_tb=$this->getPriceDaypass(
-                        $item['adults'],$item['children'],
-                        $item['service_type'],$item['room_type_id'],
-                        'BAJA'
-                    );
-                }
+                $reservation->price=$this->getTotalPriceDayPass($reservation);
+                break;
+        }
 
-                $reservation->price=$reservation->price_ta+$reservation->price_tb+$pricepets+$reservation->price_late_checkout;
 
+        $reservation->checkin=$reservation->checkin.' '.$reservation->checkin_hour;
+        $reservation->checkout=$reservation->checkout.' '.$reservation->checkout_hour;
+
+
+        if($reservation->save()){
+            return $reservation->attributes;
+        }else{
+            return $reservation->getErrors();
+        }
+
+
+    }
+
+
+    public function reservationAdd($attributes){
+
+        $priceLateCheckout=0;
+
+        foreach($attributes as $item){
+
+            $reservation=new Reservation;
+            $reservation->attributes= $item;
+            $reservation->statux=1;
+            $reservation->description=1;
+
+            $checkin= $this->toEnglishDateTime($reservation->checkin);
+            $checkout= $this->toEnglishDateTime($reservation->checkout);
+
+            $reservation->checkin_hour=date("H:i",strtotime($checkin));
+            $reservation->checkout_hour=date("H:i",strtotime($checkout));
+
+            $reservation->checkin=date("Y-m-d",strtotime($checkin));
+            $reservation->checkout=date("Y-m-d",strtotime($checkout));
+
+            $reservation->nights=$this->nights($reservation->checkin,$reservation->checkout);
+            $reservation->totalpax=$reservation->adults+$reservation->children;
+
+            $reservation->nigth_ta=$this->getPeakSeason($reservation->checkin,$reservation->checkout);
+            $reservation->nigth_tb=$this->getLowSeason($reservation->checkin,$reservation->checkout);
+
+            $reservation->price_early_checkin=$this->getEarlyCheckin($reservation->checkin_hour,$reservation->totalpax);
+            $reservation->price_late_checkout=$this->getLateCheckOut($reservation->checkout_hour,$reservation->totalpax);
+
+            switch($reservation->service_type){
+
+                case 'CABANA':
+                    $reservation->room_id=$reservation->room_id;
+                    $reservation->price=$this->getTotalPriceCabana($reservation);
+                    break;
+
+                case 'TENT':
+                    $reservation->room_id=$reservation->room_id;
+                    $reservation->price=$this->getTotalPriceTent($reservation);
+                    break;
+
+                case 'CAMPED':
+                    $reservation->room_id=0;
+                    $reservation->price=$this->getTotalPriceCamped($reservation);
+                    break;
+
+                case 'DAYPASS':
+                    $reservation->nigth_ta=$this->getPeakSeasonDayPass($reservation->checkin);
+                    $reservation->nigth_tb=$this->getLowSeasonDayPass($reservation->checkin);
+
+                    $hora3 = strtotime($reservation->checkout_hour); //hora en que sale el pax
+                    $hora4 = strtotime("18:00");  //hora en que sebe salir el pax
+                    if( $hora3 > $hora4 ) $priceLateCheckout=50*$reservation->totalpax;
+
+                    $reservation->price_early_checkin=0;
+                    $reservation->price_late_checkout=$priceLateCheckout;
+                    $reservation->room_id=0;
+
+                    $reservation->price=$this->getTotalPriceDayPass($reservation);
+                    break;
             }
 
             $reservation->checkin=$reservation->checkin.' '.$reservation->checkin_hour;
             $reservation->checkout=$reservation->checkout.' '.$reservation->checkout_hour;
-            $reservation->description=1;
 
-            $reservation->save();
 
-            return $reservation;
+            if($reservation->save()){
+                return $reservation->attributes;
+            }else{
+                return $reservation->getErrors();
+            }
 
         }
+
+    }
+
+    public function getTotalPriceCabana($reservation){
+
+        $mascotas=(int)$reservation->pets;
+        $pricepets=$this->pricePets($mascotas);
+
+        if($reservation->nigth_tb > 0){
+            $reservation->price_tb=$this->getPriceCabana(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                $reservation->nigth_tb,'BAJA'
+            );
+        }
+
+        if($reservation->nigth_ta > 0){
+            $reservation->price_ta=$this->getPriceCabana(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                $reservation->nigth_ta,'ALTA'
+            );
+        }
+
+        $price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
+
+        return $price;
+
+    }
+
+    public function getTotalPriceTent($reservation){
+
+        $mascotas=(int)$reservation->pets;
+        $pricepets=$this->pricePets($mascotas);
+
+        if($reservation->nigth_tb > 0){
+            $reservation->price_tb=$this->getPriceTent(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                $reservation->nigth_tb,'BAJA'
+            );
+        }
+
+        if($reservation->nigth_ta > 0){
+            $reservation->price_ta=$this->getPriceTent(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                $reservation->nigth_ta,'ALTA'
+            );
+        }
+
+        $price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
+
+        return $price;
+
+    }
+
+    public function getTotalPriceCamped($reservation){
+
+        $mascotas=(int)$reservation->pets;
+        $pricepets=$this->pricePets($mascotas);
+
+        if($reservation->nigth_tb > 0){
+            $reservation->price_tb=$this->getPriceCamped(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                $reservation->nigth_tb,'BAJA'
+            );
+        }
+
+        if($reservation->nigth_ta > 0){
+            $reservation->price_ta=$this->getPriceCamped(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                $reservation->nigth_ta,'ALTA'
+            );
+        }
+
+        $price=($reservation->price_tb*$reservation->nigth_tb)+($reservation->price_ta*$reservation->nigth_ta)+($pricepets*$reservation->nights)+$reservation->price_early_checkin+$reservation->price_late_checkout;
+
+        return $price;
+
+    }
+
+    public function getTotalPriceDayPass($reservation){
+
+        $mascotas=(int)$reservation->pets;
+        $pricepets=$this->pricePets($mascotas);
+
+        if($reservation->nigth_tb > 0){
+            $reservation->price_ta=$this->getPriceDaypass(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                'ALTA'
+            );
+        }
+
+        if($reservation->nigth_ta > 0){
+            $reservation->price_tb=$this->getPriceDaypass(
+                $reservation->adults,$reservation->children,
+                $reservation->service_type,$reservation->room_type_id,
+                'BAJA'
+            );
+        }
+
+        $price=$reservation->price_ta+$reservation->price_tb+$pricepets+$reservation->price_late_checkout;
+
+        return $price;
 
     }
 

@@ -65,8 +65,8 @@ class Reservation extends CActiveRecord
 			array('customer_reservation_id', 'required'),
 			array('customer_reservation_id, room_id, adults, children, pets, totalpax, nigth_ta, nigth_tb, nights', 'numerical', 'integerOnly'=>true),
 			array('room_type_id, price_ta, price_tb, price_early_checkin, price_late_checkout, price', 'length', 'max'=>10),
-			array('statux', 'length', 'max'=>13),
-			array('checkin, checkin_hour, checkout, checkout_hour,description,service_type', 'safe'),
+			//array('statux', 'length', 'max'=>13),
+			array('checkin, checkin_hour, checkout, checkout_hour,description,service_type,statux', 'safe'),
 			array('id,customer_reservation_id, checkin, checkin_hour, checkout, checkout_hour, statux,first_name,roomName', 'safe', 'on'=>'search'),
 		);
 	}

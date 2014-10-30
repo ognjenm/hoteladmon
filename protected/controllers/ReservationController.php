@@ -1351,24 +1351,25 @@ class ReservationController extends Controller
 
                if($attributes != null) $model[]=Yii::app()->quoteUtil->reservationAdd($attributes);
 
-               foreach($_POST['Reservation']['u__'] as $idx => $attributes){
+               foreach($_POST['Reservation']['u__'] as $idx => $attrs){
 
-                   $model[]=Yii::app()->quoteUtil->reservationUpdate($attributes);
+                   $model[]=Yii::app()->quoteUtil->reservationUpdate($attrs);
+
                    if (is_array($allExistingPk)) unset($allExistingPk[$idx]);
                }
 
-                if($model !=null) $res=array('ok'=>true);
+                if($model !=null) $res=array('ok'=>true,'errors'=>$model);
 
                 if (is_array($allExistingPk))
                     foreach($allExistingPk as $idx => $delPks)
                         Reservation::model()->deleteByPk($delPks['id']);
 
 
-                $customerReservationId=(int)$_POST['Reservation']['u__'][0]['customer_reservation_id'];
+                /*$customerReservationId=(int)$_POST['Reservation']['u__'][0]['customer_reservation_id'];
                 $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
                 $grandTotal=Yii::app()->quoteUtil->getTotalPrice($model,$customerReservation->see_discount);
                 $customerReservation->total=$grandTotal;
-                $customerReservation->save();
+                $customerReservation->save();*/
 
             }
 
