@@ -528,7 +528,7 @@ return array(
     'My Tasks'=>'Mis Tareas',
     'First Entry'=>'Primera Entrada',
     'Tracing Date'=>'Fecha De Seguimiento',
-    'New Task'=>'Nueva Tarea',
+    'New Task'=>'Tareas Nuevas',
     'Not set'=>'No Especificado',
     'Legal name of the company'=>'Razón social de la compañia',
     'First Name'=>'Primer Nombre',
@@ -774,7 +774,9 @@ return array(
     'Object'=>'Con objeto de',
     'Need'=>'Por el momento existe la necesidad de',
     'Contracts Lease'=>'Contratos de arrendamiento',
-    'Format Contracts'=>'Formato de contratos'
+    'Format Contracts'=>'Formato de contratos',
+    'Cell Phone'=>'Teléfono Celular',
+    'New Customer Information'=>'Información nueva de clientes'
 
 
 

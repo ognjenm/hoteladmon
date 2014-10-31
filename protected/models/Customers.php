@@ -31,7 +31,6 @@ class Customers extends CActiveRecord
 
 	public function relations()
 	{
-
 		return array(
 		);
 	}
@@ -43,7 +42,7 @@ class Customers extends CActiveRecord
             'id' => 'ID',
             'email' => Yii::t('mx','Email'),
             'alternative_email' => Yii::t('mx','Alternative Email'),
-            'first_name' => Yii::t('mx','First Names'),
+            'first_name' => Yii::t('mx','First Name'),
             'last_name' => Yii::t('mx','Last Names'),
             'country' => Yii::t('mx','Country'),
             'state' => Yii::t('mx','State'),

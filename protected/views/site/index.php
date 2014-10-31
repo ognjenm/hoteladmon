@@ -112,6 +112,13 @@ $url=$this->createUrl('/tasks/accept');
                 </a>
             </li>
 
+            <li class="pink long">
+                <a href="<?php echo $this->createUrl('/newCustomerInformation'); ?>">
+                    <span><i class="icon-group"></i></i><?php echo $newCustomerInformation; ?></span>
+                    <span class='name'><?php echo Yii::t('mx','New Customer Information'); ?></span>
+                </a>
+            </li>
+
             <li class="magenta">
                 <a href="#">
                     <span><i class="icon-signout"></i></span>

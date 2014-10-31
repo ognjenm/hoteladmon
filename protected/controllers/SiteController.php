@@ -94,11 +94,13 @@ class SiteController extends Controller
         ));
 
 
-
-
+        $newCustomerInformation=NewCustomerInformation::model()->count(
+            array('condition'=>'verified=1')
+        );
 
 		$this->render('index',array(
                 'dataProvider'=>$dataProvider,
+                'newCustomerInformation'=>$newCustomerInformation
             )
         );
 

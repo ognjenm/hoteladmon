@@ -1,6 +1,6 @@
 <?php
 
-class ReservationChannelController extends Controller
+class NewCustomerInformationController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -14,23 +14,20 @@ class ReservationChannelController extends Controller
 	public function filters()
 	{
 		return array(
-            array('CrugeAccessControlFilter'),  // perform access control for CRUD operations
+            array('CrugeAccessControlFilter'), // perform access control for CRUD operations
 		);
 	}
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
+
 	public function accessRules()
 	{
 		return array(
 
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+			array('allow',
 				'actions'=>array('create','update','index','view','delete'),
 				'users'=>array('@'),
 			),
+
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -54,36 +51,22 @@ class ReservationChannelController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new ReservationChannel;
-        $res=array('ok'=>false);
+		$model=new NewCustomerInformation;
 
-        if(Yii::app()->request->isAjaxRequest){
-            if(isset($_POST['ReservationChannel'])){
-                $model->attributes=$_POST['ReservationChannel'];
-                if($model->save()) $res=array('ok'=>true);
-            }
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
 
-            echo CJSON::encode($res);
-            Yii::app()->end();
+		if(isset($_POST['NewCustomerInformation']))
+		{
+			$model->attributes=$_POST['NewCustomerInformation'];
+			if($model->save())
+                Yii::app()->user->setFlash('success','Success');
+				$this->redirect(array('view','id'=>$model->id));
+		}
 
-        }else{
-
-            if(isset($_POST['ReservationChannel'])){
-                $model->attributes=$_POST['ReservationChannel'];
-                if($model->save()){
-                    Yii::app()->user->setFlash('success','Success');
-                    $this->redirect(array('view','id'=>$model->id));
-                }
-
-            }
-
-            $this->render('create',array(
-                'model'=>$model,
-            ));
-
-        }
-
-
+		$this->render('create',array(
+			'model'=>$model,
+		));
 	}
 
 	/**
@@ -94,13 +77,15 @@ class ReservationChannelController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+        $customer=Customers::model()->findByPk($model->customer_id);
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ReservationChannel']))
+		if(isset($_POST['NewCustomerInformation']))
 		{
-			$model->attributes=$_POST['ReservationChannel'];
+			$model->attributes=$_POST['NewCustomerInformation'];
+
 			if($model->save()){
                 Yii::app()->user->setFlash('success','Success');
                 $this->redirect(array('view','id'=>$model->id));
@@ -110,6 +95,7 @@ class ReservationChannelController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
+            'customer'=>$customer
 		));
 	}
 
@@ -138,10 +124,10 @@ class ReservationChannelController extends Controller
 	 */
 	public function actionIndex()
 	{
-        $model=new ReservationChannel('search');
+        $model=new NewCustomerInformation('search');
         $model->unsetAttributes();  // clear any default values
-        if(isset($_GET['ReservationChannel']))
-        $model->attributes=$_GET['ReservationChannel'];
+        if(isset($_GET['NewCustomerInformation']))
+        $model->attributes=$_GET['NewCustomerInformation'];
 
         $this->render('index',array(
         'model'=>$model,
@@ -160,7 +146,7 @@ class ReservationChannelController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=ReservationChannel::model()->findByPk($id);
+		$model=NewCustomerInformation::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -172,7 +158,7 @@ class ReservationChannelController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='reservation-channel-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='new-customer-information-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
