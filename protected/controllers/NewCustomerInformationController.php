@@ -41,7 +41,7 @@ class NewCustomerInformationController extends Controller
 	public function actionView($id)
 	{
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'model'=>Customers::model()->findByPk($id),
 		));
 	}
 
@@ -79,16 +79,27 @@ class NewCustomerInformationController extends Controller
 		$model=$this->loadModel($id);
         $customer=Customers::model()->findByPk($model->customer_id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
 		if(isset($_POST['NewCustomerInformation']))
 		{
-			$model->attributes=$_POST['NewCustomerInformation'];
+            $newAttributes=array(
+                'alternative_email'=>$_POST['NewCustomerInformation']['alternative_email_Save'],
+                'first_name'=>$_POST['NewCustomerInformation']['first_name_Save'],
+                'last_name'=>$_POST['NewCustomerInformation']['last_name_Save'],
+                'country'=>$_POST['NewCustomerInformation']['country_Save'],
+                'state'=>$_POST['NewCustomerInformation']['state_Save'],
+                'city'=>$_POST['NewCustomerInformation']['city_Save'],
+                'home_phone'=>$_POST['NewCustomerInformation']['home_phone_Save'],
+                'work_phone'=>$_POST['NewCustomerInformation']['work_phone_Save'],
+                'cell_phone'=>$_POST['NewCustomerInformation']['cell_phone_Save'],
+            );
 
-			if($model->save()){
+            $customer->attributes=$newAttributes;
+
+			if($customer->save()){
+                $model->verified=1;
+                $model->save();
                 Yii::app()->user->setFlash('success','Success');
-                $this->redirect(array('view','id'=>$model->id));
+                $this->redirect(array('view','id'=>$customer->id));
             }
 
 		}

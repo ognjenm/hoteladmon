@@ -1,13 +1,13 @@
     <?php
-$this->breadcrumbs=array(
+
+    $this->breadcrumbs=array(
         Yii::t('mx','New Customer Information')=>array('index'),
          Yii::t('mx','View'),
     );
 
     $this->menu=array(
         array('label'=>Yii::t('mx', 'Back'),'icon'=>'icon-chevron-left','url'=>array('index')),
-        array('label'=>Yii::t('mx','Update'),'icon'=>'icon-pencil','url'=>array('update','id'=>$model->id)),
-        array('label'=>Yii::t('mx','Delete'),'icon'=>'icon-remove','url'=>'#','linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>Yii::t('mx','Are you sure you want to delete this item?'))),
+
     );
 
 
@@ -35,18 +35,25 @@ $this->breadcrumbs=array(
             <?php $this->widget('bootstrap.widgets.TbDetailView',array(
             'data'=>$model,
             'attributes'=>array(
-            		'id',
-		'customer_id',
-		'email',
-		'alternative_email',
-		'first_name',
-		'last_name',
-		'country',
-		'state',
-		'city',
-		'home_phone',
-		'work_phone',
-		'cell_phone',
-		'verified',
+                'id',
+                'email',
+                'alternative_email',
+                'first_name',
+                'last_name',
+                'country',
+                'state',
+                'city',
+                array(
+                    'name'=>Yii::t('mx','Home Phone'),
+                    'value'=>$model->home_phone
+                ),
+                array(
+                    'name'=>Yii::t('mx','Work Phone'),
+                    'value'=>$model->work_phone
+                ),
+                array(
+                    'name'=>Yii::t('mx','Cell Phone'),
+                    'value'=>$model->cell_phone
+                ),
             ),
             )); ?>

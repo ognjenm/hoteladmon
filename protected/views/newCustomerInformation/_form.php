@@ -39,12 +39,12 @@
 
             <div class="input-append">
                 <?php echo $form->textFieldRow($model,'state',array('maxlength'=>50)); ?>
-                <span class="add-on"><?php echo CHtml::checkBox('country_New',false,array()); ?></span>
+                <span class="add-on"><?php echo CHtml::checkBox('state_New',false,array()); ?></span>
             </div>
 
             <div class="input-append">
                 <?php echo $form->textFieldRow($model,'city',array('maxlength'=>50)); ?>
-                <span class="add-on"><?php echo CHtml::checkBox('country_New',false,array()); ?></span>
+                <span class="add-on"><?php echo CHtml::checkBox('city_New',false,array()); ?></span>
             </div>
 
             <div class="input-append">

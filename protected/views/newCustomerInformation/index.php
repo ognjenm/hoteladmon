@@ -7,6 +7,7 @@
 
     $this->menu=array(
         array('label'=>Yii::t('mx', 'Refresh'),'icon'=>'icon-refresh','url'=>array('index')),
+        array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/site')),
     );
 
     $this->pageSubTitle=Yii::t('mx','Manage');

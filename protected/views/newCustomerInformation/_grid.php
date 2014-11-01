@@ -33,20 +33,12 @@
             'alternative_email',
             'first_name',
             'last_name',
-            /*
-            'country',
-            'state',
-            'city',
-            'home_phone',
-            'work_phone',
-            'cell_phone',
-            'verified',
-            */
                 array(
                     'class'=>'bootstrap.widgets.TbButtonColumn',
                     'deleteConfirmation' =>Yii::t('mx','Do you really want to delete this item?'),
                     'headerHtmlOptions' => array('style' => 'width:150px;'),
-                    'header'=>Yii::t('mx','Actions')
+                    'header'=>Yii::t('mx','Actions'),
+                    'template'=>'{update}',
                 ),
             ),
         ));
