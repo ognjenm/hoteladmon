@@ -345,6 +345,28 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+    public function getTotalDiscount($serviceType,$total,$pax=0) {
+
+        $discountCabana=0;
+        $discountCamped=0;
+        $grandTotal=0;
+
+        if($serviceType=="CABANA"){
+            $percentCabana=CabanaDiscount::model()->getDiscount($total);
+            if($percentCabana) $discountCabana=($total*$percentCabana->discount)/100;
+        }
+
+        if($serviceType=="TENT" or $serviceType=="CAMPED" or $serviceType=="DAYPASS"){
+            $percentCamped=CampedDiscount::model()->getDiscount($pax);
+            if($percentCamped) $discountCamped=($total*$percentCamped->discount)/100;
+        }
+
+        $grandTotal=$discountCamped+$discountCabana;
+
+        return $grandTotal;
+
+    }
+
     public function getTotalPrice($models,$discount=false) {
 
         $totalPrice=0;
@@ -1894,6 +1916,211 @@ class QuoteDetails extends CApplicationComponent{
         $mpdf->WriteHTML($stylesheet, 1);
         $mpdf->WriteHTML($this->render('_ajaxContent', array('table'=>$this->dailyReport())));
         $mpdf->Output('Reporte-Diario.pdf','D');
+    }
+
+
+    public function campedReport($date=null){
+
+        if($date==null){
+            $fecha1=date('Y-m-d');
+        }else{
+            $fecha1=$this->ToEnglishDateFromFormatdMyyyy($date);
+            $fecha1=date('Y-m-d',strtotime($fecha1));
+        }
+
+        $total=0;
+        $adultos=0;
+        $niños=0;
+        $mascotas=0;
+        $counter=0;
+        $grupo=null;
+        $subtotal=0;
+        $discount=0;
+
+        $connection=Yii::app()->db;
+
+        $sql="SELECT DISTINCT(customer_reservations.id) as customerReservationId,customer_reservations.see_discount,
+        reservation.*,customers.id as customerId,customers.first_name,customers.last_name,customers.country,customers.state
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        WHERE (reservation.service_type='TENT' or reservation.service_type='CAMPED' OR reservation.service_type='DAYPASS')
+        AND (reservation.statux='RESERVED' or reservation.statux='OCCUPIED' or reservation.statux='PRE-RESERVED')
+        AND reservation.checkin like :date1 order by customer_reservations.id";
+
+        $command=$connection->createCommand($sql);
+        $command->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
+        $dataReader=$command->queryAll();
+
+
+        $sql2="SELECT DISTINCT(customer_reservations.id) as customerReservationId,customer_reservations.see_discount,
+        reservation.*,customers.id as customerId,customers.first_name,customers.last_name,customers.country,customers.state
+        FROM customer_reservations
+        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
+        INNER JOIN customers on customer_reservations.customer_id=customers.id
+        WHERE (reservation.service_type='TENT' or reservation.service_type='CAMPED' OR reservation.service_type='DAYPASS')
+        AND (reservation.statux='RESERVED' or reservation.statux='OCCUPIED' or reservation.statux='PRE-RESERVED')
+        AND :date1 BETWEEN checkin AND checkout order by customer_reservations.id";
+
+        $command2=$connection->createCommand($sql2);
+        $command2->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
+        $dataReader2=$command2->queryAll();
+
+        $dataReader3=array_merge($dataReader,$dataReader2);
+
+
+        $tabledailyreport= $this->reportHeader($fecha1).'
+            <p style="text-align:right">
+                <span style="font-size:14px">
+                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO ACAMPADO Y ADMISIONES.</span></strong>
+                </span>
+            </p>
+            <table class="items table table-condensed table-striped">
+                 <tfoot>
+                    <tr><td colspan="10" rowspan="1">&nbsp;</td></tr>
+                    <tr><td colspan="10" rowspan="1">&nbsp;</td></tr>
+                </tfoot>
+            <tbody>
+        ';
+
+                foreach($dataReader3 as $item){
+
+                    $totalReservation=Reservation::model()->count(
+                        'customer_reservation_id=:customerReservationId',
+                        array('customerReservationId'=>$item['customerReservationId'])
+                    );
+
+                    $grupoant=$grupo;
+                    $grupo=$item['customerReservationId'];
+                    $pagosCliente=0;
+                    $saldo=0;
+
+                    $pricepets=$this->pricePets((int)$item['pets']);
+                    $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
+                    $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
+
+                    $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
+                    $command=Yii::app()->db->createCommand($sqlPayments);
+                    $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
+                    $payments=$command->queryAll();
+
+                    if($payments){
+                        foreach($payments as $pago){
+                            $pagosCliente=$pagosCliente+$pago['amount'];
+                        }
+                    }
+
+                    if($grupoant != $grupo){
+                        $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
+                    }
+
+                    $startDate=explode(" ",$item['checkin']);
+                    $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
+                    $horaEntrada=$startDate[1];
+
+                    $endDate=explode(" ",$item['checkout']);
+                    $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
+                    $horaSalida=$endDate[1];
+
+                    $acampado="";
+                    if($item['service_type']=='TENT') $acampado=" rentada";
+                    if($item['service_type']=='CAMPED') $acampado=" con sus propias casas";
+
+
+                    $tabledailyreport.='
+                            <tr>
+                                <td>
+                                    <p>Servicio: '.Yii::t('mx',$item['service_type']). " ".$acampado.'</p>
+                                    <p>Checkin: '.$horaEntrada.' '.$fechaEntrada.'</p>
+                                    <p>Checkout: '.$horaSalida.' '.$fechaSalida.'</p>
+                                    <p>Estatus: '.Yii::t('mx',$item['statux']).'</p>
+                                </td>
+                                <td>
+                                    <p>Id: '.$item['customerId'].'</p>
+                                    <p>Nombre: '.$item['first_name'].' '.$item['last_name'].'</p>
+                                    <p>Pais: '.$item['country'].'</p>
+                                    <p>Estado: '.$item['state'].'</p>
+                                </td>
+                                <td>
+                                    <p>Adultos: '.$item['adults'].'</p>
+                                    <p>Menores 10a: '.$item['children'].'</p>
+                                    <p>Mascotas:'.$item['pets'].'</p>
+                                </td>
+                                <td>
+                                    <p>Noches Tot: '.$item['nights'].'</p>
+                                    <p>Noches TA: '.$item['nigth_ta'].'</p>
+                                    <p>Noches TB: '.$item['nigth_tb'].'</p>
+                                </td>
+                                <td>
+                                    <p>Prec x noch TA: $'.number_format($item['price_ta'],2).'</p>
+                                    <p>Prec x noch TB: $'.number_format($item['price_tb'],2).'</p>
+                                    <p>Prec x noch Masc: $'.number_format($pricepets,2).'</p>
+                                </td>
+                                <td>
+                                    <p>Tot noch TA: $'.number_format($tot_noch_ta,2).'</p>
+                                    <p>Tot noch TB: $'.number_format($tot_noch_tb,2).'</p>
+                                </td>
+                                <td>
+                                    <p>Early check-in: $'.number_format($item['price_early_checkin'],2).'</p>
+                                    <p>Late check-out: $'.number_format($item['price_late_checkout'],2).'</p>
+                                </td>
+                            </tr>
+                            ';
+
+                    $counter++;
+
+
+                    if($counter<=$totalReservation){
+
+                        $subtotal=$subtotal+$item['price'];
+                        if($item['see_discount']==1) $discount=$discount+$this->getTotalDiscount($item['service_type'],$item['price'],$item['totalpax']);
+
+                    }
+
+                    if($counter == $totalReservation){
+
+                        $saldo=$subtotal-$discount-$pagosCliente;
+                        $total=$total+$saldo;
+
+                        $tabledailyreport.='
+                             <tr>
+                                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
+                                    <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
+                                    <p style="text-align:right"><strong>Anticipo: $'.number_format($pagosCliente,2).'</strong></p>
+                                    <p style="text-align:right"><strong>Descuento: $'.number_format($discount,2).'</strong></p>
+                                    <p style="text-align:right"><strong>Debe: $'.number_format($saldo,2).'</strong></p>
+                                </td>
+                            </tr>
+                        ';
+
+                        $counter=0;
+                        $subtotal=0;
+                        $discount=0;
+                    }
+
+                    $adultos=$adultos+$item['adults'];
+                    $niños=$niños+$item['children'];
+                    $mascotas=$mascotas+$item['pets'];
+
+                }
+
+                $tabledailyreport.='
+                        <tr style="background:#EEEEEE;">
+                            <td valign="middle" colspan="5" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
+                            <td>
+                                <p><strong>Adultos:</strong> '.$adultos.'</p>
+                                <p><strong>Ni&ntilde;os:</strong> '.$niños.'</p>
+                                <p><strong>Mascotas:</strong> '.$mascotas.'</p>
+                            </td>
+                            <td style="text-align: center;vertical-align:middle;">$'.number_format($total,2).'</td>
+                        </tr>
+                        ';
+
+                $tabledailyreport.='</tbody></table>';
+
+                return $tabledailyreport;
+
+
     }
 
 
@@ -3870,13 +4097,18 @@ class QuoteDetails extends CApplicationComponent{
     }
 
 
-    public function reportHeader(){
+    public function reportHeader($date=false){
 
+        if($date){
+            $fecha=$this->toSpanishDateTime(date("Y-M-d",strtotime($date)));
+        }else{
+            $fecha=$this->toSpanishDateTime(date("Y-M-d"));
+        }
         $header = '
             <table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family: serif; font-size: 9pt; color: #000088;">
                 <tr>
                     <td width="50%">'.CHtml::image(Yii::app()->theme->baseUrl.'/images/logo.jpg','',array('width'=>'100px','height'=>'50px')).'</td>
-                    <td width="50%" style="text-align: right;">'.$this->toSpanishDateTime(date("Y-M-d H:i")).'</td>
+                    <td width="50%" style="text-align: right;">'.$fecha.'</td>
                 </tr>
             </table>
             ';

@@ -31,7 +31,7 @@ class ReservationController extends Controller
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
-                                 'schedulerOverview_update'
+                                 'schedulerOverview_update','campedReport','getCampedReport'
                 ),
                 'users'=>array('@'),
             ),
@@ -502,7 +502,8 @@ class ReservationController extends Controller
         FROM customer_reservations
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
-        WHERE reservation.room_id=0 and (reservation.statux='CANCELLED' or reservation.statux='RESERVED' or reservation.statux='RESERVED-PENDING' or reservation.statux='PRE-RESERVED')";
+        WHERE (reservation.service_type='TENT' or reservation.service_type='CAMPED' OR reservation.service_type='DAYPASS')
+        AND (reservation.statux='CANCELLED' or reservation.statux='RESERVED' or reservation.statux='RESERVED-PENDING' or reservation.statux='PRE-RESERVED')";
 
         $scheduler->render_sql($sql, "id","checkin,checkout,first_name,service_type,statux,customerReservationId");
 
@@ -529,9 +530,39 @@ class ReservationController extends Controller
         FROM customer_reservations
         INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
         INNER JOIN customers on customer_reservations.customer_id=customers.id
-        WHERE reservation.room_id=0 and (".$conditions.")";
+        WHERE (reservation.service_type='TENT' or reservation.service_type='CAMPED' OR reservation.service_type='DAYPASS') and (".$conditions.")";
 
         $scheduler->render_sql($sql, "id","checkin,checkout,first_name,service_type,statux,customerReservationId");
+
+    }
+
+    public function actionCampedReport(){
+
+        $tabla=Yii::app()->quoteUtil->campedReport();
+
+        $this->render('campedReport',array('tabla'=>$tabla));
+    }
+
+    public function actionGetCampedReport(){
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            if(isset($_POST['date'])){
+
+                $date=$_POST['date'];
+
+                echo CJSON::encode(array(
+                    'report'=>Yii::app()->quoteUtil->campedReport($date)
+                ));
+
+            }else{
+                echo CJSON::encode(array(
+                    'report'=>'Seleccione una fecha'
+                ));
+            }
+
+            Yii::app()->end();
+        }
 
     }
 
