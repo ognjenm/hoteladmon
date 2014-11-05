@@ -19,7 +19,7 @@
                     )
                 ),*/
 
-                array(  'label' =>Yii::t('mx','Reservations'),
+                array('label' =>Yii::t('mx','Reservations'),
                     'url' => '#',
                     //'visible'=>Yii::app()->user->isSuperAdmin,
                     'items' => array(
@@ -30,6 +30,10 @@
                         array('label'=>Yii::t('mx','Reservations'), 'url'=>array('/reservation')),
                         array('label'=>Yii::t('mx','Holidays'), 'url'=>array('/holidays')),
                         array('label'=>Yii::t('mx','Expiration day pre booking'), 'url'=>array('/expirationdayPrebooking')),
+                        '--',
+                        array('label'=>Yii::t('mx','ACTIVITIES,PACKAGES,FOOD AND OTHERS'), 'url'=>'#'),
+                        array('label'=>Yii::t('mx','Groups'), 'url'=>array('/bdgtGroups')),
+                        array('label'=>Yii::t('mx','Concepts'), 'url'=>array('/bdgtConcepts')),
 
                     )
                 ),

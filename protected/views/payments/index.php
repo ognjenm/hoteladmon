@@ -1,11 +1,11 @@
     <?php
-$this->breadcrumbs=array(
+    $this->breadcrumbs=array(
         Yii::t('mx','Payments')=>array('index','id'=>$id),
         Yii::t('mx','Manage'),
     );
 
     $this->menu=array(
-        array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/reservation')),
+        array('label'=>Yii::t('mx','Back'),'icon'=>'icon-chevron-left','url'=>array('/reservation/view','id'=>$id)),
         //array('label'=>Yii::t('mx','Payment'),'icon'=>'icon-plus','url'=>'#',),
         //array('label'=>Yii::t('mx','Charges'),'icon'=>'icon-minus','url'=>array('/charges/create','id'=>$id)),
     );

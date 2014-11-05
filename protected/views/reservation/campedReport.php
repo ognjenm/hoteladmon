@@ -89,8 +89,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 
 ?>
 
-
-
 <?php $this->endWidget(); ?>
 
 <div id="maindiv">

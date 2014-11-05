@@ -1969,10 +1969,10 @@ class QuoteDetails extends CApplicationComponent{
         $dataReader3=array_merge($dataReader,$dataReader2);
 
 
-        $tabledailyreport= $this->reportHeader($fecha1).'
+        $tabledailyreport= $this->reportHeader($this->toSpanishDateDescription(date('Y-M-d',strtotime($fecha1)))).'
             <p style="text-align:right">
                 <span style="font-size:14px">
-                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO ACAMPADO Y ADMISIONES.</span></strong>
+                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO ACAMPADO Y ADMISIONES</span></strong>
                 </span>
             </p>
             <table class="items table table-condensed table-striped">
@@ -1982,6 +1982,8 @@ class QuoteDetails extends CApplicationComponent{
                 </tfoot>
             <tbody>
         ';
+
+            if($dataReader3){
 
                 foreach($dataReader3 as $item){
 
@@ -2115,11 +2117,21 @@ class QuoteDetails extends CApplicationComponent{
                             <td style="text-align: center;vertical-align:middle;">$'.number_format($total,2).'</td>
                         </tr>
                         ';
+            }else{
 
-                $tabledailyreport.='</tbody></table>';
+                $tabledailyreport.='
+                    <p style="text-align: center;">
+                        <span style="font-family:calibri;">
+                            <span style="color:#99CC00;">
+                                <span style="font-size:26px;">No hay reservaciones para este dia</span>
+                            </span>
+                        </span>
+                    </p>';
+            }
 
-                return $tabledailyreport;
+            $tabledailyreport.='</tbody></table>';
 
+            return $tabledailyreport;
 
     }
 
@@ -2179,10 +2191,10 @@ class QuoteDetails extends CApplicationComponent{
         $dataReader3=array_merge($dataReader,$dataReader2);
 
         //$connection->active=false;
-        $tabledailyreport='
+        $tabledailyreport=$this->reportHeader($this->toSpanishDateDescription(date('Y-M-d',strtotime($fecha1)))).'
             <p style="text-align:right">
                 <span style="font-size:14px">
-                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO:&nbsp;'.$fecha1.'</span></strong>
+                    <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO CABAÑAS</span></strong>
                 </span>
             </p>
             <table class="items table table-condensed table-striped">
@@ -2396,10 +2408,6 @@ class QuoteDetails extends CApplicationComponent{
 
         }
 
-
-
-
-
         $reservationTable='
         <div style="width:100%; height:500px; overflow: scroll;"  id="reservations-grid" class="grid-view">
             <table class="items table table-hover table-condensed table-bordered">
@@ -2518,8 +2526,6 @@ class QuoteDetails extends CApplicationComponent{
                     </td>
                     </tr>';
                 }
-
-
 
                 $counter=0;
                 $total=0;
@@ -4099,16 +4105,12 @@ class QuoteDetails extends CApplicationComponent{
 
     public function reportHeader($date=false){
 
-        if($date){
-            $fecha=$this->toSpanishDateTime(date("Y-M-d",strtotime($date)));
-        }else{
-            $fecha=$this->toSpanishDateTime(date("Y-M-d"));
-        }
+
         $header = '
             <table width="100%" style="border-bottom: 1px solid #000000; vertical-align: bottom; font-family: serif; font-size: 9pt; color: #000088;">
                 <tr>
                     <td width="50%">'.CHtml::image(Yii::app()->theme->baseUrl.'/images/logo.jpg','',array('width'=>'100px','height'=>'50px')).'</td>
-                    <td width="50%" style="text-align: right;">'.$fecha.'</td>
+                    <td width="50%" style="text-align: right;">'.$date.'</td>
                 </tr>
             </table>
             ';
