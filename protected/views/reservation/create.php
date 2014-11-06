@@ -59,7 +59,9 @@
         'validatedItems' => $validatedItems,
         'pollForm'=>$pollForm,
         'formSalesAgents'=>$formSalesAgents,
-        'formReservationChannel'=>$formReservationChannel
+        'formReservationChannel'=>$formReservationChannel,
+        'bdgtReservationForm'=>$bdgtReservationForm,
+        'bdgtReservation'=>$bdgtReservation
     )); ?>
 
 </div>

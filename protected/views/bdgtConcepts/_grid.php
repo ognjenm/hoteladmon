@@ -40,15 +40,19 @@
             'columns'=>array(
                 array(
                     'name'=>'bdgt_group_id',
-                    'value'=>'$data->bdgtGroup->group_name'
+                    'value'=>'$data->bdgtGroup->group_name',
+                    'filter'=>BdgtGroups::model()->listAll()
                 ),
                 'concept',
-                'price',
                 array(
                     'header'=>Yii::t('mx','Description'),
                     'value'=>'BdgtConcepts::popover($data->description)',
                     'type'=>'raw',
                     'htmlOptions'=>array('style'=>'width: 100px')
+                ),
+                array(
+                    'name'=>'price',
+                    'value'=>'"$".$data->price'
                 ),
                 array(
                     'class'=>'bootstrap.widgets.TbButtonColumn',

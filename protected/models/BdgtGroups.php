@@ -74,7 +74,6 @@ class BdgtGroups extends CActiveRecord
 	}
 
     public function listAll(){
-
         return CHtml::listData($this->model()->findAll(array('order'=>'group_name')),'id','group_name');
     }
 

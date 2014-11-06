@@ -122,6 +122,25 @@ class BdgtConcepts extends CActiveRecord
 
     }
 
+    public function listAll(){
+        return CHtml::listData($this->model()->findAll(array('order'=>'concept')),'id','concept');
+    }
+
+    public static function FindByGroup($groupId){
+
+        $list=array();
+
+        $options=BdgtConcepts::model()->findAll(array(
+            'condition'=>'bdgt_group_id=:groupId',
+            'params'=>array('groupId'=>$groupId)
+        ));
+
+        if($options) $list=CHtml::listData($options,'id','concept');
+
+        return $list;
+
+    }
+
     public function behaviors()
     {
         return array(

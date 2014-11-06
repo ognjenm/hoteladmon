@@ -32,6 +32,7 @@
                         array('label'=>Yii::t('mx','Expiration day pre booking'), 'url'=>array('/expirationdayPrebooking')),
                         '--',
                         array('label'=>Yii::t('mx','ACTIVITIES,PACKAGES,FOOD AND OTHERS'), 'url'=>'#'),
+                        '--',
                         array('label'=>Yii::t('mx','Groups'), 'url'=>array('/bdgtGroups')),
                         array('label'=>Yii::t('mx','Concepts'), 'url'=>array('/bdgtConcepts')),
 

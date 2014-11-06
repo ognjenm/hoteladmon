@@ -28,7 +28,7 @@ class BdgtConceptsController extends Controller
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view','delete'),
+				'actions'=>array('create','update','index','view','delete','getConcepts'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -37,10 +37,26 @@ class BdgtConceptsController extends Controller
 		);
 	}
 
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
+
+    public function actionGetConcepts(){
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            $groupId=(int)$_POST['groupId'];
+            $options=BdgtConcepts::FindByGroup($groupId);
+
+            if($options){
+                echo CHtml::tag('option', array('value'=>''),CHtml::encode(Yii::t('mx','Select')),true);
+                foreach ($options as $key => $value) echo CHtml::tag('option', array('value'=>$key),CHtml::encode($value),true);
+            }
+            else{
+                echo CHtml::tag('option', array('value'=>0),CHtml::encode(Yii::t('mx','Select')),true);
+            }
+
+            Yii::app()->end();
+        }
+    }
+
 	public function actionView($id)
 	{
 		$this->render('view',array(

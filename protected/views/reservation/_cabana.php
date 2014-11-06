@@ -2,9 +2,7 @@
 
     <div id="reserv" style="display:none;">
 
-        <?php
-
-        echo $reservationForm->renderBegin();
+        <?php echo $reservationForm->renderBegin();
 
             $formConfig=Reservation::model()->getForm();
             $this->widget('ext.multimodelform.MultiModelForm',array(
