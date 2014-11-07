@@ -61,7 +61,8 @@
         'formSalesAgents'=>$formSalesAgents,
         'formReservationChannel'=>$formReservationChannel,
         'bdgtReservationForm'=>$bdgtReservationForm,
-        'bdgtReservation'=>$bdgtReservation
+        'bdgtReservation'=>$bdgtReservation,
+        'customerReservationForm'=>$customerReservationForm
     )); ?>
 
 </div>

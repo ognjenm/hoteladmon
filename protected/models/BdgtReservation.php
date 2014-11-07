@@ -170,15 +170,16 @@ class BdgtReservation extends CActiveRecord
                     'label' => Yii::t('mx','Budget With Discount'),
                     'url'=>Yii::app()->createUrl('/bdgtReservation/budgetWithDiscount'),
                     'ajaxOptions' => array(
-                        'beforeSend' => 'function() {
-                            $("#maindiv").addClass("loading");
-                         }',
-                        'complete' => 'function() {
-                             $("#maindiv").removeClass("loading");
-                        }',
+                        'type'=>'POST',
+                        'dataType'=>'json',
+                        'beforeSend' => 'function() { $("#maindiv").addClass("loading"); }',
+                        'complete' => 'function() {   $("#maindiv").removeClass("loading"); }',
                         'success' =>'function(data){
-                                $("#detailsGrid").html(data);
-                                $("#actions").show();
+                                if(data.ok==true){
+                                    CKEDITOR.instances.ckeditorActivities.updateElement();
+                                    CKEDITOR.instances.ckeditorActivities.setData(data.budget);
+                                    $("#actionsActivities").show();
+                                }
                         }',
                     ),
                 ),
@@ -188,17 +189,17 @@ class BdgtReservation extends CActiveRecord
                     'icon'=>'icon-money',
                     'layoutType' => 'primary',
                     'label' => Yii::t('mx','Undiscounted Budget'),
-                    'url'=>Yii::app()->createUrl('/reservation/undiscountedBudget'),
+                    'url'=>Yii::app()->createUrl('/bdgtReservation/budgetWithDiscount'),
                     'ajaxOptions' => array(
-                        'beforeSend' => 'function() {
-                            $("#maindiv").addClass("loading");
-                         }',
-                        'complete' => 'function() {
-                             $("#maindiv").removeClass("loading");
-                        }',
+                        'type'=>'POST',
+                        'dataType'=>'json',
+                        'beforeSend' => 'function() { $("#maindiv").addClass("loading"); }',
+                        'complete' => 'function() {   $("#maindiv").removeClass("loading"); }',
                         'success' =>'function(data){
-                                $("#detailsGrid").html(data);
-                                $("#actions").show();
+                                if(data.ok==true){
+                                    $("#activitiesGrid").html(data.budget);
+                                    $("#actionsActivities").show();
+                                }
                         }',
                     ),
                 ),

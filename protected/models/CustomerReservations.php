@@ -1,57 +1,20 @@
 <?php
 
-/**
- * This is the model class for table "customer_reservations".
- *
- * The followings are the available columns in table 'customer_reservations':
- * @property integer $id
- * @property integer $customer_id
- * @property string $email
- * @property string $alternative_email
- * @property string $first_name
- * @property string $last_name
- * @property string $country
- * @property string $state
- * @property string $city
- * @property string $how_find_us
- * @property string $home_phone
- * @property string $work_phone
- * @property string $cell_phone
- * @property string $subtotal
- * @property string $cabana_discount
- * @property string $tent_discount
- * @property string $camped_discount
- * @property string $day_pass_discount
- * @property string $grand_total
- * @property integer $see_discount
- *
- * The followings are the available model relations:
- * @property Customers $customer
- * @property Reservation[] $reservations
- */
 class CustomerReservations extends CActiveRecord
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
-	 * @return CustomerReservations the static model class
-	 */
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
 
-	/**
-	 * @return string the associated database table name
-	 */
+
 	public function tableName()
 	{
 		return 'customer_reservations';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
+
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -64,9 +27,7 @@ class CustomerReservations extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
+
 	public function relations()
 	{
 		// NOTE: you may need to adjust the relation name and the related
@@ -77,9 +38,7 @@ class CustomerReservations extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
+
 	public function attributeLabels()
 	{
 		return array(
@@ -90,10 +49,6 @@ class CustomerReservations extends CActiveRecord
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
 	public function search()
 	{
 		// Warning: Please modify the following code to remove attributes that
@@ -125,6 +80,45 @@ class CustomerReservations extends CActiveRecord
             ),
         ));
     }
+
+    public function getForm(){
+
+        return array(
+
+            'elements'=>array(
+                "customer_id"=>array(
+                    'type'=>'select2',
+                    'data'=>Customers::model()->listFullname(),
+                    'prompt'=>Yii::t('mx','Select'),
+                ),
+            ),
+
+            'buttons' => array(
+
+                'search' => array(
+                    'type' => 'ajaxSubmit',
+                    'icon'=>'icon-search',
+                    'layoutType' => 'primary',
+                    'label' => Yii::t('mx','Search'),
+                    'url'=>Yii::app()->createUrl('/customerReservation/searchReservation'),
+                    'ajaxOptions' => array(
+                        'type'=>'POST',
+                        'dataType'=>'json',
+                        'beforeSend' => 'function() { $("#maindiv").addClass("loading"); }',
+                        'complete' => 'function() {   $("#maindiv").removeClass("loading"); }',
+                        'success' =>'function(data){
+                                if(data.ok==true){
+                                    CKEDITOR.instances.ckeditorActivities.updateElement();
+                                    CKEDITOR.instances.ckeditorActivities.setData(data.budget);
+                                    $("#actionsActivities").show();
+                                }
+                        }',
+                    ),
+                ),
+            )
+        );
+    }
+
 
     public function behaviors()
     {

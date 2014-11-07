@@ -20,6 +20,7 @@
                             'bdgtReservation'=>$bdgtReservation,
                             'validatedItems' => $validatedItems,
                             'model'=>$model,
+                            'customerReservationForm'=>$customerReservationForm
                         ),true)
             ),
     ),

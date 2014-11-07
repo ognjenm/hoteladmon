@@ -1918,6 +1918,61 @@ class QuoteDetails extends CApplicationComponent{
         $mpdf->Output('Reporte-Diario.pdf','D');
     }
 
+    public function tableActivities($model){
+
+        $total=0;
+        $discount=0;
+        $subtotal=0;
+
+        $table='
+            <table class="items table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th style="text-align: center;"><strong>Descripcion</strong></td>
+                    <th style="text-align: center;"><strong>Fecha</strong></td>
+                    <th style="text-align: center;"><strong># Personas</strong></td>
+                    <th style="text-align: center;"><strong>Precio por persona</strong></td>
+                    <th style="text-align: center;"><strong>Subtotal</strong></td>
+                </tr>
+		    </thead>
+            <tbody>
+        ';
+
+        foreach($model as $item){
+
+            $table.='
+                <tr>
+                    <td style="text-align: center;">'.$item["description"].'</td>
+                    <td style="text-align: center;">'.$item["date"].'</td>
+                    <td style="text-align: center;">'.$item["pax"].'</td>
+                    <td style="text-align: center;">$'.number_format($item["pricexpax"],2).'</td>
+                    <td style="text-align: center;">$'.number_format($item["subtotal"],2).'</td>
+                </tr>
+            ';
+
+            $subtotal=$subtotal+$item["subtotal"];
+        }
+
+        $total=$subtotal-$discount;
+
+        $table.='
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5" rowspan="1" style="text-align:right; vertical-align:middle">
+                    <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
+                    <p style="text-align:right"><strong>Descuento: $'.number_format($discount,2).'</strong></p>
+                    <p style="text-align:right"><strong>Total: $'.number_format($total,2).'</strong></p>
+                    </td>
+                </tr>
+            </tfoot
+            </table>
+        ';
+
+        return $table;
+
+    }
+
 
     public function campedReport($date=null){
 

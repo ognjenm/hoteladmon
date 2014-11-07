@@ -28,27 +28,57 @@ class BdgtReservationController extends Controller
 		);
 	}
 
+
+
 	public function actionBudgetWithDiscount(){
 
-        if (isset($_POST['BdgtReservation'])){
+        $res=array('ok'=>false);
 
-            $tope=count($_POST['BdgtReservation']['bdgt_group_id']);
-            $model=array();
+        if(Yii::app()->request->isAjaxRequest){
 
-            for($i=0;$i<$tope;$i++){
+            if (isset($_POST['BdgtReservation'])){
 
-                $data=array();
+                $tope=count($_POST['BdgtReservation']['bdgt_group_id']);
+                $model=array();
+                $tabla=array();
 
-                foreach ($_POST['BdgtReservation'] as $id=>$values){
-                    $anexo=array($id=>$values[$i]);
-                    $data=array_merge($data,$anexo);
+                for($i=0;$i<$tope;$i++){
+
+                    $data=array();
+
+                    foreach ($_POST['BdgtReservation'] as $id=>$values){
+                        $anexo=array($id=>$values[$i]);
+                        $data=array_merge($data,$anexo);
+                    }
+
+                    $model[]=$data;
                 }
 
-                $model[]=$data;
-            }
+                foreach($model as $item){
+
+                    $subtotal=BdgtConcepts::getSubtotal($item['bdgt_concept_id'],$item['pax']);
+                    $price=BdgtConcepts::getPricexPax($item['bdgt_concept_id']);
+                    $concept=BdgtConcepts::model()->findByPk((int)$item['bdgt_concept_id']);
+
+                    array_push($tabla,array(
+                        'description'=>$concept->description,
+                        'date'=>$item['fecha'],
+                        'pax'=>$item['pax'],
+                        'pricexpax'=>$price,
+                        'subtotal'=>$subtotal
+                    ));
+                }
+
+                $budget=Yii::app()->quoteUtil->tableActivities($tabla);
+
+                $res=array('ok'=>true,'budget'=>$budget);
 
         }
 
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
     }
 
 	public function actionView($id)

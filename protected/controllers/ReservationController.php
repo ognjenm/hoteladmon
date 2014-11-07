@@ -1186,6 +1186,7 @@ class ReservationController extends Controller
         $salesAgents=new SalesAgents;
         $reservationChannel= new ReservationChannel;
         $bdgtReservation=new BdgtReservation;
+        $customerReservation=new CustomerReservations;
         $model= new Customers;
         $poll= new Poll;
         $validatedItems = array();
@@ -1222,7 +1223,6 @@ class ReservationController extends Controller
             )
         );
 
-
         $CustomerForm = TbForm::createForm($model->getForm(),$model,
             array(
                 //'htmlOptions'=>array('class'=>'well'),
@@ -1245,6 +1245,18 @@ class ReservationController extends Controller
             )
         );
 
+        $customerReservationForm=TbForm::createForm($customerReservation->getForm(),$customerReservation,
+            array(
+                'type'=>'inline',
+                'enableClientValidation'=>true,
+                'clientOptions'=>array(
+                    'validateOnSubmit'=>true,
+                ),
+            )
+        );
+
+
+
         if(isset($_POST['CustomerReservations'])){
             $model->attributes=$_POST['CustomerReservations'];
             $masterValues = array ('customer_reservation_id'=>$model->id,'statux'=>1);
@@ -1266,7 +1278,8 @@ class ReservationController extends Controller
             'formSalesAgents'=>$formSalesAgents,
             'formReservationChannel'=>$formReservationChannel,
             'bdgtReservationForm'=>$bdgtReservationForm,
-            'bdgtReservation'=>$bdgtReservation
+            'bdgtReservation'=>$bdgtReservation,
+            'customerReservationForm'=>$customerReservationForm
         ));
     }
 

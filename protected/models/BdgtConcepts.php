@@ -126,6 +126,29 @@ class BdgtConcepts extends CActiveRecord
         return CHtml::listData($this->model()->findAll(array('order'=>'concept')),'id','concept');
     }
 
+
+    public static function getSubtotal($conceptId,$pax){
+
+        $price=0;
+        $concepts=BdgtConcepts::model()->findByPk($conceptId);
+
+        if($concepts){
+            $price=$concepts->price*$pax;
+        }
+
+        return $price;
+
+    }
+
+   public static function getPricexPax($conceptId){
+
+       $concept=BdgtConcepts::model()->findByPk($conceptId);
+
+       if($concept) return $concept->price;
+       else return 0;
+
+   }
+
     public static function FindByGroup($groupId){
 
         $list=array();
