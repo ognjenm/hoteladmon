@@ -30,19 +30,48 @@ class BdgtReservationController extends Controller
 
     public function actionSave(){
 
-        $customerReservationId=(int)$_POST['customerReservationId'];
         $activities=Yii::app()->getSession()->get('reservationActivities');
-        Yii::app()->getSession()->remove('reservationActivities');
+        $errors=array();
 
-        if($activities){
-            foreach($activities as $item){
-                $bdgtReservation=new BdgtReservation;
-                $bdgtReservation->attributes=$activities;
-                $bdgtReservation->customer_reservation_id=$customerReservationId;
-                $bdgtReservation->price=BdgtConcepts::getSubtotal($item['bdgt_concept_id'],$item['pax']);
-                $bdgtReservation->save();
+        if(Yii::app()->request->isAjaxRequest){
+
+            if (isset($_POST['customerReservationId'])){
+                $customerReservationId=(int)$_POST['customerReservationId'];
+
+                if(!empty($activities)){
+                    foreach($activities as $item){
+                        $bdgtReservation=new BdgtReservation;
+                        $bdgtReservation->bdgt_group_id=$item['bdgt_group_id'];
+                        $bdgtReservation->bdgt_concept_id=$item['bdgt_concept_id'];
+                        $bdgtReservation->customer_reservation_id=$customerReservationId;
+                        $bdgtReservation->fecha=$item['fecha'];
+                        $bdgtReservation->pax=$item['pax'];
+                        $bdgtReservation->price=BdgtConcepts::getSubtotal($item['bdgt_concept_id'],$item['pax']);
+
+                        if(!$bdgtReservation->save()){
+                            array_push($errors,$bdgtReservation->getErrors());
+                        }
+                    }
+
+                    if(!empty($errors)){
+                        $res=array('ok'=>false,'errors'=>$errors);
+                    }else{
+                        $res=array('ok'=>true,'url'=>'','activities'=>$activities);
+                        Yii::app()->getSession()->remove('reservationActivities');
+                    }
+                }else{
+                    $res=array('ok'=>false,'errors'=>'Por favor, click al botón de cotizar...');
+                }
             }
+
+
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
         }
+
+
 
     }
 

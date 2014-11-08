@@ -1395,6 +1395,7 @@ class ReservationController extends Controller
                 $reservationHistory->because=$_POST['because'];
                 $reservationHistory->user_id=Yii::app()->user->id;
                 $reservationHistory->customer_reservation_id=$_POST['Reservation']['u__'][0]['customer_reservation_id'];
+                $status=$_POST['Reservation']['u__'][0]['statux'];
                 $reservationHistory->save();
 
                 if(!empty($_POST['Reservation']['service_type'][0])) $tope=count($_POST['Reservation']['service_type']);
@@ -1417,7 +1418,7 @@ class ReservationController extends Controller
 
                $allExistingPk = isset($_POST['Reservation']['pk__']) ? $_POST['Reservation']['pk__'] : null;
 
-               if($attributes != null) $model[]=Yii::app()->quoteUtil->reservationAdd($attributes);
+               if($attributes != null) $model[]=Yii::app()->quoteUtil->reservationAdd($attributes,$status);
 
                foreach($_POST['Reservation']['u__'] as $idx => $attrs){
                    $model[]=Yii::app()->quoteUtil->reservationUpdate($attrs);

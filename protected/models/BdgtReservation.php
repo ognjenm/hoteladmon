@@ -142,7 +142,7 @@ class BdgtReservation extends CActiveRecord
                         'showAnim'=>'slide',
                         'changeYear' => true,
                         'changeMonth' => true,
-                        'dateFormat'=>Yii::app()->format->dateFormat,
+                        'dateFormat'=>'dd-M-yy',
                         'timeText'=> Yii::t('mx','Schedule'),
                         'hourText'=> Yii::t('mx','Hour'),
                         'minuteText'=>Yii::t('mx','Minute'),

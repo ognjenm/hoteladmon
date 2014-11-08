@@ -105,6 +105,19 @@ return array(
                         '_MPDF_TEMP_PATH' => Yii::getPathOfAlias('application.runtime'),
                     ),
                     'class'=>'mpdf',
+                    'defaultParams'     => array( // More info: http://mpdf1.com/manual/index.php?tid=184
+                        'mode'              => 'c', //  This parameter specifies the mode of the new document.
+                        'format'            => 'LETTER', // format A4, A5, ...
+                        'default_font_size' => 8, // Sets the default document font size in points (pt)
+                        'default_font'      => 'arial', // Sets the default font-family for the new document.
+                        'mgl'               => 10, // margin_left. Sets the page margins for the new document.
+                        'mgr'               => 10, // margin_right
+                        'mgt'               => 30, // margin_top
+                        'mgb'               => 20, // margin_bottom
+                        'mgh'               => 10, // margin_header
+                        'mgf'               => 10, // margin_footer
+                        'orientation'       => 'P', // landscape or portrait orientation
+                    )
 
                 ),
                 'HTML2PDF' => array(
