@@ -36,6 +36,7 @@ class Reservation extends CActiveRecord
     public $checkout_hour;
     public $first_name;
     public $roomName;
+    public $customerId;
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -121,13 +122,31 @@ class Reservation extends CActiveRecord
     }
 
 
-        /**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
+    public function search2(){
+
+        $criteria=new CDbCriteria;
+        $criteria->compare('checkin','>'.date('Y-m-d H:i'));
+        $criteria->compare('customerReservation.customer_id',$this->first_name);
+        $criteria->order = 'checkin ASC';
+        $criteria->group='customer_reservation_id';
+
+        $criteria->with = array(
+            'customerReservation' => array(
+                'joinType' => 'INNER JOIN',
+            ),
+        );
+
+        return new CActiveDataProvider($this, array(
+            'criteria'=>$criteria,
+        ));
+
+    }
+
+
 	public function search(){
 
 		$criteria=new CDbCriteria;
+
 
         $checkin= Yii::app()->quoteUtil->englishOnlyDate($this->checkin);
         $checkout= Yii::app()->quoteUtil->englishOnlyDate($this->checkout);

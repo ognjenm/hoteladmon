@@ -1225,7 +1225,6 @@ class ReservationController extends Controller
 
         $CustomerForm = TbForm::createForm($model->getForm(),$model,
             array(
-                //'htmlOptions'=>array('class'=>'well'),
                 'type'=>'vertical',
                 'enableClientValidation'=>true,
                 'focus'=>array($model,'email'),
@@ -1247,11 +1246,13 @@ class ReservationController extends Controller
 
         $customerReservationForm=TbForm::createForm($customerReservation->getForm(),$customerReservation,
             array(
+                'id'=>'customerReservationForm',
                 'type'=>'inline',
                 'enableClientValidation'=>true,
                 'clientOptions'=>array(
                     'validateOnSubmit'=>true,
                 ),
+                'htmlOptions'=>array('class'=>'well'),
             )
         );
 
@@ -1267,6 +1268,15 @@ class ReservationController extends Controller
             }
         }
 
+
+        $gridFindCustomerReservation=new Reservation('search2');
+        $gridFindCustomerReservation->unsetAttributes();
+
+        if(isset($_GET['CustomerReservations']))
+            $gridFindCustomerReservation->first_name=$_GET['CustomerReservations']['customer_id'];
+        else $gridFindCustomerReservation->first_name=0;
+
+
         $this->render('create',array(
             'form'=>$form,
             'CustomerForm'=>$CustomerForm,
@@ -1279,7 +1289,8 @@ class ReservationController extends Controller
             'formReservationChannel'=>$formReservationChannel,
             'bdgtReservationForm'=>$bdgtReservationForm,
             'bdgtReservation'=>$bdgtReservation,
-            'customerReservationForm'=>$customerReservationForm
+            'customerReservationForm'=>$customerReservationForm,
+            'gridFindCustomerReservation'=>$gridFindCustomerReservation
         ));
     }
 

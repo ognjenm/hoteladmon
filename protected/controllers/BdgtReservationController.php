@@ -19,7 +19,7 @@ class BdgtReservationController extends Controller
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view','delete','budgetWithDiscount'),
+				'actions'=>array('create','update','index','view','delete','budgetWithDiscount','save'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -27,6 +27,24 @@ class BdgtReservationController extends Controller
 			),
 		);
 	}
+
+    public function actionSave(){
+
+        $customerReservationId=(int)$_POST['customerReservationId'];
+        $activities=Yii::app()->getSession()->get('reservationActivities');
+        Yii::app()->getSession()->remove('reservationActivities');
+
+        if($activities){
+            foreach($activities as $item){
+                $bdgtReservation=new BdgtReservation;
+                $bdgtReservation->attributes=$activities;
+                $bdgtReservation->customer_reservation_id=$customerReservationId;
+                $bdgtReservation->price=BdgtConcepts::getSubtotal($item['bdgt_concept_id'],$item['pax']);
+                $bdgtReservation->save();
+            }
+        }
+
+    }
 
 
 
@@ -72,6 +90,8 @@ class BdgtReservationController extends Controller
                 $budget=Yii::app()->quoteUtil->tableActivities($tabla);
 
                 $res=array('ok'=>true,'budget'=>$budget);
+
+                Yii::app()->getSession()->add('reservationActivities',$model);
 
         }
 

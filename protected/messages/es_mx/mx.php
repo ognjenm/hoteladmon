@@ -777,7 +777,8 @@ return array(
     'Format Contracts'=>'Formato de contratos',
     'Cell Phone'=>'Teléfono Celular',
     'New Customer Information'=>'Información nueva de clientes',
-    'ACTIVITIES,PACKAGES,FOOD AND OTHERS'=>'ACTIVIDADES, PAQUETES, ALIMENTOS Y OTROS'
+    'ACTIVITIES,PACKAGES,FOOD AND OTHERS'=>'ACTIVIDADES, PAQUETES, ALIMENTOS Y OTROS',
+    'Budgets'=>'Cotizaciones'
 
 
 

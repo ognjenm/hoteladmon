@@ -43,7 +43,7 @@ class CustomerReservations extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'customer_id' => 'Customer',
+			'customer_id' => '',
 			'total' => 'Total',
 			'see_discount' => 'See Discount',
 		);
@@ -79,6 +79,7 @@ class CustomerReservations extends CActiveRecord
                 'pageSize'=>Yii::app()->params['pagination']
             ),
         ));
+
     }
 
     public function getForm(){
@@ -94,26 +95,12 @@ class CustomerReservations extends CActiveRecord
             ),
 
             'buttons' => array(
-
                 'search' => array(
-                    'type' => 'ajaxSubmit',
+                    'id'=>'buttonSearchCustomerReservation',
+                    'type' => 'submit',
                     'icon'=>'icon-search',
                     'layoutType' => 'primary',
                     'label' => Yii::t('mx','Search'),
-                    'url'=>Yii::app()->createUrl('/customerReservation/searchReservation'),
-                    'ajaxOptions' => array(
-                        'type'=>'POST',
-                        'dataType'=>'json',
-                        'beforeSend' => 'function() { $("#maindiv").addClass("loading"); }',
-                        'complete' => 'function() {   $("#maindiv").removeClass("loading"); }',
-                        'success' =>'function(data){
-                                if(data.ok==true){
-                                    CKEDITOR.instances.ckeditorActivities.updateElement();
-                                    CKEDITOR.instances.ckeditorActivities.setData(data.budget);
-                                    $("#actionsActivities").show();
-                                }
-                        }',
-                    ),
                 ),
             )
         );

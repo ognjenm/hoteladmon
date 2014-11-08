@@ -178,7 +178,7 @@ class BdgtReservation extends CActiveRecord
                                 if(data.ok==true){
                                     CKEDITOR.instances.ckeditorActivities.updateElement();
                                     CKEDITOR.instances.ckeditorActivities.setData(data.budget);
-                                    $("#actionsActivities").show();
+                                    $("#buttonUndiscountedBudget").attr("disabled",false);
                                 }
                         }',
                     ),

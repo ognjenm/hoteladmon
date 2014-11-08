@@ -30,8 +30,6 @@
                 'hideCopyTemplate'=>false,
                 'options'=>array('clearInputs'=>false),
                 'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['fecha']),
-                //'fieldsetWrapper' => array('tag' => 'div', 'htmlOptions' => array('class' => 'span3')),
-
             ));
 
         ?>
@@ -39,6 +37,18 @@
         <div class="form-actions">
             <?php echo $bdgtReservationForm->renderElement('budget'); ?>
             <?php echo $bdgtReservationForm->renderElement('undiscountedBudget'); ?>
+            <?php $this->widget('bootstrap.widgets.TbButton', array(
+                'id'=>'buttonUndiscountedBudget',
+                'label' => Yii::t('mx','Agregar a reservación'),
+                'type' => 'primary',
+                'buttonType'=>'button',
+                'icon'=>'icon-ok',
+                'htmlOptions' => array(
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalActivities',
+                ),
+            )); ?>
+
         </div>
 
     <?php echo $bdgtReservationForm->renderEnd();?>
@@ -52,38 +62,84 @@
         'editorOptions'=>array(
             'height'=>'400',
             //'contentsCss'=> Yii::app()->theme->baseUrl.'/css/ckeditor.css',
-            //'stylesSet'=> '[]'
         ),
 
     ) );
 
     ?>
 
-    <div style="display: none;" id="actionsActivities">
-
-        <?php $this->widget('bootstrap.widgets.TbButton', array(
-            'label' => Yii::t('mx','Agregar a hospedaje'),
-            'type' => 'primary',
-            'icon'=>'icon-ok',
-            'htmlOptions' => array(
-                'data-toggle' => 'modal',
-                'data-target' => '#modalActivities',
-            ),
-        )); ?>
-
-    </div>
-
-
     <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id' => 'modalActivities')); ?>
         <div class="modal-header">
             <a class="close" data-dismiss="modal">
                 <?php echo CHtml::image(Yii::app()->theme->baseUrl.'/images/close_green.png'); ?>
             </a>
-            <h4><i class="icon-user"></i> <?php echo Yii::t('mx','Activities'); ?></h4>
+            <h4><i class="icon-building"></i> <?php echo Yii::t('mx','Reservations'); ?></h4>
         </div>
+        <div id="loadingevent">
+            <div class="modal-body">
+            <?php echo $customerReservationForm->render(); ?>
 
-        <div class="modal-body"><?php echo $customerReservationForm->render(); ?></div>
+            <?php $provider = $gridFindCustomerReservation->search2(); ?>
 
+            <?php $this->widget('bootstrap.widgets.TbGridView',array(
+                'id'=>'customerReservationsFilter',
+                'type' => 'hover condensed',
+                'emptyText' => Yii::t('mx','There are no data to display'),
+                'showTableOnEmpty' => false,
+                'summaryText' => '<strong>'.Yii::t('mx','Budgets').': {count}</strong>',
+                'template' => '{items}{pager}',
+                'responsiveTable' => true,
+                'enablePagination'=>true,
+                'dataProvider'=>$provider,
+                'pager' => array(
+                    'class' => 'bootstrap.widgets.TbPager',
+                    'displayFirstAndLast' => true,
+                ),
+                'columns'=>array(
+                    array(
+                        'id'=>'chk',
+                        'class'=>'CCheckBoxColumn',
+                    ),
+                    array(
+                        'name'=>'Reservación Id',
+                        'value'=>'$data->customer_reservation_id'
+                    ),
+                    'checkin',
+                    'checkout',
+                    array(
+                        'class'=>'bootstrap.widgets.TbButtonColumn',
+                        'deleteConfirmation' =>Yii::t('mx','Do you really want to delete this item?'),
+                        'headerHtmlOptions' => array('style' => 'width:150px;text-align:center;'),
+                        'template'=>'',
+                    ),
+                ),
+            ));
+            ?>
+
+            <div class="modal-footer">
+                <?php $this->widget('bootstrap.widgets.TbButton', array(
+                    'id'=>'saveActivities',
+                    'buttonType'=>'ajaxButton',
+                    'label' => Yii::t('mx','ok'),
+                    'url' => '#',
+                    'icon'=>'icon-ok',
+                    'url'=>$this->createUrl('/bdgtReservation/save'),
+                    'ajaxOptions'=>array(
+                        'type'=>'POST',
+                        'dataType'=>'json',
+                        'data'=> "js:{customerReservationId:$.fn.yiiGridView.getChecked('customerReservationsFilter','chk').toString()}",
+                        'beforeSend'=> 'function() { $("#loadingevent").addClass("loading"); }',
+                        'complete' => 'function() { $("#loadingevent").removeClass("loading"); }',
+                        'success'=>"function(data){
+
+                        }",
+                    ),
+
+                )); ?>
+            </div>
+
+        </div>
+        </div>
         <div class="modal-footer">
             <?php $this->widget('bootstrap.widgets.TbButton', array(
                 'label' => Yii::t('mx','Cancel'),
@@ -92,3 +148,4 @@
             )); ?>
         </div>
     <?php $this->endWidget(); ?>
+

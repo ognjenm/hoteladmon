@@ -15,12 +15,13 @@
                 'formReservationChannel'=>$formReservationChannel
             ),true), 'active'=>true),
 
-            array(  'label'=>Yii::t('mx','ACTIVITIES,PACKAGES,FOOD AND OTHERS'),'content'=>$this->renderPartial("_groupsAndEvents",array(
+            array('label'=>Yii::t('mx','ACTIVITIES,PACKAGES,FOOD AND OTHERS'),'content'=>$this->renderPartial("_groupsAndEvents",array(
                             'bdgtReservationForm'=>$bdgtReservationForm,
                             'bdgtReservation'=>$bdgtReservation,
                             'validatedItems' => $validatedItems,
                             'model'=>$model,
-                            'customerReservationForm'=>$customerReservationForm
+                            'customerReservationForm'=>$customerReservationForm,
+                            'gridFindCustomerReservation'=>$gridFindCustomerReservation
                         ),true)
             ),
     ),

@@ -62,7 +62,6 @@ Yii::app()->clientScript->registerScript('search', "
 
     $('.filters').hide();
 
-
 ");
 
 ?>

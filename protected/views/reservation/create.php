@@ -29,6 +29,7 @@
 
     Yii::app()->clientScript->registerScript('search', "
 
+
         $('#search-button').click(function(){
             $('.daypass').toggle();
             //$('#ReservationCamped_checkin').val('')
@@ -43,7 +44,22 @@
          var startDateTextBox = $('#Reservation_checkin');
          var endDateTextBox = $('#Reservation_checkout');
 
+
+            $('#customerReservationForm').submit(function(){
+
+                $('#customerReservationsFilter').yiiGridView('update', {
+                    data: $(this).serialize()
+                });
+
+                return false;
+
+            });
+
+            $('#buttonUndiscountedBudget').attr('disabled', true);
+
     ");
+
+
 
 
 ?>
@@ -62,7 +78,8 @@
         'formReservationChannel'=>$formReservationChannel,
         'bdgtReservationForm'=>$bdgtReservationForm,
         'bdgtReservation'=>$bdgtReservation,
-        'customerReservationForm'=>$customerReservationForm
+        'customerReservationForm'=>$customerReservationForm,
+        'gridFindCustomerReservation'=>$gridFindCustomerReservation
     )); ?>
 
 </div>
