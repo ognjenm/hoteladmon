@@ -31,12 +31,11 @@ class BdgtReservation extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('bdgt_group_id, bdgt_concept_id, customer_reservation_id', 'required'),
+			array('bdgt_group_id, bdgt_concept_id, customer_reservation_id,fecha,pax', 'required'),
 			array('bdgt_group_id, bdgt_concept_id, customer_reservation_id, pax', 'numerical', 'integerOnly'=>true),
 			array('price', 'length', 'max'=>10),
 			array('fecha, hora', 'safe'),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
+
 			array('id, bdgt_group_id, bdgt_concept_id, customer_reservation_id, fecha, hora, pax, price', 'safe', 'on'=>'search'),
 		);
 	}
@@ -52,35 +51,22 @@ class BdgtReservation extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
+
 	public function attributeLabels()
 	{
 		return array(
 			'id' => 'ID',
-			'bdgt_group_id' => 'Group',
-			'bdgt_concept_id' => 'Concept',
-			'customer_reservation_id' => 'Customer',
-			'fecha' => 'Date',
-			'hora' => 'Time',
-			'pax' => 'Pax',
-			'price' => 'Price',
+			'bdgt_group_id' => Yii::t('mx','Group'),
+			'bdgt_concept_id' => Yii::t('mx','Concept'),
+			'customer_reservation_id' => Yii::t('mx','Customer'),
+			'fecha' => Yii::t('mx','Date'),
+			'hora' => Yii::t('mx','Time'),
+			'pax' => Yii::t('mx','Pax'),
+			'price' => Yii::t('mx','Price'),
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
+
 	public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
@@ -100,6 +86,19 @@ class BdgtReservation extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    public static function getAmount($customerReservationId){
+
+        $grandTotal=Yii::app()->db->createCommand()
+            ->select("sum(price) as total")
+            ->from('bdgt_reservation')
+            ->where('customer_reservation_id=:customerReservationId',array(':customerReservationId'=>$customerReservationId))
+            ->group('customer_reservation_id')
+            ->queryRow();
+
+        return $grandTotal['total'];
+
+    }
 
     public function getForm(){
 
@@ -197,8 +196,9 @@ class BdgtReservation extends CActiveRecord
                         'complete' => 'function() {   $("#maindiv").removeClass("loading"); }',
                         'success' =>'function(data){
                                 if(data.ok==true){
-                                    $("#activitiesGrid").html(data.budget);
-                                    $("#actionsActivities").show();
+                                    CKEDITOR.instances.ckeditorActivities.updateElement();
+                                    CKEDITOR.instances.ckeditorActivities.setData(data.budget);
+                                    $("#buttonUndiscountedBudget").attr("disabled",false);
                                 }
                         }',
                     ),

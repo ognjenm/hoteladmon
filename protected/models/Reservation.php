@@ -125,7 +125,7 @@ class Reservation extends CActiveRecord
     public function search2(){
 
         $criteria=new CDbCriteria;
-        $criteria->compare('checkin','>'.date('Y-m-d H:i'));
+        $criteria->compare('checkin','>'.date('Y-m-d'));
         $criteria->compare('customerReservation.customer_id',$this->first_name);
         $criteria->order = 'checkin ASC';
         $criteria->group='customer_reservation_id';

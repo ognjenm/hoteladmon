@@ -35,8 +35,9 @@
         ?>
 
         <div class="form-actions">
-            <?php echo $bdgtReservationForm->renderElement('budget'); ?>
             <?php echo $bdgtReservationForm->renderElement('undiscountedBudget'); ?>
+            <?php //echo $bdgtReservationForm->renderElement('budget'); ?>
+
             <?php $this->widget('bootstrap.widgets.TbButton', array(
                 'id'=>'buttonUndiscountedBudget',
                 'label' => Yii::t('mx','Agregar a reservación'),
@@ -101,7 +102,7 @@
                         'class'=>'CCheckBoxColumn',
                     ),
                     array(
-                        'name'=>'Reservación Id',
+                        'name'=>'Id',
                         'value'=>'$data->customer_reservation_id'
                     ),
                     'checkin',

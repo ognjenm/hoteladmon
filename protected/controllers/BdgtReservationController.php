@@ -36,27 +36,68 @@ class BdgtReservationController extends Controller
         if(Yii::app()->request->isAjaxRequest){
 
             if (isset($_POST['customerReservationId'])){
-                $customerReservationId=(int)$_POST['customerReservationId'];
+                $ReservationId=(int)$_POST['customerReservationId'];
+
+                $reservation = Yii::app()->db->createCommand()
+                    ->select("DISTINCT(reservation.customer_reservation_id),customer_reservations.customer_id")
+                    ->from('reservation')
+                    ->join('customer_reservations','reservation.customer_reservation_id=customer_reservations.id')
+                    ->where('reservation.id=:reservationId',array(':reservationId'=>$ReservationId))
+                    ->queryRow();
+
+                $customerReservationId=$reservation['customer_reservation_id'];
+                $customerId=$reservation['customer_id'];
 
                 if(!empty($activities)){
                     foreach($activities as $item){
                         $bdgtReservation=new BdgtReservation;
                         $bdgtReservation->bdgt_group_id=$item['bdgt_group_id'];
+
                         $bdgtReservation->bdgt_concept_id=$item['bdgt_concept_id'];
                         $bdgtReservation->customer_reservation_id=$customerReservationId;
-                        $bdgtReservation->fecha=$item['fecha'];
                         $bdgtReservation->pax=$item['pax'];
                         $bdgtReservation->price=BdgtConcepts::getSubtotal($item['bdgt_concept_id'],$item['pax']);
+
+                        $fecha=substr($item['fecha'],0,11);
+                        $hora=substr($item['fecha'],12,5);
+
+                        $fecha=Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($fecha);
+                        $dateTime=$fecha." ".$hora;
+
+                        $bdgtReservation->fecha=date('Y-m-d H:i',strtotime($dateTime));
 
                         if(!$bdgtReservation->save()){
                             array_push($errors,$bdgtReservation->getErrors());
                         }
                     }
 
+                    if(empty($errors)){
+
+                        $grandTotal=BdgtReservation::getAmount($customerReservationId);
+                        $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
+
+                        $totalReservation=$customerReservation->total;
+                        $totalActivities=$grandTotal;
+                        $customerReservation->total=$totalReservation+$totalActivities;
+                        $customerReservation->save();
+
+                        $charges=new Charges;
+                        $charges->customer_reservation_id=$customerReservationId;
+                        $charges->concept_id=2;
+                        $charges->description='Actividades';
+                        $charges->amount=$grandTotal;
+                        $charges->datex=$fecha;
+                        $charges->user_id=Yii::app()->user->id;
+                        $charges->guest_name='Cargo Automatico';
+                        $charges->save();
+
+                    }
+
+
                     if(!empty($errors)){
                         $res=array('ok'=>false,'errors'=>$errors);
                     }else{
-                        $res=array('ok'=>true,'url'=>'','activities'=>$activities);
+                        $res=array('ok'=>true,'url'=>$this->createUrl('/reservation/view',array('id'=>$customerReservationId)));
                         Yii::app()->getSession()->remove('reservationActivities');
                     }
                 }else{

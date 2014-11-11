@@ -778,7 +778,8 @@ return array(
     'Cell Phone'=>'Teléfono Celular',
     'New Customer Information'=>'Información nueva de clientes',
     'ACTIVITIES,PACKAGES,FOOD AND OTHERS'=>'ACTIVIDADES, PAQUETES, ALIMENTOS Y OTROS',
-    'Budgets'=>'Cotizaciones'
+    'Budgets'=>'Cotizaciones',
+    'Activities,Packages,Food,And Others'=>'Actividades,Paquetes,Comidas, y Otros'
 
 
 

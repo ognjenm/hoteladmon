@@ -15,7 +15,7 @@
                 'formReservationChannel'=>$formReservationChannel
             ),true), 'active'=>true),
 
-            array('label'=>Yii::t('mx','ACTIVITIES,PACKAGES,FOOD AND OTHERS'),'content'=>$this->renderPartial("_groupsAndEvents",array(
+            array('label'=>Yii::t('mx','Activities,Packages,Food,And Others'),'content'=>$this->renderPartial("_groupsAndEvents",array(
                             'bdgtReservationForm'=>$bdgtReservationForm,
                             'bdgtReservation'=>$bdgtReservation,
                             'validatedItems' => $validatedItems,

@@ -84,17 +84,26 @@ class PollController extends Controller
             $charges->description=$description;
             $charges->amount=$customerReservation->total;
             $charges->datex=date('Y-M-d');
-            $charges->save();
-
+            $charges->user_id=Yii::app()->user->id;
+            $charges->guest_name='Cargo Automatico';
 
             if(isset($_POST['Poll'])){
                 $model->attributes=$_POST['Poll'];
                 $model->customer_reservation_id=$CustomerReservationId;
-                if($model->save()){
+                if($model->save() and $charges->save()){
                     $res=array('ok'=>true,
                         'redirect'=>Yii::app()->createUrl('reservation/view',array('id'=>$CustomerReservationId))
                     );
                     Yii::app()->getSession()->remove('CustomerReservation');
+                }else{
+                    $errorPool=$model->getErrors();
+                    $errorCharges=$charges->getErrors();
+                    $errors=array_merge($errorCharges,$errorPool);
+
+                    $res=array('ok'=>false,
+                        'error'=>$errors
+                    );
+
                 }
             }
 
