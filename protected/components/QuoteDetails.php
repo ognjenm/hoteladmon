@@ -2897,10 +2897,10 @@ class QuoteDetails extends CApplicationComponent{
         //si es envio de cuenta
         if($emailformatId==1){
 
-            $totalAPagar=($totalCotizacion*(int)$settings->early_payment)/100;
+            $totalAPagar=($amountTotal*(int)$settings->early_payment)/100;
             $totalAPagar=number_format($totalAPagar,2);
 
-            $balance=($totalCotizacion*$pagoRestantePorciento)/100;
+            $balance=($amountTotal*$pagoRestantePorciento)/100;
             $balance=number_format($balance,2);
 
             $replace=array(
@@ -2927,7 +2927,7 @@ class QuoteDetails extends CApplicationComponent{
             }
 
             $totalPagado=$payment;
-            $balance=$totalCotizacion-$totalPagado;
+            $balance=$amountTotal-$totalPagado;
             $balance=number_format($balance,2);
 
             $replace=array(
