@@ -132,7 +132,10 @@
                         'beforeSend'=> 'function() { $("#loadingevent").addClass("loading"); }',
                         'complete' => 'function() { $("#loadingevent").removeClass("loading"); }',
                         'success'=>"function(data){
-
+                                var request=data.ok;
+                                if(request==true){
+                                    document.location.href=data.redirect;
+                                }
                         }",
                     ),
 

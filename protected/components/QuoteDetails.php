@@ -578,39 +578,39 @@ class QuoteDetails extends CApplicationComponent{
 
 
         $tableCananaAndTent='
-            <table class="items table table-hover table-condensed table-bordered">
-            <thead>
-                <tr>
-                    '.$tableStatus.'
-                    <th>'.Yii::t('mx','Room Type').'</th>
-                    <th>'.Yii::t('mx','Check In').'</th>
-                    <th>'.Yii::t('mx','Check In Time').'</th>
-                    <th>'.Yii::t('mx','Check Out').'</th>
-                    <th>'.Yii::t('mx','Check Out Time').'</th>
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+                <thead>
+                    <tr>
+                        '.$tableStatus.'
+                        <th>'.Yii::t('mx','Room Type').'</th>
+                        <th>'.Yii::t('mx','Check In').'</th>
+                        <th>'.Yii::t('mx','Check In Time').'</th>
+                        <th>'.Yii::t('mx','Check Out').'</th>
+                        <th>'.Yii::t('mx','Check Out Time').'</th>
 
-                    <th>'.Yii::t('mx','Adults').'</th>
-                    <th>'.Yii::t('mx','Children').'</th>
-                    <th>'.Yii::t('mx','Pets').'</th>
+                        <th>'.Yii::t('mx','Adults').'</th>
+                        <th>'.Yii::t('mx','Children').'</th>
+                        <th>'.Yii::t('mx','Pets').'</th>
 
-                    <th># '.Yii::t('mx','Nights').'</th>
-                    <th># '.Yii::t('mx','Nights').' Ta</th>
-                    <th># '.Yii::t('mx','Nights').' Tb</th>
+                        <th># '.Yii::t('mx','Nights').'</th>
+                        <th># '.Yii::t('mx','Nights').' Ta</th>
+                        <th># '.Yii::t('mx','Nights').' Tb</th>
 
-                    <th>'.Yii::t('mx','Price x Night').' Ta</th>
-                    <th>'.Yii::t('mx','Price x Night').' Tb</th>
-                    <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+                        <th>'.Yii::t('mx','Price x Night').' Ta</th>
+                        <th>'.Yii::t('mx','Price x Night').' Tb</th>
+                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
 
-                    <th>'.Yii::t('mx','Price Early Check In').'</th>
-                    <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                    <th>'.Yii::t('mx','Price').'</th>
-                </tr>
-            <thead>
+                        <th>'.Yii::t('mx','Price Early Check In').'</th>
+                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                        <th>'.Yii::t('mx','Price').'</th>
+                    </tr>
+                </thead>
             <tbody>
-                <tr>
+
         ';
 
         $tableCamped='
-            <table class="items table table-hover table-condensed table-bordered">
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
             <thead>
                 <tr>
                     '.$tableStatus.'
@@ -639,40 +639,38 @@ class QuoteDetails extends CApplicationComponent{
                     <th>'.Yii::t('mx','Price Late Check Out').'</th>
                     <th>'.Yii::t('mx','Price').'</th>
                 </tr>
-            <thead>
+            </thead>
             <tbody>
-                <tr>
         ';
 
         $tableDayPasss='
-            <table class="items table table-hover table-condensed table-bordered">
-            <thead>
-                <tr>
-                    '.$tableStatus.'
-                    <th>'.Yii::t('mx','Room Type').'</th>
-                    <th>'.Yii::t('mx','Check In').'</th>
-                    <th>'.Yii::t('mx','Check In Time').'</th>
-                    <th>'.Yii::t('mx','Check Out').'</th>
-                    <th>'.Yii::t('mx','Check Out Time').'</th>
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+                <thead>
+                    <tr>
+                        '.$tableStatus.'
+                        <th>'.Yii::t('mx','Room Type').'</th>
+                        <th>'.Yii::t('mx','Check In').'</th>
+                        <th>'.Yii::t('mx','Check In Time').'</th>
+                        <th>'.Yii::t('mx','Check Out').'</th>
+                        <th>'.Yii::t('mx','Check Out Time').'</th>
 
-                    <th>'.Yii::t('mx','Adults').'</th>
-                    <th>'.Yii::t('mx','Children').'</th>
-                    <th>'.Yii::t('mx','Pets').'</th>
+                        <th>'.Yii::t('mx','Adults').'</th>
+                        <th>'.Yii::t('mx','Children').'</th>
+                        <th>'.Yii::t('mx','Pets').'</th>
 
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Ta</th>
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Ta</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Ta</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Ta</th>
 
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Tb</th>
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Tb</th>
-                    <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Tb</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Tb</th>
+                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
 
-                    <th>'.Yii::t('mx','Price Early Check In').'</th>
-                    <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                    <th>'.Yii::t('mx','Price').'</th>
-                </tr>
-            <thead>
+                        <th>'.Yii::t('mx','Price Early Check In').'</th>
+                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                        <th>'.Yii::t('mx','Price').'</th>
+                    </tr>
+                </thead>
             <tbody>
-                <tr>
         ';
 
         foreach($models as $i):
@@ -1925,7 +1923,7 @@ class QuoteDetails extends CApplicationComponent{
         $subtotal=0;
 
         $table='
-            <table class="items table table-condensed table-striped">
+            <table class="items table table-condensed table-striped" style="width: 100%;">
             <thead>
                 <tr>
                     <th style="text-align: center;"><strong>Descripcion</strong></td>
@@ -1956,16 +1954,16 @@ class QuoteDetails extends CApplicationComponent{
         $total=$subtotal-$discount;
 
         $table.='
-            </tbody>
+        </tbody>
             <tfoot>
                 <tr>
                     <td colspan="5" rowspan="1" style="text-align:right; vertical-align:middle">
-                    <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
-                    <p style="text-align:right"><strong>Descuento: $'.number_format($discount,2).'</strong></p>
-                    <p style="text-align:right"><strong>Total: $'.number_format($total,2).'</strong></p>
+                        <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
+                        <p style="text-align:right"><strong>Descuento: $'.number_format($discount,2).'</strong></p>
+                        <p style="text-align:right"><strong>Total: $'.number_format($total,2).'</strong></p>
                     </td>
                 </tr>
-            </tfoot
+            </tfoot>
             </table>
         ';
 
@@ -2751,6 +2749,11 @@ class QuoteDetails extends CApplicationComponent{
             'params'=>array(':customerReservationId'=>$customerReservationId)
         ));
 
+        $activitiesRows=BdgtReservation::model()->findAll(array(
+                'condition'=>'customer_reservation_id=:customerReservationId',
+                'params'=>array('customerReservationId'=>$customerReservation->id)
+        ));
+
         $payment=0;
         $totalCotizacion=0;
         $emailformatId=(int)$format;
@@ -2809,6 +2812,62 @@ class QuoteDetails extends CApplicationComponent{
             $tabla=Yii::app()->quoteUtil->getCotizacionNoDiscount($models);
             $totalCotizacion=Yii::app()->quoteUtil->getTotalPrice($models,false);
         }
+
+
+        if($activitiesRows){
+
+            $dataActivities=array();
+            $amountActivities=0;
+
+            foreach($activitiesRows as $itemActivity){
+
+                $concept=BdgtConcepts::model()->findByPk((int)$itemActivity['bdgt_concept_id']);
+                $price=BdgtConcepts::getPricexPax($itemActivity['bdgt_concept_id']);
+
+                array_push($dataActivities,array(
+                    'description'=>$concept->description,
+                    'date'=>$itemActivity['fecha'],
+                    'pax'=>$itemActivity['pax'],
+                    'pricexpax'=>$price,
+                    'subtotal'=>$itemActivity['price']
+                ));
+                $amountActivities+=$itemActivity['price'];
+            }
+
+            $activities=Yii::app()->quoteUtil->tableActivities($dataActivities);
+            $tabla.="<br><br><br><br><br>";
+            $tabla.=$activities;
+            $amountTotal=$totalCotizacion+$amountActivities;
+
+            $grandTotal='
+                <table class="items table table-condensed table-striped" align="right"  style="width: 500px;">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;"><strong>Total Reservacion:</strong></td>
+                            <td style="text-align: right;"><strong>$'.number_format($totalCotizacion,2).'</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Total Actividades:</strong></td>
+                            <td style="text-align: right;"><strong><strong style="text-align: right;">$'.number_format($amountActivities,2).'</strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;">
+                            <h3><strong>Total:</strong></h3>
+                            </td>
+                            <td style="text-align: right;">
+                            <h3><strong>$'.number_format($amountTotal,2).'</strong></h3>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            ';
+
+            $tabla.=$grandTotal;
+        }
+
+
+        $tabla.="<br><br><br><br><br>";
+
 
         $userId=(int)Yii::app()->user->id;
 

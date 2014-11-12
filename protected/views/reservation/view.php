@@ -293,6 +293,28 @@
 </div>
 
 
+
+<?php
+
+    if($activities){
+
+        $this->beginWidget('bootstrap.widgets.TbBox', array(
+            'title' => Yii::t('mx', 'Activities'),
+            'headerIcon' => 'icon-user',
+            'htmlOptions' => array('class'=>'bootstrap-widget-table'),
+            'htmlContentOptions'=>array('class'=>'box-content nopadding'),
+        ));
+
+        echo $activities;
+
+        $this->endWidget();
+    }
+
+
+?>
+
+
+
 <!-- Formulario para envio de formatos !-->
 
 

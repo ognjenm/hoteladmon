@@ -177,7 +177,7 @@ class Payments extends CActiveRecord
 
                                 $("#payments-grid").yiiGridView("update", {
                                         data: $(this).serialize()
-                                 });
+                                });
                             }
                         }',
                     ),

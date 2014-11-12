@@ -218,6 +218,7 @@ class ReservationController extends Controller
         $customerReservation=CustomerReservations::model()->findByPk($id);
         $customer=Customers::model()->findByPk($customerReservation->customer_id);
 
+
        $format=Yii::app()->quoteUtil->EmailFormats($id,$requestFormat,$response,$bankId);
 
         $this->render('accountNumber',array(
@@ -255,6 +256,12 @@ class ReservationController extends Controller
             'where' => 'customer_reservation_id=:id',
             'params' => array(':id'=>$id),
         ))->queryAll();
+
+        $activitiesRows=BdgtReservation::model()->findAll(array(
+            'condition'=>'customer_reservation_id=:customerReservationId',
+            'params'=>array('customerReservationId'=>$id)
+        ));
+
 
         foreach($formats as $item){
 
@@ -299,6 +306,8 @@ class ReservationController extends Controller
 
            $reservations=Reservation::model()->findAll($criteriaReserv);
 
+
+
            if($reservations){
                foreach($reservations as $item):
 
@@ -339,8 +348,70 @@ class ReservationController extends Controller
                endforeach;
            }
 
-           if($customerReservation->see_discount==true) $budget_table=Yii::app()->quoteUtil->getTableCotizacion($models);
-           if($customerReservation->see_discount==false) $budget_table=Yii::app()->quoteUtil->getCotizacionNoDiscount($models);
+           if($customerReservation->see_discount==true){
+               $budget_table=Yii::app()->quoteUtil->getTableCotizacion($models);
+               $amountReservations=Yii::app()->quoteUtil->getTotalPrice($models,true);
+           }
+           if($customerReservation->see_discount==false){
+               $budget_table=Yii::app()->quoteUtil->getCotizacionNoDiscount($models);
+               $amountReservations=Yii::app()->quoteUtil->getTotalPrice($models,false);
+           }
+
+
+            if($activitiesRows){
+
+                $dataActivities=array();
+                $amountActivities=0;
+
+                foreach($activitiesRows as $itemActivity){
+
+                    $concept=BdgtConcepts::model()->findByPk((int)$itemActivity['bdgt_concept_id']);
+                    $price=BdgtConcepts::getPricexPax($itemActivity['bdgt_concept_id']);
+
+                    array_push($dataActivities,array(
+                        'description'=>$concept->description,
+                        'date'=>$itemActivity['fecha'],
+                        'pax'=>$itemActivity['pax'],
+                        'pricexpax'=>$price,
+                        'subtotal'=>$itemActivity['price']
+                    ));
+                    $amountActivities+=$itemActivity['price'];
+                }
+
+                $activities=Yii::app()->quoteUtil->tableActivities($dataActivities);
+                $budget_table.="<br><br><br><br><br>";
+                $budget_table.=$activities;
+                $amountTotal=$amountReservations+$amountActivities;
+
+                $grandTotal='
+                <table class="items table table-condensed table-striped" align="right"  style="width: 500px;">
+                    <tbody>
+                        <tr>
+                            <td style="text-align: right;"><strong>Total Reservacion:</strong></td>
+                            <td style="text-align: right;"><strong>$'.number_format($amountReservations,2).'</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;"><strong>Total Actividades:</strong></td>
+                            <td style="text-align: right;"><strong><strong style="text-align: right;">$'.number_format($amountActivities,2).'</strong></strong></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: right;">
+                            <h3><strong>Total:</strong></h3>
+                            </td>
+                            <td style="text-align: right;">
+                            <h3><strong>$'.number_format($amountTotal,2).'</strong></h3>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            ';
+
+                $budget_table.=$grandTotal;
+            }
+
+
+            $budget_table.="<br><br><br>";
+
 
            $userId=(int)Yii::app()->user->id;
            $employee=Employees::model()->find(array('condition'=>'user_id=:userId','params'=>array('userId'=>$userId)));
@@ -1158,6 +1229,38 @@ class ReservationController extends Controller
             );
         }
 
+        $activitiesRows=BdgtReservation::model()->findAll(
+            array(
+                'condition'=>'customer_reservation_id=:customerReservationId',
+                'params'=>array('customerReservationId'=>$customerReservation->id)
+            )
+        );
+
+        $tabla=array();
+
+        foreach($activitiesRows as $item){
+
+            $concept=BdgtConcepts::model()->findByPk((int)$item['bdgt_concept_id']);
+            $price=BdgtConcepts::getPricexPax($item['bdgt_concept_id']);
+
+            array_push($tabla,array(
+                'description'=>$concept->description,
+                'date'=>$item['fecha'],
+                'pax'=>$item['pax'],
+                'pricexpax'=>$price,
+                'subtotal'=>$item['price']
+            ));
+        }
+
+        if($tabla){
+            $activities=Yii::app()->quoteUtil->tableActivities($tabla);
+        }else{
+            $activities=false;
+        }
+
+
+
+
         $this->render('view',array(
             'model'=>$models,
             'customerReservation'=>$customerReservation,
@@ -1170,7 +1273,8 @@ class ReservationController extends Controller
             'customerHistory'=>$customerHistory,
             'customerCreated'=>$customerCreated,
             'customerForm'=>$customerForm,
-            'formPayments'=>$formPayments
+            'formPayments'=>$formPayments,
+            'activities'=>$activities
         ));
 
     }

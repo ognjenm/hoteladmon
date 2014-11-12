@@ -1,4 +1,4 @@
-    <?php
+<?php
     $this->breadcrumbs=array(
         Yii::t('mx','Payments')=>array('index','id'=>$id),
         Yii::t('mx','Manage'),
@@ -57,8 +57,10 @@
         <h4><?php echo Yii::t('mx','Payments'); ?></h4>
     </div>
 
-    <div class="modal-body" id="messages">
-        <?php echo $formPayments->render(); ?>
+    <div class="modal-body">
+        <div id="messages">
+            <?php echo $formPayments->render(); ?>
+        </div>
     </div>
 
     <div class="modal-footer">

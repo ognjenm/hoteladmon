@@ -97,7 +97,7 @@ class BdgtReservationController extends Controller
                     if(!empty($errors)){
                         $res=array('ok'=>false,'errors'=>$errors);
                     }else{
-                        $res=array('ok'=>true,'url'=>$this->createUrl('/reservation/view',array('id'=>$customerReservationId)));
+                        $res=array('ok'=>true,'redirect'=>$this->createUrl('/reservation/view',array('id'=>$customerReservationId)));
                         Yii::app()->getSession()->remove('reservationActivities');
                     }
                 }else{
