@@ -31,15 +31,23 @@ $this->breadcrumbs=array(
 
 ?>
 
-
-
             <?php $this->widget('bootstrap.widgets.TbDetailView',array(
             'data'=>$model,
             'attributes'=>array(
             		'id',
-		'bdgt_group_id',
-		'concept',
-		'description',
-		'price',
+                    array(
+                        'name'=>'bdgt_group_id',
+                        'value'=>$model->bdgtGroup->group_name,
+                    ),
+                    'concept',
+                    'description',
+                array(
+                    'name'=>'price',
+                    'value'=>"$".number_format($model->price,2)
+                ),
+                array(
+                    'name'=>'supplier_price',
+                    'value'=>"$".number_format($model->supplier_price,2)
+                ),
             ),
             )); ?>

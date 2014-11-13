@@ -1916,6 +1916,83 @@ class QuoteDetails extends CApplicationComponent{
         $mpdf->Output('Reporte-Diario.pdf','D');
     }
 
+
+
+
+    public function reportActivitiesSupplier($model,$nameCustomer){
+
+        $subtotal=0;
+        $count=1;
+        $totalActividades=count($model);
+
+        $table='<table align="center" border="0" cellpadding="0" cellspacing="0" class="items table table-condensed table-striped" style="width: 100%;">
+            <head>
+                <tr>
+                    <th style="text-align: center;"><strong>NOMBRE</strong></th>
+                    <th style="text-align: center;"><strong>#PERSONAS</strong></th>
+                    <th style="text-align: center;"><strong>ACTIVIDADES</strong></th>
+                    <th style="text-align: center;"><strong>FECHA Y HORA</strong></th>
+                    <th style="text-align: center;"><strong>PRECIO</strong></th>
+                    <th style="text-align: center;"><strong>SUBTOTAL</strong></th>
+                </tr>
+            </head>
+            <tfoot>
+                <tr>
+                    <td style="text-align: center;"><h4><strong>NOTAS:</strong></h4></td>
+                    <td colspan="5" rowspan="1" style="text-align: center;"><h4>&nbsp;</h4></td>
+                </tr>
+            <tfoot>
+            <tbody>';
+
+        foreach($model as $item){
+
+            if($count==1){
+                $table.='<tr>
+                    <td align="center" colspan="1" rowspan="'.$totalActividades.'">'.$nameCustomer.'</td>
+                    <td style="text-align: center;">'.$item["pax"].'</td>
+                    <td style="text-align: center;">'.$item["description"].'</td>
+                    <td style="text-align: center;">'.$item["date"].'</td>
+                    <td style="text-align: center;">$'.number_format($item["pricesupplier"],2).'</td>
+                    <td style="text-align: right;">$'.number_format($item["amountSupplier"],2).'</td>
+                </tr>';
+            }else{
+
+                $table.='<tr>
+                    <td style="text-align: center;">'.$item["pax"].'</td>
+                    <td style="text-align: center;">'.$item["description"].'</td>
+                    <td style="text-align: center;">'.$item["date"].'</td>
+                    <td style="text-align: center;">$'.number_format($item["pricesupplier"],2).'</td>
+                    <td style="text-align: right;">$'.number_format($item["amountSupplier"],2).'</td>
+                    <td style="text-align: center;">&nbsp;</td>
+                </tr>';
+            }
+
+
+
+            $subtotal=$subtotal+$item["amountSupplier"];
+            $count++;
+        }
+
+                $table.='<tr>
+                    <td colspan="5" rowspan="1" style="text-align: right;">
+                        <h4 style="text-align: right;"><strong>TOTAL:</strong></h4>
+                        <p style="text-align: right;"><strong>ANTICIPO:</strong></p>
+                        <p style="text-align: right;"><strong>DEBE:</strong></p>
+                    </td>
+                    <td style="text-align: center;">
+                        <h4 style="text-align: right;"><strong>$'.number_format($subtotal,2).'</strong></h4>
+                        <p style="text-align: right;"><strong>0.00</strong></p>
+                        <p style="text-align: right;"><strong>0.00</strong></p>
+                    </td>
+                </tr>
+                </tbody>
+        </table>
+        ';
+
+        return $table;
+
+    }
+
     public function tableActivities($model){
 
         $total=0;
@@ -2863,6 +2940,8 @@ class QuoteDetails extends CApplicationComponent{
             ';
 
             $tabla.=$grandTotal;
+        }else{
+            $amountTotal=$totalCotizacion;
         }
 
 

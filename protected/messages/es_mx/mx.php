@@ -779,7 +779,9 @@ return array(
     'New Customer Information'=>'Información nueva de clientes',
     'ACTIVITIES,PACKAGES,FOOD AND OTHERS'=>'ACTIVIDADES, PAQUETES, ALIMENTOS Y OTROS',
     'Budgets'=>'Cotizaciones',
-    'Activities,Packages,Food,And Others'=>'Actividades,Paquetes,Comidas, y Otros'
+    'Activities,Packages,Food,And Others'=>'Actividades,Paquetes,Comidas, y Otros',
+    'Supplier Price'=>'Precio de proveedor',
+    'Report Supplier'=>'Reporte para proveedor'
 
 
 

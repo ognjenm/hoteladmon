@@ -207,6 +207,13 @@ class BdgtReservation extends CActiveRecord
         );
     }
 
+    public function afterFind() {
+
+        $this->fecha=Yii::app()->quoteUtil->toSpanishDateTime(date('Y-M-d H:i',strtotime($this->fecha)));
+
+        return  parent::afterFind();
+    }
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);

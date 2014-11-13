@@ -1,4 +1,4 @@
-<?php $provider = $model->search(); ?>
+    <?php $provider = $model->search(); ?>
 <div class="inner" id="bdgt-concepts-grid-inner">
 
     <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
@@ -52,7 +52,11 @@
                 ),
                 array(
                     'name'=>'price',
-                    'value'=>'"$".$data->price'
+                    'value'=>'"$".number_format($data->price,2)'
+                ),
+                array(
+                    'name'=>'supplier_price',
+                    'value'=>'"$".number_format($data->supplier_price,2)'
                 ),
                 array(
                     'class'=>'bootstrap.widgets.TbButtonColumn',

@@ -1,18 +1,6 @@
 <?php
 
-/**
- * This is the model class for table "bdgt_concepts".
- *
- * The followings are the available columns in table 'bdgt_concepts':
- * @property integer $id
- * @property integer $bdgt_group_id
- * @property string $concept
- * @property string $description
- * @property string $price
- *
- * The followings are the available model relations:
- * @property BdgtGroups $bdgtGroup
- */
+
 class BdgtConcepts extends CActiveRecord
 {
 	/**
@@ -31,14 +19,14 @@ class BdgtConcepts extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('bdgt_group_id', 'required'),
+			array('bdgt_group_id, concept, price', 'required'),
 			array('bdgt_group_id', 'numerical', 'integerOnly'=>true),
 			array('concept', 'length', 'max'=>500),
-			array('price', 'length', 'max'=>10),
+			array('price, supplier_price', 'length', 'max'=>10),
 			array('description', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, bdgt_group_id, concept, description, price', 'safe', 'on'=>'search'),
+			array('id, bdgt_group_id, concept, description, price, supplier_price', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,21 +53,10 @@ class BdgtConcepts extends CActiveRecord
 			'concept' => Yii::t('mx','Concept'),
 			'description' => Yii::t('mx','Description'),
 			'price' => Yii::t('mx','Price'),
+			'supplier_price' => Yii::t('mx','Supplier Price'),
 		);
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
 	public function search()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
@@ -91,6 +68,7 @@ class BdgtConcepts extends CActiveRecord
 		$criteria->compare('concept',$this->concept,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('price',$this->price,true);
+		$criteria->compare('supplier_price',$this->supplier_price,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -140,14 +118,22 @@ class BdgtConcepts extends CActiveRecord
 
     }
 
-   public static function getPricexPax($conceptId){
+    public static function getPricexPax($conceptId){
 
-       $concept=BdgtConcepts::model()->findByPk($conceptId);
+        $concept=BdgtConcepts::model()->findByPk($conceptId);
 
-       if($concept) return $concept->price;
-       else return 0;
+        if($concept) return $concept->price;
+        else return 0;
 
-   }
+    }
+
+    public static function getPriceProviderxPax($conceptId){
+
+        $concept=BdgtConcepts::model()->findByPk($conceptId);
+
+        if($concept) return $concept->supplier_price;
+        else return 0;
+    }
 
     public static function FindByGroup($groupId){
 
@@ -164,6 +150,20 @@ class BdgtConcepts extends CActiveRecord
 
     }
 
+    public function beforeSave(){
+
+        $price=(string)$this->price;
+        $price=str_replace(',','',$price);
+        $this->price=$price;
+
+        $supplier_price=(string)$this->supplier_price;
+        $supplier_price=str_replace(',','',$supplier_price);
+        $this->supplier_price=$supplier_price;
+
+        return parent::beforeSave();
+
+    }
+
     public function behaviors()
     {
         return array(
@@ -171,8 +171,6 @@ class BdgtConcepts extends CActiveRecord
                 'application.modules.auditTrail.behaviors.LoggableBehavior',
         );
     }
-
-
 
 	public static function model($className=__CLASS__)
 	{

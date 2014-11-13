@@ -58,6 +58,7 @@
                 return false;
          });
 
+
     ");
 
     $this->breadcrumbs=array(
@@ -299,13 +300,26 @@
     if($activities){
 
         $this->beginWidget('bootstrap.widgets.TbBox', array(
-            'title' => Yii::t('mx', 'Activities'),
+            'title' => Yii::t('mx', 'ACTIVITIES,PACKAGES,FOOD AND OTHERS'),
             'headerIcon' => 'icon-user',
             'htmlOptions' => array('class'=>'bootstrap-widget-table'),
             'htmlContentOptions'=>array('class'=>'box-content nopadding'),
+            'headerButtons' => array(
+                array(
+                    'id'=>'buttonReportSupplier',
+                    'class' => 'bootstrap.widgets.TbButton',
+                    'type' => 'primary',
+                    'label'=>Yii::t('mx','Report Supplier'),
+                    'icon'=>'icon-edit',
+                    'htmlOptions' => array(
+                        'data-toggle' => 'modal',
+                        'data-target' => '#reportActivitiesModal',
+                    ),
+                ),
+            )
         ));
 
-        echo $activities;
+            echo $activities;
 
         $this->endWidget();
     }
@@ -683,4 +697,48 @@
 </div>
 <?php $this->endWidget(); ?>
 
+
+
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array(
+    'id' => 'reportActivitiesModal',
+    'htmlOptions' => array('style' => 'width: 650px;')
+)); ?>
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">
+            <?php echo CHtml::image(Yii::app()->theme->baseUrl.'/images/close_green.png'); ?>
+        </a>
+        <h4><i class="icon-user"></i> <?php echo Yii::t('mx','Report Supplier'); ?></h4>
+    </div>
+
+    <div class="modal-body">
+        <?php $this->widget('bootstrap.widgets.TbCKEditor',array(
+                'name'=>'ckeditor',
+                'value'=>$reportSupplier,
+                'editorOptions'=>array(
+                    'contentsCss'=> Yii::app()->theme->baseUrl.'/css/table.css',
+                    'toolbar'=>"js:[
+                        { name: 'document',     items: ['Print'] },
+                        { name: 'clipboard',    items: [ 'Cut', 'Copy', 'Paste'] },
+                        { name: 'editing',      items: ['SelectAll'] },
+                        { name: 'basicstyles',  items: [ 'Bold', 'Italic', 'Underline'] },
+                        { name: 'paragraph',    items: [ 'NumberedList', 'BulletedList', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+                        { name: 'insert',       items: [ 'Table'] },
+                        { name: 'styles',       items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+                        { name: 'tools',        items: [ 'Maximize'] },
+
+                    ]"
+                ),
+            ));
+        ?>
+    </div>
+
+    <div class="modal-footer">
+        <?php $this->widget('bootstrap.widgets.TbButton', array(
+            'label' => Yii::t('mx','Return'),
+            'url' => '#',
+            'htmlOptions' => array('data-dismiss' => 'modal'),
+        )); ?>
+    </div>
+<?php $this->endWidget(); ?>
 

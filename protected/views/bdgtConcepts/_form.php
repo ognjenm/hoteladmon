@@ -14,13 +14,26 @@
         array('prompt'=>Yii::t('mx','Select'))
     ); ?>
 
-    <?php echo $form->textAreaRow($model,'concept',array('rows'=>3, 'cols'=>50, 'class'=>'span5')); ?>
+    <?php echo $form->textAreaRow($model,'concept',array(
+        'rows'=>3,
+        'cols'=>50,
+        'class'=>'span5',
+        'rel'=>'tooltip',
+        'title'=>'Es el concepto que te aparece cuando haces una cotizacón'
+    )); ?>
 
-	<?php echo $form->textAreaRow($model,'description',array('rows'=>6, 'cols'=>50, 'class'=>'span5')); ?>
+	<?php echo $form->textAreaRow($model,'description',array(
+        'rows'=>6,
+        'cols'=>50,
+        'class'=>'span5',
+        'rel'=>'tooltip',
+        'title'=>'Es lo que le aparece al cliente en su cotización'
+
+    )); ?>
 
     <?php
     $this->widget('application.extensions.moneymask.MMask',array(
-        'element'=>'#BdgtConcepts_price',
+        'element'=>'#BdgtConcepts_price,#BdgtConcepts_supplier_price',
         'currency'=>'PHP',
     ));
 
@@ -30,7 +43,19 @@
         'class'=>'span12',
         'maxlength'=>10,
         'prepend'=>'$',
-        'placeholder'=>'0.00'
+        'placeholder'=>'0.00',
+        'rel'=>'tooltip',
+        'title'=>'Es el precio que se le da al cliente'
+
+    )); ?>
+
+    <?php echo $form->textFieldRow($model,'supplier_price',array(
+        'class'=>'span12',
+        'maxlength'=>10,
+        'prepend'=>'$',
+        'placeholder'=>'0.00',
+        'rel'=>'tooltip',
+        'title'=>'Es el precio que nos da los proveedores'
     )); ?>
 
 

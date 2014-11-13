@@ -1236,29 +1236,36 @@ class ReservationController extends Controller
             )
         );
 
-        $tabla=array();
+        if($activitiesRows){
 
-        foreach($activitiesRows as $item){
+            $tabla=array();
 
-            $concept=BdgtConcepts::model()->findByPk((int)$item['bdgt_concept_id']);
-            $price=BdgtConcepts::getPricexPax($item['bdgt_concept_id']);
+            foreach($activitiesRows as $item){
 
-            array_push($tabla,array(
-                'description'=>$concept->description,
-                'date'=>$item['fecha'],
-                'pax'=>$item['pax'],
-                'pricexpax'=>$price,
-                'subtotal'=>$item['price']
-            ));
-        }
+                $concept=BdgtConcepts::model()->findByPk((int)$item['bdgt_concept_id']);
+                $price=BdgtConcepts::getPricexPax($item['bdgt_concept_id']);
+                $priceSupplier=BdgtConcepts::getPriceProviderxPax($item['bdgt_concept_id']);
+                $amountSupplier=$item['pax']*$priceSupplier;
 
-        if($tabla){
+                array_push($tabla,array(
+                    'description'=>$concept->description,
+                    'date'=>$item['fecha'],
+                    'pax'=>$item['pax'],
+                    'pricexpax'=>$price,
+                    'pricesupplier'=>$priceSupplier,
+                    'subtotal'=>$item['price'],
+                    'amountSupplier'=>$amountSupplier
+                ));
+            }
+
+            $nameCustomer=$customer->first_name." ".$customer->last_name;
             $activities=Yii::app()->quoteUtil->tableActivities($tabla);
+            $reportSupplier=Yii::app()->quoteUtil->reportActivitiesSupplier($tabla,$nameCustomer);
+
         }else{
             $activities=false;
+            $reportSupplier="";
         }
-
-
 
 
         $this->render('view',array(
@@ -1274,7 +1281,8 @@ class ReservationController extends Controller
             'customerCreated'=>$customerCreated,
             'customerForm'=>$customerForm,
             'formPayments'=>$formPayments,
-            'activities'=>$activities
+            'activities'=>$activities,
+            'reportSupplier'=>$reportSupplier
         ));
 
     }
