@@ -1587,6 +1587,16 @@ class QuoteDetails extends CApplicationComponent{
         $checkin=date("Y-m-d",strtotime($checkin));
         $checkout=date("Y-m-d",strtotime($checkout));
 
+        //SELECT dia_entrada, dia_salida FROM disponibilidad WHERE (dia_entrada BETWEEN '$dia_entrada' AND '$dia_salida') OR  (dia_salida BETWEEN '$dia_entrada' AND '$dia_salida') OR (dia_entrada <= '$dia_entrada'  AND dia_salida >= '$dia_salida')
+
+        /*SELECT casas FROM disponibilidad WHERE
+        (dia_entrada BETWEEN '$dia_entrada' AND '$dia_salida') OR
+        (dia_salida BETWEEN '$dia_entrada' AND '$dia_salida') OR
+        (dia_entrada <= '$dia_entrada'  AND dia_salida >= '$dia_salida');*/
+
+        //http://www.forosdelweb.com/f18/asociar-disponibilidad-habitacion-con-rango-fechas-sql-1093358/
+
+
         //     1                 2           3              4                  5           6         7          8         9         10         11        12
         //'AVAILABLE','BUDGET-SUBMITED','PRE-RESERVED','RESERVED-PENDING','RESERVED','CANCELLED','NO-SHOW','OCCUPIED','ARRIVAL','CHECKIN','CHECKOUT','DIRTY',
         //  5, 8,9,10
@@ -1608,6 +1618,7 @@ class QuoteDetails extends CApplicationComponent{
             'condition'=>':checkin<= checkin and :checkout>=checkout and (statux=5 or statux=8 or statux=9 or statux=10)',
             'params'=>array(':checkin'=>$checkin,':checkout'=>$checkout)
         );
+
         $include=Reservation::model()->findAll($criteriaInclude);
 
         foreach($include as $item):

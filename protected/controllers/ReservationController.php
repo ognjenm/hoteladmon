@@ -458,7 +458,6 @@ class ReservationController extends Controller
             ));
     }
 
-
     public function actionSchedulerOverview()
     {
         $cn = Yii::app()->quoteUtil->conexion();
@@ -562,8 +561,6 @@ class ReservationController extends Controller
 
     }
 
-
-
     public function actionScheduler_camped(){
         $cn = Yii::app()->quoteUtil->conexion();
         $scheduler = new JSONSchedulerConnector($cn,'PDO');
@@ -637,7 +634,6 @@ class ReservationController extends Controller
 
     }
 
-
     public function actionOverviewCalendar(){
         $this->render('overviewCalendar',array());
     }
@@ -649,7 +645,6 @@ class ReservationController extends Controller
     public function actionCampedCalendar(){
         $this->render('campedCalendar',array());
     }
-
 
     public function actionBudgetWithDiscount(){
 
@@ -1044,6 +1039,9 @@ class ReservationController extends Controller
                 //$model->attributes = $_POST['FBReservation'];
 
                 $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($checkin,$checkout);
+
+                print_r($roomUnavailable);
+
                 $options=Rooms::model()->getRoomsavailable($roomUnavailable,$roomType);
 
                 if($options){
