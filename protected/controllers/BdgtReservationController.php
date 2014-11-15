@@ -79,18 +79,18 @@ class BdgtReservationController extends Controller
                         $totalReservation=$customerReservation->total;
                         $totalActivities=$grandTotal;
                         $customerReservation->total=$totalReservation+$totalActivities;
-                        $customerReservation->save();
 
-                        $charges=new Charges;
-                        $charges->customer_reservation_id=$customerReservationId;
-                        $charges->concept_id=2;
-                        $charges->description='Actividades';
-                        $charges->amount=$grandTotal;
-                        $charges->datex=$fecha;
-                        $charges->user_id=Yii::app()->user->id;
-                        $charges->guest_name='Cargo Automatico';
-                        $charges->save();
-
+                        if($customerReservation->save()){
+                            $charges=new Charges;
+                            $charges->customer_reservation_id=$customerReservationId;
+                            $charges->concept_id=2;
+                            $charges->description='Actividades';
+                            $charges->amount=$grandTotal;
+                            $charges->datex=$fecha;
+                            $charges->user_id=Yii::app()->user->id;
+                            $charges->guest_name='Cargo Automatico';
+                            $charges->save();
+                        }
                     }
 
 

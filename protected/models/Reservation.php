@@ -1,35 +1,6 @@
 <?php
 
-/**
- * This is the model class for table "reservation".
- *
- * The followings are the available columns in table 'reservation':
- * @property integer $id
- * @property string $type_reservation
- * @property integer $customer_reservation_id
- * @property integer $room_id
- * @property string $checkin
- * @property string $checkin_hour
- * @property string $checkout
- * @property string $checkout_hour
- * @property integer $adults
- * @property integer $children
- * @property integer $pets
- * @property integer $totalpax
- * @property string $statux
- * @property integer $nigth_ta
- * @property integer $nigth_tb
- * @property integer $nights
- * @property string $price_ta
- * @property string $price_tb
- * @property string $price_early_checkin
- * @property string $price_late_checkout
- * @property string $price
- *
- * The followings are the available model relations:
- * @property CustomerReservations $customerReservation
- * @property Rooms $room
- */
+
 class Reservation extends CActiveRecord
 {
     public $checkin_hour;
@@ -37,27 +8,17 @@ class Reservation extends CActiveRecord
     public $first_name;
     public $roomName;
     public $customerId;
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
-	 * @return Reservation the static model class
-	 */
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
 
-	/**
-	 * @return string the associated database table name
-	 */
 	public function tableName()
 	{
 		return 'reservation';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -72,9 +33,6 @@ class Reservation extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
 	public function relations()
 	{
 		// NOTE: you may need to adjust the relation name and the related
@@ -86,9 +44,6 @@ class Reservation extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
     public function attributeLabels()
     {
         return array(
@@ -121,7 +76,6 @@ class Reservation extends CActiveRecord
         );
     }
 
-
     public function search2(){
 
         $criteria=new CDbCriteria;
@@ -141,7 +95,6 @@ class Reservation extends CActiveRecord
         ));
 
     }
-
 
 	public function search(){
 
@@ -196,7 +149,6 @@ class Reservation extends CActiveRecord
             ),
         ));
 	}
-
 
     //'FOR-CONFIRMED','RESERVED','CANCELLED','NO-SHOW','OCCUPIED'
 
@@ -263,7 +215,6 @@ class Reservation extends CActiveRecord
 
     }
 
-
     public function getReservationsJson(){
 
         $json="[\n";
@@ -291,9 +242,6 @@ class Reservation extends CActiveRecord
         $json.="]";
         echo $json;
     }
-
-
-
 
     public function getGridColumns(){
 
@@ -741,12 +689,15 @@ class Reservation extends CActiveRecord
                         var roomType=$(this).val();
                         var checkin=$("#FBReservation_checkin").val()+" 15:00";
                         var checkout=$("#FBReservation_checkout").val()+" 13:00";
+
                         var index=$(this).attr("id");
                         index=index.substring(24,26);
 
+                        var serviceType=$("#Reservation_service_type"+index).val();
+
                         $.ajax({
                             url: "'.CController::createUrl('/reservation/getRooms').'",
-                            data: { roomType: roomType,checkin:checkin,checkout: checkout  },
+                            data: { serviceType: serviceType, roomType: roomType, checkin: checkin, checkout: checkout  },
                             type: "POST",
                             beforeSend: function() {
                                 $("#maindiv").addClass("loading");
@@ -923,10 +874,11 @@ class Reservation extends CActiveRecord
         $this->checkin= Yii::app()->quoteUtil->toSpanishDateTime($checkin);
         $this->checkout= Yii::app()->quoteUtil->toSpanishDateTime($checkout);
 
-        $this->price_ta= number_format($this->price_ta,2);
+        /*$this->price_ta= number_format($this->price_ta,2);
         $this->price_tb= number_format($this->price_tb,2);
         $this->price_early_checkin= number_format($this->price_early_checkin,2);
         $this->price_late_checkout= number_format($this->price_late_checkout,2);
+        */
 
         //$this->statux=Yii::t('mx',$this->statux);
 
@@ -934,26 +886,16 @@ class Reservation extends CActiveRecord
     }
 
 
-    public function beforeSave(){
+    /*public function beforeSave(){
 
         $this->price_ta= str_replace(",","",$this->price_ta);
         $this->price_tb= str_replace(",","",$this->price_tb);
         $this->price_early_checkin= str_replace(",","",$this->price_early_checkin);
         $this->price_late_checkout= str_replace(",","",$this->price_late_checkout);
 
-        /*$checkin=$this->checkin.' '.$this->checkin_hour;
-        $checkout=$this->checkout.' '.$this->checkin_hour;
-
-        $this->checkin=Yii::app()->quoteUtil->toEnglishDateTime($checkin);
-        $this->checkout=Yii::app()->quoteUtil->toEnglishDateTime($checkout);
-
-        $this->checkin= date("Y-m-d H:i",strtotime($this->checkin));
-        $this->checkout= date("Y-m-d H:i",strtotime($this->checkout));
-        */
-
        return parent::beforeSave();
 
-    }
+    }*/
 
     public function behaviors()
     {

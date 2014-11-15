@@ -1033,14 +1033,9 @@ class ReservationController extends Controller
             $roomType=$_POST['roomType'];
             $checkin=$_POST['checkin'];
             $checkout=$_POST['checkout'];
+            $serviceType=$_POST['serviceType'];
 
-            //if(isset($_POST['FBReservation'])){
-
-                //$model->attributes = $_POST['FBReservation'];
-
-                $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($checkin,$checkout);
-
-                print_r($roomUnavailable);
+                $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($serviceType,$checkin,$checkout);
 
                 $options=Rooms::model()->getRoomsavailable($roomUnavailable,$roomType);
 
@@ -1055,7 +1050,6 @@ class ReservationController extends Controller
                 }
 
                 Yii::app()->end();
-            //}
         }
     }
 

@@ -1579,7 +1579,7 @@ class QuoteDetails extends CApplicationComponent{
     }
 
 
-    public function checkAvailability($checkin,$checkout){
+    public function checkAvailability($serviceType,$checkin,$checkout){
 
         $checkin= Yii::app()->quoteUtil->toEnglishDateTime($checkin);
         $checkout= Yii::app()->quoteUtil->toEnglishDateTime($checkout);
@@ -1587,65 +1587,24 @@ class QuoteDetails extends CApplicationComponent{
         $checkin=date("Y-m-d",strtotime($checkin));
         $checkout=date("Y-m-d",strtotime($checkout));
 
-        //SELECT dia_entrada, dia_salida FROM disponibilidad WHERE (dia_entrada BETWEEN '$dia_entrada' AND '$dia_salida') OR  (dia_salida BETWEEN '$dia_entrada' AND '$dia_salida') OR (dia_entrada <= '$dia_entrada'  AND dia_salida >= '$dia_salida')
-
-        /*SELECT * FROM reservation WHERE
-        (checkin BETWEEN '2014-11-15' AND '2014-11-16') OR
-        (checkout BETWEEN '2014-11-15' AND '2014-11-15') OR
-        (checkin <= '2014-11-15'  AND checkout >= '2014-11-15');*/
-
-        //http://www.forosdelweb.com/f18/asociar-disponibilidad-habitacion-con-rango-fechas-sql-1093358/
-
+        $roomids=array();
 
         //     1                 2           3              4                  5           6         7          8         9         10         11        12
         //'AVAILABLE','BUDGET-SUBMITED','PRE-RESERVED','RESERVED-PENDING','RESERVED','CANCELLED','NO-SHOW','OCCUPIED','ARRIVAL','CHECKIN','CHECKOUT','DIRTY',
         //  5, 8,9,10
 
-        $roomids=array();
-
-        $criteriaInside=array(
-            'condition'=>':checkin>= checkin and :checkout<=checkout and (statux=5 or statux=8 or statux=9 or statux=10)',
-            'params'=>array(':checkin'=>$checkin,':checkout'=>$checkout)
+        $criteria=array(
+            'condition'=>'(service_type=:serviceType AND checkin BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+                          (service_type=:serviceType AND checkout BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+                          (service_type=:serviceType AND checkin <= :checkin and checkout >= :checkout AND (statux=5 or statux=8 or statux=9 or statux=10))',
+            'params'=>array('serviceType'=>$serviceType,':checkin'=>$checkin.' 15:00',':checkout'=>$checkout.' 13:00')
         );
 
-        $inside=Reservation::model()->findAll($criteriaInside);
-
-        foreach($inside as $item):
-            array_push($roomids,$item->room_id);
-        endforeach;
-
-        $criteriaInclude=array(
-            'condition'=>':checkin<= checkin and :checkout>=checkout and (statux=5 or statux=8 or statux=9 or statux=10)',
-            'params'=>array(':checkin'=>$checkin,':checkout'=>$checkout)
-        );
-
-        $include=Reservation::model()->findAll($criteriaInclude);
+        $include=Reservation::model()->findAll($criteria);
 
         foreach($include as $item):
             array_push($roomids,$item->room_id);
         endforeach;
-
-        /*$criteriaLeft=array(
-            'condition'=>':checkin< checkin and :checkout<=checkout and (statux=2 or statux=5)',
-            'params'=>array(':checkin'=>$checkin,':checkout'=>$checkout)
-        );
-        $left=Reservation::model()->findAll($criteriaLeft);
-
-        foreach($left as $item):
-            array_push($roomids,$item->room_id);
-        endforeach;
-*/
-
-        /*$criteriaRight=array(
-            'condition'=>':checkin>= checkin and :checkout > checkout and (statux=2 or statux=5)',
-            'params'=>array(':checkin'=>$checkin,':checkout'=>$checkout)
-        );
-
-        $right=Reservation::model()->findAll($criteriaRight);
-
-        foreach($right as $item):
-            array_push($roomids,$item->room_id);
-        endforeach;*/
 
         return $roomids;
 
@@ -2291,7 +2250,7 @@ class QuoteDetails extends CApplicationComponent{
         $niños=0;
         $mascotas=0;
         $columnas=array();
-        $counter=0;
+        $counter=1;
 
         $reservations=Reservation::model()->findAll(array(
             "condition"=>"service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio)",
@@ -2321,11 +2280,9 @@ class QuoteDetails extends CApplicationComponent{
         foreach($reservations as $item){
 
             $totalReservation=Reservation::model()->count(
-                "service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio) and customer_reservation_id=:customerReservationId",
+                "service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio) AND customer_reservation_id=:customerReservationId",
                 array("inicio"=>$fecha1." 15:00","fin"=>$fecha1." 13:00","customerReservationId"=>$item->customer_reservation_id)
             );
-
-            echo $totalReservation;
 
             $grupoant=$grupo;
             $grupo=$item->customer_reservation_id;
@@ -2396,22 +2353,21 @@ class QuoteDetails extends CApplicationComponent{
                             <p>Noches TB: '.$item->nigth_tb.'</p>
                         </td>
                         <td>
-                            <p>Prec x noch TA: $'.$item->price_ta.'</p>
-                            <p>Prec x noch TB: $'.$item->price_tb.'</p>
-                            <p>Prec x noch Masc: $'.$pricepets.'</p>
+                            <p>Prec x noch TA: $'.number_format($item->price_ta,2).'</p>
+                            <p>Prec x noch TB: $'.number_format($item->price_tb,2).'</p>
+                            <p>Prec x noch Masc: $'.number_format($pricepets,2).'</p>
                         </td>
                         <td>
-                            <p>Tot noch TA: $'.$tot_noch_ta.'</p>
-                            <p>Tot noch TB: $'.$tot_noch_tb.'</p>
+                            <p>Tot noch TA: $'.number_format($tot_noch_ta,2).'</p>
+                            <p>Tot noch TB: $'.number_format($tot_noch_tb,2).'</p>
                         </td>
                         <td>
-                            <p>Early check-in: $'.$item->price_early_checkin.'</p>
-                            <p>Late check-out: $'.$item->price_late_checkout.'</p>
+                            <p>Early check-in: $'.number_format($item->price_early_checkin,2).'</p>
+                            <p>Late check-out: $'.number_format($item->price_late_checkout,2).'</p>
                         </td>
 		            </tr>
                     ';
 
-            $counter++;
 
             $subtotal=$subtotal+$item->price;
 
@@ -2441,7 +2397,7 @@ class QuoteDetails extends CApplicationComponent{
                 $subtotal=0;
             }
 
-
+            $counter++;
             $adultos=$adultos+$item->adults;
             $niños=$niños+$item->children;
             $mascotas=$mascotas+$item->pets;
@@ -2603,11 +2559,11 @@ class QuoteDetails extends CApplicationComponent{
                         <td>'.$item['nights'].'</td>
                         <td>'.$item['nigth_ta'].'</td>
                         <td>'.$item['nigth_tb'].'</td>
-                        <td>'.$item['price_ta'].'</td>
-                        <td>'.$item['price_tb'].'</td>
-                        <td>'.$item['price_early_checkin'].'</td>
-                        <td>'.$item['price_late_checkout'].'</td>
-                        <td>'.number_format($item['price'],2).'</td>
+                        <td>$'.number_format($item['price_ta'],2).'</td>
+                        <td>$'.number_format($item['price_tb'],2).'</td>
+                        <td>$'.number_format($item['price_early_checkin'],2).'</td>
+                        <td>$'.number_format($item['price_late_checkout'],2).'</td>
+                        <td>$'.number_format($item['price'],2).'</td>
                     </tr>';
             $counter++;
             $total+=$item['price'];

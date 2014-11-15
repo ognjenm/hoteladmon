@@ -1,31 +1,9 @@
 <?php
 
-/**
- * This is the model class for table "rooms".
- *
- * The followings are the available columns in table 'rooms':
- * @property integer $id
- * @property integer $room_type_id
- * @property integer $capacity
- * @property string $room
- * @property string $image
- * @property string $image_title
- * @property string $image_title_es
- * @property string $description
- * @property string $descrition_es
- *
- * The followings are the available model relations:
- * @property Rates[] $rates
- * @property Reservation[] $reservations
- * @property RoomsType $roomType
- */
+
 class Rooms extends CActiveRecord
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
-	 * @return Rooms the static model class
-	 */
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
@@ -207,6 +185,7 @@ class Rooms extends CActiveRecord
                 'params'=>array('roomType'=>$roomType),
                 'order'=>'uso'
             );
+
             $options = CHtml::listData(Rooms::model()->findAll($criteria),'id','room');
         }
 
