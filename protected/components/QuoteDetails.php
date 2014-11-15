@@ -1589,10 +1589,10 @@ class QuoteDetails extends CApplicationComponent{
 
         //SELECT dia_entrada, dia_salida FROM disponibilidad WHERE (dia_entrada BETWEEN '$dia_entrada' AND '$dia_salida') OR  (dia_salida BETWEEN '$dia_entrada' AND '$dia_salida') OR (dia_entrada <= '$dia_entrada'  AND dia_salida >= '$dia_salida')
 
-        /*SELECT casas FROM disponibilidad WHERE
-        (dia_entrada BETWEEN '$dia_entrada' AND '$dia_salida') OR
-        (dia_salida BETWEEN '$dia_entrada' AND '$dia_salida') OR
-        (dia_entrada <= '$dia_entrada'  AND dia_salida >= '$dia_salida');*/
+        /*SELECT * FROM reservation WHERE
+        (checkin BETWEEN '2014-11-15' AND '2014-11-16') OR
+        (checkout BETWEEN '2014-11-15' AND '2014-11-15') OR
+        (checkin <= '2014-11-15'  AND checkout >= '2014-11-15');*/
 
         //http://www.forosdelweb.com/f18/asociar-disponibilidad-habitacion-con-rango-fechas-sql-1093358/
 
@@ -2293,42 +2293,12 @@ class QuoteDetails extends CApplicationComponent{
         $columnas=array();
         $counter=0;
 
-        $sql="SELECT DISTINCT(customer_reservations.id) as customerReservationId,customer_reservations.see_discount,
-        reservation.*,rooms.room,customers.id as customerId,customers.first_name,customers.last_name,customers.country,customers.state
-        FROM customer_reservations
-        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
-        INNER JOIN customers on customer_reservations.customer_id=customers.id
-        INNER JOIN rooms on reservation.room_id=rooms.id
-        WHERE (reservation.statux='RESERVED' or reservation.statux='OCCUPIED' or reservation.statux='PRE-RESERVED')
-        AND reservation.checkin like :date1 order by customer_reservations.id";
+        $reservations=Reservation::model()->findAll(array(
+            "condition"=>"service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio)",
+            "params"=>array("inicio"=>$fecha1." 15:00","fin"=>$fecha1." 13:00"),
+            "order"=>"customer_reservation_id"
+        ));
 
-        $connection=Yii::app()->db;
-        $command=$connection->createCommand($sql);
-        $command->bindValue(":date1", $fecha1."%" , PDO::PARAM_STR);
-        $dataReader=$command->queryAll();
-
-
-        $sql2="SELECT DISTINCT(customer_reservations.id) as customerReservationId,customer_reservations.see_discount,
-        reservation.*,rooms.room,customers.id as customerId,customers.first_name,customers.last_name,customers.country,customers.state
-        FROM customer_reservations
-        INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
-        INNER JOIN customers on customer_reservations.customer_id=customers.id
-        INNER JOIN rooms on reservation.room_id=rooms.id
-        WHERE (reservation.statux='RESERVED' or reservation.statux='OCCUPIED' or reservation.statux='PRE-RESERVED')
-        AND (reservation.checkin <= :inicio AND reservation.checkout > :fin ) order by customer_reservations.id";
-
-        //substr(checkin,1,10)>=CURDATE() and substr(checkout,1,10)>=CURDATE()
-
-        $connection=Yii::app()->db;
-        $command2=$connection->createCommand($sql2);
-        $command2->bindValue(":inicio", $fecha1 , PDO::PARAM_STR);
-        $command2->bindValue(":fin", $fecha1." 13:00" , PDO::PARAM_STR);
-        $dataReader2=$command2->queryAll();
-
-
-        $dataReader3=array_merge($dataReader,$dataReader2);
-
-        //$connection->active=false;
         $tabledailyreport=$this->reportHeader($this->toSpanishDateDescription(date('Y-M-d',strtotime($fecha1)))).'
             <p style="text-align:right">
                 <span style="font-size:14px">
@@ -2348,17 +2318,19 @@ class QuoteDetails extends CApplicationComponent{
 
         for($x=1;$x<=15;$x++) $columnas[$x]=false;
 
-        foreach($dataReader3 as $item){
+        foreach($reservations as $item){
 
             $totalReservation=Reservation::model()->count(
-                'customer_reservation_id=:customerReservationId',
-                array('customerReservationId'=>(int)$item['customerReservationId'])
+                "service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio) and customer_reservation_id=:customerReservationId",
+                array("inicio"=>$fecha1." 15:00","fin"=>$fecha1." 13:00","customerReservationId"=>$item->customer_reservation_id)
             );
 
-            $grupoant=$grupo;
-            $grupo=$item['customerReservationId'];
+            echo $totalReservation;
 
-            $room=explode('-',$item['room']);
+            $grupoant=$grupo;
+            $grupo=$item->customer_reservation_id;
+
+            $room=explode('-',$item->room->room);
             $room=(int)$room[1];
 
             for($x=1;$x<=15;$x++){
@@ -2367,18 +2339,17 @@ class QuoteDetails extends CApplicationComponent{
                 }
             }
 
-
             $pagosCliente=0;
             $saldo=0;
 
-            $pricepets=$this->pricePets((int)$item['pets']);
-            $discoutCabanas=($item['see_discount']==1) ? $this->getTotalDiscountCabanas($item['price']) : 0;
-            $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
-            $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
+            $pricepets=$this->pricePets((int)$item->pets);
+            $discoutCabanas=($item->customerReservation->see_discount==1) ? $this->getTotalDiscountCabanas($item->price) : 0;
+            $tot_noch_ta=$item->nigth_ta*$item->price_ta;
+            $tot_noch_tb=$item->nigth_tb*$item->price_tb;
 
             $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
             $command=Yii::app()->db->createCommand($sqlPayments);
-            $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
+            $command->bindValue(":customerReservationId",$item->customer_reservation_id, PDO::PARAM_INT);
             $payments=$command->queryAll();
 
             if($payments){
@@ -2388,14 +2359,14 @@ class QuoteDetails extends CApplicationComponent{
             }
 
             if($grupoant != $grupo){
-                $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
+                $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item->customerReservation->customer->first_name." ".$item->customerReservation->customer->last_name).'</strong></td></tr>';
             }
 
-            $startDate=explode(" ",$item['checkin']);
+            $startDate=explode(" ",$item->checkin);
             $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
             $horaEntrada=$startDate[1];
 
-            $endDate=explode(" ",$item['checkout']);
+            $endDate=explode(" ",$item->checkout);
             $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
             $horaSalida=$endDate[1];
 
@@ -2403,52 +2374,50 @@ class QuoteDetails extends CApplicationComponent{
             $tabledailyreport.='
                     <tr>
                         <td>
-                            <p>Caba&ntilde;a: '.$item['room'].'</p>
+                            <p>Caba&ntilde;a: '.$item->room->room.'</p>
                             <p>Checkin: '.$horaEntrada.' '.$fechaEntrada.'</p>
                             <p>Checkout: '.$horaSalida.' '.$fechaSalida.'</p>
-                            <p>Estatus: '.Yii::t('mx',$item['statux']).'</p>
+                            <p>Estatus: '.Yii::t('mx',$item->statux).'</p>
                         </td>
                         <td>
-                            <p>Id: '.$item['customerId'].'</p>
-                            <p>Nombre: '.$item['first_name'].' '.$item['last_name'].'</p>
-                            <p>Pais: '.$item['country'].'</p>
-                            <p>Estado: '.$item['state'].'</p>
+                            <p>Id: '.$item->customerReservation->customer_id.'</p>
+                            <p>Nombre: '.$item->customerReservation->customer->first_name.' '.$item->customerReservation->customer->last_name.'</p>
+                            <p>Pais: '.$item->customerReservation->customer->country.'</p>
+                            <p>Estado: '.$item->customerReservation->customer->state.'</p>
                         </td>
                         <td>
-                            <p>Adultos: '.$item['adults'].'</p>
-                            <p>Menores 10a: '.$item['children'].'</p>
-                            <p>Mascotas:'.$item['pets'].'</p>
+                            <p>Adultos: '.$item->adults.'</p>
+                            <p>Menores 10a: '.$item->children.'</p>
+                            <p>Mascotas:'.$item->pets.'</p>
                         </td>
                         <td>
-                            <p>Noches Tot: '.$item['nights'].'</p>
-                            <p>Noches TA: '.$item['nigth_ta'].'</p>
-                            <p>Noches TB: '.$item['nigth_tb'].'</p>
+                            <p>Noches Tot: '.$item->nights.'</p>
+                            <p>Noches TA: '.$item->nigth_ta.'</p>
+                            <p>Noches TB: '.$item->nigth_tb.'</p>
                         </td>
                         <td>
-                            <p>Prec x noch TA: $'.number_format($item['price_ta'],2).'</p>
-                            <p>Prec x noch TB: $'.number_format($item['price_tb'],2).'</p>
-                            <p>Prec x noch Masc: $'.number_format($pricepets,2).'</p>
+                            <p>Prec x noch TA: $'.$item->price_ta.'</p>
+                            <p>Prec x noch TB: $'.$item->price_tb.'</p>
+                            <p>Prec x noch Masc: $'.$pricepets.'</p>
                         </td>
                         <td>
-                            <p>Tot noch TA: $'.number_format($tot_noch_ta,2).'</p>
-                            <p>Tot noch TB: $'.number_format($tot_noch_tb,2).'</p>
+                            <p>Tot noch TA: $'.$tot_noch_ta.'</p>
+                            <p>Tot noch TB: $'.$tot_noch_tb.'</p>
                         </td>
                         <td>
-                            <p>Early check-in: $'.number_format($item['price_early_checkin'],2).'</p>
-                            <p>Late check-out: $'.number_format($item['price_late_checkout'],2).'</p>
+                            <p>Early check-in: $'.$item->price_early_checkin.'</p>
+                            <p>Late check-out: $'.$item->price_late_checkout.'</p>
                         </td>
 		            </tr>
                     ';
 
             $counter++;
 
-            if($counter<=$totalReservation){
-                $subtotal=$subtotal+$item['price'];
-            }
+            $subtotal=$subtotal+$item->price;
 
             if($counter == $totalReservation){
 
-                if($item['see_discount']==1){
+                if($item->customerReservation->see_discount==1){
                     $discoutCabanas= $this->getTotalDiscountCabanas($subtotal);
                     $saldo=$subtotal-$discoutCabanas-$pagosCliente;
                 }else{
@@ -2472,9 +2441,10 @@ class QuoteDetails extends CApplicationComponent{
                 $subtotal=0;
             }
 
-            $adultos=$adultos+$item['adults'];
-            $niños=$niños+$item['children'];
-            $mascotas=$mascotas+$item['pets'];
+
+            $adultos=$adultos+$item->adults;
+            $niños=$niños+$item->children;
+            $mascotas=$mascotas+$item->pets;
 
         }
 
