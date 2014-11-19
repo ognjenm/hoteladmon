@@ -1899,7 +1899,8 @@ class MultiModelRenderForm extends CForm
         {
             echo CHtml::htmlButton($this->parentWidget->addItemText,
                 array('id' => $this->parentWidget->id,
-                    'rel' => '.' . $this->parentWidget->getCopyClass()
+                    'rel' => '.' . $this->parentWidget->getCopyClass(),
+                    'class'=>'btn btn-primary'
                 ));
         } else
         {

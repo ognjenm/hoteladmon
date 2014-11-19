@@ -373,7 +373,6 @@ class Reservation extends CActiveRecord
         return array(
 
             'elements'=>array(
-
                 "checkin" => array(
                     'type'=>'application.extensions.CJuiDateTimePicker.CJuiDateTimePicker',
                     'language'=>substr(Yii::app()->getLanguage(), 0, 2),
@@ -387,7 +386,25 @@ class Reservation extends CActiveRecord
                         'hourText'=> Yii::t('mx','Hour'),
                         'minuteText'=>Yii::t('mx','Minute'),
                         'timeOnlyTitle'=>Yii::t('mx','Choose Time'),
-                        'minDate'=>0
+                        'minDate'=>0,
+                        'hour'=>15,
+                        'minute'=>0,
+                        'onClose'=>' function(dateText, inst) {
+                            if ($("#end").val() != "") {
+                                var testStartDate = $("#start").datetimepicker("getDate");
+                                var testEndDate = $("#end").datetimepicker("getDate");
+
+                                if (testStartDate > testEndDate)
+                                    $("#end").datetimepicker("setDate", testStartDate);
+
+                            }
+                            else {
+                                $("#end").val(dateText);
+                            }
+                        }',
+                        'onSelect'=>'function (selectedDateTime){
+                            $("#end").datetimepicker("option", "minDate", $("#start").datetimepicker("getDate") );
+                        }'
                     ),
                     'htmlOptions' => array(
                         'class' => 'input-medium',
@@ -407,7 +424,9 @@ class Reservation extends CActiveRecord
                         'hourText'=> Yii::t('mx','Hour'),
                         'minuteText'=>Yii::t('mx','Minute'),
                         'timeOnlyTitle'=>Yii::t('mx','Choose Time'),
-                        'minDate'=>0
+                        'minDate'=>0,
+                        'hour'=>13,
+                        'minute'=>0,
 
                     ),
                     'htmlOptions' => array(

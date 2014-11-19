@@ -58,7 +58,6 @@
                 return false;
          });
 
-
     ");
 
     $this->breadcrumbs=array(
@@ -71,20 +70,13 @@
 
     );
 
-
     $this->pageSubTitle=Yii::t('mx','View');
     $this->pageIcon='icon-list-alt';
 
-    echo CHtml::script('function alertIds(newElem,sourceElem) {
-
-            $source=sourceElem.attr("id");
-            c++;
-
-            objArray[c]=$("#"+$source).val();
-
-                bootbox.alert($("#"+$source).val());
-
-            }'
+    echo CHtml::script('function alertIds(newElem,sourceElem){
+            var newOption=newElem.attr("id");
+            $("#"+newOption).prop("selectedIndex",0);
+        }'
     );
 
 ?>
@@ -162,14 +154,15 @@
             'removeText' =>Yii::t('mx','Remove'),
             'removeConfirm'=>Yii::t('mx','Delete this item?'),
             'addItemText'=>Yii::t('mx','Add'),
+            'addItemAsButton'=>true,
             'tableView'=>true,
             'tableHtmlOptions'=>array('class'=>'items table table-hover table-condensed'),
             'data' => $data,
             'hideCopyTemplate'=>true,
-            'options'=>array('clearInputs'=>false),
+            'clearInputs'=>false,
+            //'options'=>array('clearInputs'=>false),
             'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),
-            'jsAfterCloneCallback'=>'alertIds',
-            //'jsBeforeNewId' => "alert(this.attr('id'));",
+            'jsAfterCloneCallback'=>'alertIds'
         ));
     ?>
 
@@ -227,7 +220,7 @@
                 'class' => 'bootstrap.widgets.TbButton',
                 'type' => 'primary',
                 'label'=>Yii::t('mx','Edit'),
-                'url'=>array('/customers/update','id'=>$customer->id),
+                //'url'=>array('/customers/update','id'=>$customer->id),
                 'icon'=>'icon-edit'
             ),
             array(
