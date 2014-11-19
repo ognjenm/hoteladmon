@@ -93,6 +93,26 @@ class Payments extends CActiveRecord
 
     }
 
+    public static function getTotalPayments($customerReservationId){
+
+        $pagosCliente=0;
+
+
+        $payments=Payments::model()->findAll(array(
+            'condition'=>'customer_reservation_id=:customerReservationId',
+            'params'=>array(":customerReservationId"=>$customerReservationId)
+        ));
+
+        if($payments){
+            foreach($payments as $pago){
+                $pagosCliente=$pagosCliente+$pago->amount;
+            }
+        }
+
+        return $pagosCliente;
+
+    }
+
     public function getPaymentTypes(){
         return array(
             'TRANSFER'=>Yii::t('mx','Transfer'),

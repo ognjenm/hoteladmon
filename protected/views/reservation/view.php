@@ -75,7 +75,17 @@
     $this->pageSubTitle=Yii::t('mx','View');
     $this->pageIcon='icon-list-alt';
 
+    echo CHtml::script('function alertIds(newElem,sourceElem) {
 
+            $source=sourceElem.attr("id");
+            c++;
+
+            objArray[c]=$("#"+$source).val();
+
+                bootbox.alert($("#"+$source).val());
+
+            }'
+    );
 
 ?>
 
@@ -157,9 +167,9 @@
             'data' => $data,
             'hideCopyTemplate'=>true,
             'options'=>array('clearInputs'=>false),
-            'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin']),
-            'jsBeforeClone'=>$formConfig,
-            'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkout']),
+            'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),
+            'jsAfterCloneCallback'=>'alertIds',
+            //'jsBeforeNewId' => "alert(this.attr('id'));",
         ));
     ?>
 
@@ -174,14 +184,15 @@
             'encodeLabel'=>false,
             'label'=>Yii::t('mx','Save'),
             'icon'=>'icon-money',
-            'url'=>Yii::app()->createUrl('/reservation/update'),
+            'url'=>Yii::app()->createUrl('/reservation/update',array('customerReservationId'=>$customerReservation->id)),
             'ajaxOptions' => array(
+                'type'=>'post',
                 'dataType'=>'json',
                 'beforeSend' => 'function() {$(".update").addClass("saving");  }',
                 'complete' => 'function() { $(".update").removeClass("saving"); }',
                 'success' =>'function(data){
-                            if(data.ok==true) window.location.reload();
-                            else $("#required-because").show();
+                            //if(data.ok==true) window.location.reload();
+                            //else $("#required-because").show();
                 }',
             ),
         )); ?>

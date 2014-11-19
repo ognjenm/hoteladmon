@@ -2273,7 +2273,6 @@ class QuoteDetails extends CApplicationComponent{
         ';
 
         $grupo=null;
-        $subtotal=0;
 
         for($x=1;$x<=15;$x++) $columnas[$x]=false;
 
@@ -2296,24 +2295,9 @@ class QuoteDetails extends CApplicationComponent{
                 }
             }
 
-            $pagosCliente=0;
-            $saldo=0;
-
             $pricepets=$this->pricePets((int)$item->pets);
-            $discoutCabanas=($item->customerReservation->see_discount==1) ? $this->getTotalDiscountCabanas($item->price) : 0;
             $tot_noch_ta=$item->nigth_ta*$item->price_ta;
             $tot_noch_tb=$item->nigth_tb*$item->price_tb;
-
-            $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
-            $command=Yii::app()->db->createCommand($sqlPayments);
-            $command->bindValue(":customerReservationId",$item->customer_reservation_id, PDO::PARAM_INT);
-            $payments=$command->queryAll();
-
-            if($payments){
-                foreach($payments as $pago){
-                    $pagosCliente=$pagosCliente+$pago['amount'];
-                }
-            }
 
             if($grupoant != $grupo){
                 $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item->customerReservation->customer->first_name." ".$item->customerReservation->customer->last_name).'</strong></td></tr>';
@@ -2368,18 +2352,11 @@ class QuoteDetails extends CApplicationComponent{
 		            </tr>
                     ';
 
-
-            $subtotal=$subtotal+$item->price;
-
             if($counter == $totalReservation){
 
-                if($item->customerReservation->see_discount==1){
-                    $discoutCabanas= $this->getTotalDiscountCabanas($subtotal);
-                    $saldo=$subtotal-$discoutCabanas-$pagosCliente;
-                }else{
-                    $saldo=$subtotal-$pagosCliente;
-                }
-
+                $pagosCliente=Payments::getTotalPayments($item->customer_reservation_id);
+                $subtotal=$item->customerReservation->total;
+                $saldo=$subtotal-$pagosCliente;
                 $total=$total+$saldo;
 
                 $tabledailyreport.='
@@ -2387,14 +2364,12 @@ class QuoteDetails extends CApplicationComponent{
 		                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
                             <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
                             <p style="text-align:right"><strong>Anticipo: $'.number_format($pagosCliente,2).'</strong></p>
-                            <p style="text-align:right"><strong>Descuento: $'.number_format($discoutCabanas,2).'</strong></p>
                             <p style="text-align:right"><strong>Debe: $'.number_format($saldo,2).'</strong></p>
 		                </td>
 		            </tr>
                 ';
 
                 $counter=0;
-                $subtotal=0;
             }
 
             $counter++;
@@ -2409,7 +2384,6 @@ class QuoteDetails extends CApplicationComponent{
                 $tabledailyreport.='<tr><td colspan="7">Caba&ntilde;a:'.$i.'</td></tr>';
             }
         }
-
 
         $tabledailyreport.='
                 <tr style="background:#EEEEEE;">

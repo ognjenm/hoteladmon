@@ -1492,13 +1492,15 @@ class ReservationController extends Controller
 
         if(Yii::app()->request->isAjaxRequest){
 
+            $customerReservationId=(int)$_GET['customerReservationId'];
+
             if(isset($_POST['Reservation']) && !empty($_POST['because']))
             {
                 $reservationHistory= new ReservationHistory;
                 $reservationHistory->change=date('Y-m-d H:i');
                 $reservationHistory->because=$_POST['because'];
                 $reservationHistory->user_id=Yii::app()->user->id;
-                $reservationHistory->customer_reservation_id=$_POST['Reservation']['u__'][0]['customer_reservation_id'];
+                $reservationHistory->customer_reservation_id=$customerReservationId;
                 $status=$_POST['Reservation']['u__'][0]['statux'];
                 $reservationHistory->save();
 
@@ -1507,7 +1509,7 @@ class ReservationController extends Controller
                 for($i=0;$i<$tope;$i++){
 
                     $attributes[]=array(
-                        'customer_reservation_id'=>$_POST['Reservation']['u__'][0]['customer_reservation_id'],
+                        'customer_reservation_id'=>$customerReservationId,
                         'service_type' =>$_POST['Reservation']['service_type'][$i],
                         'room_type_id'=>$_POST['Reservation']['room_type_id'][$i],
                         'room_id' =>$_POST['Reservation']['room_id'][$i],
@@ -1535,8 +1537,6 @@ class ReservationController extends Controller
                     foreach($allExistingPk as $idx => $delPks)
                         Reservation::model()->deleteByPk($delPks['id']);
 
-
-                $customerReservationId=(int)$_POST['Reservation']['u__'][0]['customer_reservation_id'];
                 $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
                 $grandTotal=Yii::app()->quoteUtil->getTotalPrice($model,$customerReservation->see_discount);
                 $customerReservation->total=$grandTotal;

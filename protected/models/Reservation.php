@@ -387,7 +387,7 @@ class Reservation extends CActiveRecord
                         'hourText'=> Yii::t('mx','Hour'),
                         'minuteText'=>Yii::t('mx','Minute'),
                         'timeOnlyTitle'=>Yii::t('mx','Choose Time'),
-
+                        'minDate'=>0
                     ),
                     'htmlOptions' => array(
                         'class' => 'input-medium',
@@ -407,6 +407,7 @@ class Reservation extends CActiveRecord
                         'hourText'=> Yii::t('mx','Hour'),
                         'minuteText'=>Yii::t('mx','Minute'),
                         'timeOnlyTitle'=>Yii::t('mx','Choose Time'),
+                        'minDate'=>0
 
                     ),
                     'htmlOptions' => array(
@@ -499,10 +500,13 @@ class Reservation extends CActiveRecord
                     'onchange'=>'
 
                         var roomType=$(this).val();
+
                         var index=$(this).attr("id");
                         index=index.substring(24,26);
+
                         var indexupdate=$(this).attr("id");
                         indexupdate=indexupdate.substring(0,18);
+
                         var checkin=$("#"+indexupdate+"checkin").val();
                         var checkout=$("#"+indexupdate+"checkout").val();
 
@@ -511,9 +515,13 @@ class Reservation extends CActiveRecord
                             var checkout=$("#Reservation_checkout"+index).val();
                         }
 
+                        var serviceType=$("#Reservation_service_type"+index).val();
+
+                        if(!serviceType) var serviceType=$("#"+indexupdate+"service_type").val();
+
                         $.ajax({
                             url: "'.CController::createUrl('/reservation/getRooms').'",
-                            data: { roomType: roomType,checkin:checkin,checkout: checkout  },
+                            data: { serviceType: serviceType, roomType: roomType,checkin:checkin,checkout: checkout  },
                             type: "POST",
                             beforeSend: function() { $("#maindiv").addClass("loading"); }
                         })
@@ -522,7 +530,7 @@ class Reservation extends CActiveRecord
                             $("#Reservation_room_id"+index).html(data);
                             $("#"+indexupdate+"room_id").html(data);
                         })
-                        .fail(function() { alert( "error" ); })
+                        .fail(function() { bootbox.alert("error"); })
                         .always(function() { $("#maindiv").removeClass("loading"); });
 
                     ',

@@ -211,8 +211,10 @@ class CustomersController extends Controller
 
             if(isset($_POST['Customers'])){
                 $model->attributes=$_POST['Customers'];
-                if($model->save()) Yii::app()->user->setFlash('success','Success');
-                $this->redirect(array('view','id'=>$model->id));
+                if($model->save()){
+                    Yii::app()->user->setFlash('success','Success');
+                    $this->redirect(array('view','id'=>$model->id));
+                }
             }
 
 

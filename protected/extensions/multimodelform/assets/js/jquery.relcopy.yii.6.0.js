@@ -1,7 +1,7 @@
 /**
- * RELEASE FOR multimodelform 3.3 or greater
+ * RELEASE FOR multimodelform 4.0 or greater
  *
- * jquery.relcopy.yii.3.3.js
+ * jquery.relcopy.yii.6.0.js
  * Version for Yii extension 'jqrelcopy' and 'multimodelform'
  * Added: beforeClone,afterClone,beforeNewId,afterNewId
  * @link http://www.yiiframework.com/extension/jqrelcopy
@@ -50,9 +50,25 @@ function clearAllInputs(groupObj)
                 $(this).val("");
         }
     });
-
-
 }
+
+
+function copyInputVals(fromContainer, toContainer)
+{
+    if(fromContainer && toContainer)
+    {
+        var masters = $(fromContainer).find(':input');
+        $(toContainer).find(':input').each(function(cIndex,cElem) {
+            var m = masters.eq(cIndex);
+            if(m)
+            {
+                $(cElem).val(m.val());
+                if($(cElem).attr('type')=='checkbox') $(cElem).attr('checked', m.attr('checked'));
+            }
+        });
+    }
+}
+
 
 (function($) {
 
@@ -68,7 +84,8 @@ function clearAllInputs(groupObj)
             beforeClone: null,
             afterClone: null,
             beforeNewId: null,
-            afterNewId: null
+            afterNewId: null,
+            afterCloneCallback: null
         }, options);
 
         settings.limit = parseInt(settings.limit);
@@ -80,7 +97,6 @@ function clearAllInputs(groupObj)
             $(this).click(function(){
                 var rel = $(this).attr('rel'); // rel in jquery selector format
                 var counter = $(rel).length;
-
 
                 if (settings.limit > 0 && mmfRecordCount != null) //check limit
                 {
@@ -94,25 +110,47 @@ function clearAllInputs(groupObj)
                     }
                 }
 
-
                 var funcBeforeClone = function(){eval(settings.beforeClone);};
                 var funcAfterClone = function(){eval(settings.afterClone);};
                 var funcBeforeNewId = function(){eval(settings.beforeNewId);};
                 var funcAfterNewId = function(){eval(settings.afterNewId);};
+                var funcAfterCloneCallback = eval(settings.afterCloneCallback);
 
                 var master = $(rel+":first");
+                var last = $(rel+":last");
 
                 if(!master.is(":visible"))
                 {
+                    var prev =last.prev();
+                    if (!settings.clearInputs)
+                        copyInputVals(prev,master);
+
+                    if(funcAfterCloneCallback)
+                    {
+                        if(prev)
+                        {
+                            var m = $(prev).find(':input');
+                            $(master).find(':input').each(function(i,e) {
+                                funcAfterCloneCallback($(e),$(m.eq(i)));
+                            });
+                        }
+                        else
+                            $(last).find(':input').each(function(i,e) {
+                                funcAfterCloneCallback($(e),null);
+                            });
+                    }
+
                     master.show();
                     mmfRecordCount++;
-                    return;
+
+                    return false;
                 }
 
                 funcBeforeClone.call(master);
 
                 var parent = $(master).parent();
                 var clone = $(master).clone(true).addClass(settings.copyClass+counter).append(settings.append);
+
                 funcAfterClone.call(clone);
 
                 //Remove Elements with excludeSelector
@@ -142,9 +180,18 @@ function clearAllInputs(groupObj)
                 });
 
                 //Clear Inputs/Textarea
-                if (settings.clearInputs){
+                if (settings.clearInputs)
                     clearAllInputs($(clone));
-                };
+                else
+                    copyInputVals(last,clone);
+
+                if(funcAfterCloneCallback)
+                {
+                    var m = $(master).find(':input');
+                    $(clone).find(':input').each(function(cIndex,cElem) {
+                        funcAfterCloneCallback($(cElem),$(m.eq(cIndex)));
+                    });
+                }
 
                 mmfRecordCount++;
 
