@@ -1481,14 +1481,13 @@ class ReservationController extends Controller
     }
 
 
+
     public function actionUpdate()
     {
         $res=array('ok'=>false);
         $attributes=array();
         $model=array();
-        $tope=0;
-        $deleteItems=array();
-        $grandTotal=0;
+        $errors=array();
 
         if(Yii::app()->request->isAjaxRequest){
 
@@ -1504,43 +1503,54 @@ class ReservationController extends Controller
                 $status=$_POST['Reservation']['u__'][0]['statux'];
                 $reservationHistory->save();
 
-                if(!empty($_POST['Reservation']['service_type'][0])) $tope=count($_POST['Reservation']['service_type']);
 
-                for($i=0;$i<$tope;$i++){
+                if(!empty($_POST['Reservation']['service_type'][0])){
 
-                    $attributes[]=array(
-                        'customer_reservation_id'=>$customerReservationId,
-                        'service_type' =>$_POST['Reservation']['service_type'][$i],
-                        'room_type_id'=>$_POST['Reservation']['room_type_id'][$i],
-                        'room_id' =>$_POST['Reservation']['room_id'][$i],
-                        'checkin' =>$_POST['Reservation']['checkin'][$i],
-                        'checkout' =>$_POST['Reservation']['checkout'][$i],
-                        'adults' =>$_POST['Reservation']['adults'][$i],
-                        'children' =>$_POST['Reservation']['children'][$i],
-                        'pets' =>$_POST['Reservation']['pets'][$i],
-                    );
+                    $tope=count($_POST['Reservation']['service_type']);
+
+                    for($i=0;$i<$tope;$i++){
+
+                        $attributes[]=array(
+                            'service_type' =>$_POST['Reservation']['service_type'][$i],
+                            'room_type_id'=>$_POST['Reservation']['room_type_id'][$i],
+                            'customer_reservation_id'=>$customerReservationId,
+                            'room_id' =>$_POST['Reservation']['room_id'][$i],
+                            'checkin' =>$_POST['Reservation']['checkin'][$i],
+                            'checkout' =>$_POST['Reservation']['checkout'][$i],
+                            'adults' =>$_POST['Reservation']['adults'][$i],
+                            'children' =>$_POST['Reservation']['children'][$i],
+                            'pets' =>$_POST['Reservation']['pets'][$i],
+                        );
+                    }
+
+                    $aux=Yii::app()->quoteUtil->reservationAdd($attributes,$status);
+                    $model=$aux['attributes'];
+                    $errors=$aux['errors'];
 
                 }
 
+
                $allExistingPk = isset($_POST['Reservation']['pk__']) ? $_POST['Reservation']['pk__'] : null;
 
-               if($attributes != null) $model[]=Yii::app()->quoteUtil->reservationAdd($attributes,$status);
-
                foreach($_POST['Reservation']['u__'] as $idx => $attrs){
-                   $model[]=Yii::app()->quoteUtil->reservationUpdate($attrs);
+                   $aux=Yii::app()->quoteUtil->reservationUpdate($attrs);
+                   array_push($model,$aux['attributes']);
+                   array_push($errors,$aux['errors']);
+
                    if (is_array($allExistingPk)) unset($allExistingPk[$idx]);
                }
 
-                if($model !=null) $res=array('ok'=>true);
 
                 if (is_array($allExistingPk))
-                    foreach($allExistingPk as $idx => $delPks)
+                    foreach($allExistingPk as $delPks)
                         Reservation::model()->deleteByPk($delPks['id']);
 
                 $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
                 $grandTotal=Yii::app()->quoteUtil->getTotalPrice($model,$customerReservation->see_discount);
                 $customerReservation->total=$grandTotal;
                 $customerReservation->save();
+
+                if($errors !=null) $res=array('ok'=>true);
 
             }
 

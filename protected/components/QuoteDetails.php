@@ -373,13 +373,9 @@ class QuoteDetails extends CApplicationComponent{
         $totalCabana=0;
         $totalCamping=0;
         $totalDaypass=0;
-        $discountCabana=0;
-        $discountCamping=0;
-        $discountDaypass=0;
         $totalDiscount=0;
         $paxCamping=0;
         $paxDaypass=0;
-        $grandTotal=0;
 
         foreach($models as $i):
 
@@ -1612,6 +1608,8 @@ class QuoteDetails extends CApplicationComponent{
 
     public function reservationUpdate($attributes){
 
+        $arrayAttributes=array();
+        $arrayErrors=array();
         $priceLateCheckout=0;
         $reservationId=(int)$attributes['id'];
 
@@ -1673,13 +1671,13 @@ class QuoteDetails extends CApplicationComponent{
         $reservation->checkin=$reservation->checkin.' '.$reservation->checkin_hour;
         $reservation->checkout=$reservation->checkout.' '.$reservation->checkout_hour;
 
-
         if($reservation->save()){
-            return $reservation->attributes;
+            $arrayAttributes= $reservation->attributes;
         }else{
-            return $reservation->getErrors();
+            $arrayErrors= $reservation->getErrors();
         }
 
+        return array('attributes'=>$arrayAttributes,'errors'=>$arrayErrors);
 
     }
 
@@ -1687,6 +1685,8 @@ class QuoteDetails extends CApplicationComponent{
     public function reservationAdd($attributes,$status=1){
 
         $priceLateCheckout=0;
+        $arrayAttributes=array();
+        $arrayErrors=array();
 
         foreach($attributes as $item){
 
@@ -1741,7 +1741,6 @@ class QuoteDetails extends CApplicationComponent{
                     $reservation->price_early_checkin=0;
                     $reservation->price_late_checkout=$priceLateCheckout;
                     $reservation->room_id=0;
-
                     $reservation->price=$this->getTotalPriceDayPass($reservation);
                     break;
             }
@@ -1749,14 +1748,14 @@ class QuoteDetails extends CApplicationComponent{
             $reservation->checkin=$reservation->checkin.' '.$reservation->checkin_hour;
             $reservation->checkout=$reservation->checkout.' '.$reservation->checkout_hour;
 
-
             if($reservation->save()){
-                return $reservation->attributes;
+                array_push($arrayAttributes,$reservation->attributes);
             }else{
-                return $reservation->getErrors();
+                array_push($arrayErrors,$reservation->getErrors());
             }
-
         }
+
+        return array('attributes'=>$arrayAttributes,'errors'=>$arrayErrors);
 
     }
 

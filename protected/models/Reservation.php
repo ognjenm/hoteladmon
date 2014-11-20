@@ -632,6 +632,12 @@ class Reservation extends CActiveRecord
                     'class' => 'input-small',
                     'items'=>array(0=>Yii::t('mx','Select'),1=>1,2=>2,3=>3,4=>4,5=>5),
                 ),
+                "statux"=>array(
+                    'type'=>"hidden"
+                ),
+                "id"=>array(
+                    "type"=>"hidden"
+                )
             ));
     }
 
