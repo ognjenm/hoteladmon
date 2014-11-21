@@ -61,7 +61,7 @@ class BdgtReservation extends CActiveRecord
 			'customer_reservation_id' => Yii::t('mx','Customer'),
 			'fecha' => Yii::t('mx','Date'),
 			'hora' => Yii::t('mx','Time'),
-			'pax' => Yii::t('mx','Pax'),
+			'pax' => Yii::t('mx','Pax').'/'.Yii::t('mx','Quantity'),
 			'price' => Yii::t('mx','Price'),
 		);
 	}

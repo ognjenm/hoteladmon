@@ -249,7 +249,6 @@ class ReservationController extends Controller
 
         $from=Poll::model()->find($criteria);
 
-
         $formats = Yii::app()->db->createCommand(array(
             'select' => array('distinct(service_type)'),
             'from' => 'reservation',
@@ -1529,7 +1528,6 @@ class ReservationController extends Controller
 
                 }
 
-
                $allExistingPk = isset($_POST['Reservation']['pk__']) ? $_POST['Reservation']['pk__'] : null;
 
                foreach($_POST['Reservation']['u__'] as $idx => $attrs){
@@ -1636,75 +1634,21 @@ class ReservationController extends Controller
 
 
     public function actionChangeStatus(){
+
         $res=array('ok'=>false);
 
         if(Yii::app()->request->isAjaxRequest){
 
             $customerReservationId=(int)$_POST['id'];
             $status=(int)$_POST['status'];
-            $requestFormat=(int)$_POST['formatId'];
-            $concepts=array();
 
-            if($requestFormat==1){
-
-                $crit=array(
-                    'condition'=>'customer_reservation_id=:id',
-                    'params'=>array(
-                        'id'=>$customerReservationId
-                    )
-                );
-
-                $reservations=Reservation::model()->findAll($crit);
-
-
-                foreach($reservations as $item):
-                    array_push($concepts,Yii::t('mx',$item->service_type));
-                endforeach;
-
-                                $concept= implode(",", $concepts);
-
-                                $customerReservation=CustomerReservations::model()->findByPk($customerReservationId);
-
-                                $charge=new Charges;
-                                $charge->customer_reservation_id=(int)$customerReservationId;
-                                $charge->concept_id=1;
-                                $charge->description="Hospedaje de ".$concept;
-                                $charge->amount=$customerReservation->total;
-                                $charge->datex=date('Y-M-d');
-                                $charge->user_id=Yii::app()->user->id;
-                                $charge->guest_name=Yii::t('mx','Automatic Charge');
-                                $charge->save();
-
-            }
-
-            $criteria=array(
-                'condition'=>'customer_reservation_id=:id',
-                'params'=>array('id'=>$customerReservationId)
-            );
-
-            $reservations=Reservation::model()->findAll($criteria);
-
-            foreach($reservations as $item){
-                $item->statux=$status;
-                $item->checkin=Yii::app()->quoteUtil->toEnglishDateTime($item->checkin);
-                $item->checkout=Yii::app()->quoteUtil->toEnglishDateTime($item->checkout);
-                $item->checkin= date("Y-m-d H:i",strtotime($item->checkin));
-                $item->checkout= date("Y-m-d H:i",strtotime($item->checkout));
-
-
-                if($item->save()){
-                    $res=array('ok'=>true,'url'=>$this->createUrl('/reservation/view',array('id'=>$customerReservationId)));
-                }
-                else{
-                    $res=array('ok'=>false);
-                    break;
-                }
-            }
-
-            echo CJSON::encode($res);
-            Yii::app()->end();
+            Yii::app()->quoteUtil->changeStatusReservation($customerReservationId,$status);
+            $res=array('ok'=>true,'url'=>$this->createUrl('/reservation/view',array('id'=>$customerReservationId)));
 
         }
+
+        echo CJSON::encode($res);
+        Yii::app()->end();
 
     }
 

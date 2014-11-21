@@ -2250,6 +2250,8 @@ class QuoteDetails extends CApplicationComponent{
         $mascotas=0;
         $columnas=array();
         $counter=1;
+        $reservationsId=array();
+        $subtable='';
 
         $reservations=Reservation::model()->findAll(array(
             "condition"=>"service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio)",
@@ -2263,7 +2265,7 @@ class QuoteDetails extends CApplicationComponent{
                     <strong><span style="font-family:arial,helvetica,sans-serif">HOJA DE REPORTE DIARIO CABAÑAS</span></strong>
                 </span>
             </p>
-            <table class="items table table-condensed table-striped">
+            <table class="items table table-condensed">
                  <tfoot>
                     <tr><td colspan="10" rowspan="1">&nbsp;</td></tr>
                     <tr><td colspan="10" rowspan="1">&nbsp;</td></tr>
@@ -2351,7 +2353,65 @@ class QuoteDetails extends CApplicationComponent{
 		            </tr>
                     ';
 
+            array_push($reservationsId,$item->id);
+
+
             if($counter == $totalReservation){
+
+                $ids=implode(',',$reservationsId);
+                $reservationsId=array();
+
+                $reservationDesfase=Reservation::model()->findAll(array(
+                    'condition'=>'service_type="CABANA" AND customer_reservation_id=:customerReservationId AND id not in('.$ids.')',
+                    'params'=>array('customerReservationId'=>$item->customer_reservation_id)
+                ));
+
+                if($reservationDesfase){
+
+                    $subtable='<table class="items table table-striped table-bordered table-condensed" style="width:80%" align="center"><caption><h2>Por llegar</h2></caption><tbody>';
+
+                    foreach($reservationDesfase as $desfase){
+
+                        $pricepets2=$this->pricePets((int)$desfase->pets);
+                        $tot_noch_ta2=$desfase->nigth_ta*$desfase->price_ta;
+                        $tot_noch_tb2=$desfase->nigth_tb*$desfase->price_tb;
+
+                        $subtable.='
+                            <tr>
+                                <td>
+                                    <p>Caba&ntilde;a: '.$desfase->room->room.'</p>
+                                    <p>Checkin: '.$desfase->checkin.'</p>
+                                    <p>Checkout: '.$desfase->checkout.'</p>
+                                    <p>Estatus: '.Yii::t('mx',$desfase->statux).'</p>
+                                </td>
+                                <td>
+                                    <p>Nombre: '.$desfase->customerReservation->customer->first_name.' '.$desfase->customerReservation->customer->last_name.'</p>
+                                    <p>Adultos: '.$desfase->adults.'</p>
+                                    <p>Menores 10a: '.$desfase->children.'</p>
+                                    <p>Mascotas:'.$desfase->pets.'</p>
+                                </td>
+                                <td>
+                                    <p>Noches Tot: '.$desfase->nights.'</p>
+                                    <p>Noches TA: '.$desfase->nigth_ta.'</p>
+                                    <p>Noches TB: '.$desfase->nigth_tb.'</p>
+                                </td>
+                                <td>
+                                    <p>Prec x noch TA: $'.number_format($desfase->price_ta,2).'</p>
+                                    <p>Prec x noch TB: $'.number_format($desfase->price_tb,2).'</p>
+                                    <p>Prec x noch Masc: $'.number_format($pricepets2,2).'</p>
+                                </td>
+                                <td>
+                                    <p>Tot noch TA: $'.number_format($tot_noch_ta2,2).'</p>
+                                    <p>Tot noch TB: $'.number_format($tot_noch_tb2,2).'</p>
+                                    <p>Early check-in: $'.number_format($desfase->price_early_checkin,2).'</p>
+                                    <p>Late check-out: $'.number_format($desfase->price_late_checkout,2).'</p>
+                                </td>
+                            </tr>
+                        ';
+                    }
+
+                    $subtable.='</tbody></table>';
+                }
 
                 $pagosCliente=Payments::getTotalPayments($item->customer_reservation_id);
                 $subtotal=$item->customerReservation->total;
@@ -2360,8 +2420,9 @@ class QuoteDetails extends CApplicationComponent{
 
                 $tabledailyreport.='
                      <tr>
-		                <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
-                            <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
+		                <td colspan="6" rowspan="1">'.$subtable.'</td>
+		                <td style="vertical-align:middle">
+		                    <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
                             <p style="text-align:right"><strong>Anticipo: $'.number_format($pagosCliente,2).'</strong></p>
                             <p style="text-align:right"><strong>Debe: $'.number_format($saldo,2).'</strong></p>
 		                </td>
@@ -2375,6 +2436,7 @@ class QuoteDetails extends CApplicationComponent{
             $adultos=$adultos+$item->adults;
             $niños=$niños+$item->children;
             $mascotas=$mascotas+$item->pets;
+            $subtable='';
 
         }
 
@@ -2419,8 +2481,8 @@ class QuoteDetails extends CApplicationComponent{
             FROM customer_reservations
             INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
             INNER JOIN customers on customer_reservations.customer_id=customers.id
-            WHERE substr(checkin,1,10)>=CURDATE() and substr(checkout,1,10)>=CURDATE() and
-            concat(customers.first_name,' ',customers.last_name) LIKE :fullName
+            WHERE (substr(checkin,1,16)>=CONCAT(CURDATE(),' 15:00') AND concat(customers.first_name,' ',customers.last_name) LIKE :fullName) OR
+            (substr(checkin,1,16) <= CONCAT(CURDATE(),' 15:00') AND substr(checkout,1,16) >= CONCAT(CURDATE(),' 13:00') AND concat(customers.first_name,' ',customers.last_name) LIKE :fullName)
             ORDER BY reservation.checkin";
 
             $connection=Yii::app()->db;
@@ -2428,14 +2490,14 @@ class QuoteDetails extends CApplicationComponent{
             $command->bindValue(":fullName", $fullName."%" , PDO::PARAM_STR);
             $dataReader=$command->queryAll();
 
-
         }else{
+
             $sql="SELECT customer_reservations.id as customerReservationID,customer_reservations.see_discount,reservation.*,
                 customers.first_name,customers.last_name,customers.state
                 FROM customer_reservations
                 INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
                 INNER JOIN customers on customer_reservations.customer_id=customers.id
-                WHERE substr(checkin,1,10)>=CURDATE() and substr(checkout,1,10)>=CURDATE()
+                WHERE substr(checkin,1,16)>=CONCAT(CURDATE(),' 15:00') OR (substr(checkin,1,16) <= CONCAT(CURDATE(),' 15:00') AND substr(checkout,1,16) >= CONCAT(CURDATE(),' 13:00'))
                 ORDER BY reservation.checkin";
 
             $connection=Yii::app()->db;

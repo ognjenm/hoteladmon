@@ -184,8 +184,8 @@
                 'beforeSend' => 'function() {$(".update").addClass("saving");  }',
                 'complete' => 'function() { $(".update").removeClass("saving"); }',
                 'success' =>'function(data){
-                            //if(data.ok==true) window.location.reload();
-                            //else $("#required-because").show();
+                            if(data.ok==true) window.location.reload();
+                            else $("#required-because").show();
                 }',
             ),
         )); ?>
