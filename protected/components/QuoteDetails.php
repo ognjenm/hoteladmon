@@ -2481,8 +2481,11 @@ class QuoteDetails extends CApplicationComponent{
             FROM customer_reservations
             INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
             INNER JOIN customers on customer_reservations.customer_id=customers.id
-            WHERE (substr(checkin,1,16)>=CONCAT(CURDATE(),' 15:00') AND concat(customers.first_name,' ',customers.last_name) LIKE :fullName) OR
-            (substr(checkin,1,16) <= CONCAT(CURDATE(),' 15:00') AND substr(checkout,1,16) >= CONCAT(CURDATE(),' 13:00') AND concat(customers.first_name,' ',customers.last_name) LIKE :fullName)
+            WHERE (substr(checkin,1,16)>=CONCAT(CURDATE(),' 15:00')
+            AND concat(customers.first_name,' ',customers.last_name) LIKE :fullName)
+            OR (substr(checkin,1,16) <= CONCAT(CURDATE(),' 15:00')
+            AND substr(checkout,1,16) >= CONCAT(CURDATE(),' 13:00')
+            AND concat(customers.first_name,' ',customers.last_name) LIKE :fullName)
             ORDER BY reservation.checkin";
 
             $connection=Yii::app()->db;
@@ -2497,7 +2500,9 @@ class QuoteDetails extends CApplicationComponent{
                 FROM customer_reservations
                 INNER JOIN reservation on customer_reservations.id=reservation.customer_reservation_id
                 INNER JOIN customers on customer_reservations.customer_id=customers.id
-                WHERE substr(checkin,1,16)>=CONCAT(CURDATE(),' 15:00') OR (substr(checkin,1,16) <= CONCAT(CURDATE(),' 15:00') AND substr(checkout,1,16) >= CONCAT(CURDATE(),' 13:00'))
+                WHERE substr(checkin,1,16)>=CONCAT(CURDATE(),' 15:00')
+                OR (substr(checkin,1,16) <= CONCAT(CURDATE(),' 15:00')
+                AND substr(checkout,1,16) >= CONCAT(CURDATE(),' 13:00'))
                 ORDER BY reservation.checkin";
 
             $connection=Yii::app()->db;
