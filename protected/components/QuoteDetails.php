@@ -1453,7 +1453,6 @@ class QuoteDetails extends CApplicationComponent{
 
     public function getPriceCabana($adults,$children,$service_type,$room_type_id,$nights,$season){
 
-        $details=0;
         $pax=$adults;
         $price=0;
 
@@ -1478,8 +1477,6 @@ class QuoteDetails extends CApplicationComponent{
 
     public function getPriceTent($adults,$children,$service_type,$room_type_id,$nights,$season){
 
-        $priceAdults=0;
-        $priceChildren=0;
         $pax=$adults;
         $price=0;
 
@@ -1518,8 +1515,6 @@ class QuoteDetails extends CApplicationComponent{
 
     public function getPriceCamped($adults,$children,$service_type,$room_type_id,$nights,$season){
 
-        $priceAdults=0;
-        $priceChildren=0;
         $price=0;
 
         $criteria=array(
@@ -1543,10 +1538,6 @@ class QuoteDetails extends CApplicationComponent{
 
 
     public function getPriceDaypass($adults,$children,$service_type,$room_type_id,$season){
-
-        $priceAdults=0;
-        $priceChildren=0;
-        $price=0;
 
         $criteria=array(
             'condition'=>'service_type=:serviceType and room_type_id=:roomTypeId',
@@ -1638,17 +1629,82 @@ class QuoteDetails extends CApplicationComponent{
 
             case 'CABANA':
                 $reservation->room_id=$reservation->room_id;
+
+                if($reservation->nigth_tb > 0){
+                    $reservation->price_tb=$this->getPriceCabana(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        $reservation->nigth_tb,'BAJA'
+                    );
+                }else{
+                    $reservation->price_tb=0;
+                }
+
+                if($reservation->nigth_ta > 0){
+                    $reservation->price_ta=$this->getPriceCabana(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        $reservation->nigth_ta,'ALTA'
+                    );
+                }else{
+                    $reservation->price_ta=0;
+                }
+
                 $reservation->price=$this->getTotalPriceCabana($reservation);
                 break;
 
             case 'TENT':
                 $reservation->room_id=$reservation->room_id;
+
+                if($reservation->nigth_tb > 0){
+                    $reservation->price_tb=$this->getPriceTent(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        $reservation->nigth_tb,'BAJA'
+                    );
+                }else{
+                    $reservation->price_tb=0;
+                }
+
+                if($reservation->nigth_ta > 0){
+                    $reservation->price_ta=$this->getPriceTent(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        $reservation->nigth_ta,'ALTA'
+                    );
+                }else{
+                    $reservation->price_ta=0;
+                }
+
                 $reservation->price=$this->getTotalPriceTent($reservation);
+
                 break;
 
             case 'CAMPED':
                 $reservation->room_id=0;
+
+                if($reservation->nigth_tb > 0){
+                    $reservation->price_tb=$this->getPriceCamped(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        $reservation->nigth_tb,'BAJA'
+                    );
+                }else{
+                    $reservation->price_tb=0;
+                }
+
+                if($reservation->nigth_ta > 0){
+                    $reservation->price_ta=$this->getPriceCamped(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        $reservation->nigth_ta,'ALTA'
+                    );
+                }else{
+                    $reservation->price_ta=0;
+                }
+
                 $reservation->price=$this->getTotalPriceCamped($reservation);
+
                 break;
 
             case 'DAYPASS':
@@ -1662,6 +1718,27 @@ class QuoteDetails extends CApplicationComponent{
                 $reservation->price_early_checkin=0;
                 $reservation->price_late_checkout=$priceLateCheckout;
                 $reservation->room_id=0;
+
+                if($reservation->nigth_tb > 0){
+
+                    $reservation->price_ta=$this->getPriceDaypass(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        'ALTA'
+                    );
+                }else{
+                    $reservation->price_tb=0;
+                }
+
+                if($reservation->nigth_ta > 0){
+                    $reservation->price_tb=$this->getPriceDaypass(
+                        $reservation->adults,$reservation->children,
+                        $reservation->service_type,$reservation->room_type_id,
+                        'BAJA'
+                    );
+                }else{
+                    $reservation->price_ta=0;
+                }
 
                 $reservation->price=$this->getTotalPriceDayPass($reservation);
                 break;

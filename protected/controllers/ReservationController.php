@@ -709,6 +709,7 @@ class ReservationController extends Controller
                             $model->nigth_ta,'ALTA'
                         );
                     }
+
                     $model->price=($model->price_tb*$model->nigth_tb)+($model->price_ta*$model->nigth_ta)+($pricepets*$model->nights)+$model->price_early_checkin+$model->price_late_checkout;
 
                 }
