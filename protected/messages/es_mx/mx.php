@@ -781,7 +781,8 @@ return array(
     'Budgets'=>'Cotizaciones',
     'Activities,Packages,Food,And Others'=>'Actividades,Paquetes,Comidas, y Otros',
     'Supplier Price'=>'Precio de proveedor',
-    'Report Supplier'=>'Reporte para proveedor'
+    'Report Supplier'=>'Reporte para proveedor',
+    'Description Of Supliers'=>'Descripción para proveedores'
 
 
 

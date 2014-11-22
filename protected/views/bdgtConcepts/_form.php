@@ -31,6 +31,15 @@
 
     )); ?>
 
+    <?php echo $form->textAreaRow($model,'description_suppliers',array(
+        'rows'=>6,
+        'cols'=>50,
+        'class'=>'span5',
+        'rel'=>'tooltip',
+        'title'=>'Es lo que aparece en el reporte para los proveedores'
+
+    )); ?>
+
     <?php
     $this->widget('application.extensions.moneymask.MMask',array(
         'element'=>'#BdgtConcepts_price,#BdgtConcepts_supplier_price',

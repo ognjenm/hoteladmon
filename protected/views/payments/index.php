@@ -59,6 +59,11 @@
 
     <div class="modal-body">
         <div id="messages">
+            <?php $this->widget('application.extensions.moneymask.MMask',array(
+                    'element'=>'#Payments_amount',
+                    'currency'=>'PHP',
+                ));
+            ?>
             <?php echo $formPayments->render(); ?>
         </div>
     </div>

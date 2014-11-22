@@ -192,9 +192,7 @@ class Payments extends CActiveRecord
                         'complete' => 'function() { $("#messages").removeClass("saving"); }',
                         'success' =>'function(data){
                             if(data.ok==true){
-
                                 $("#payment-modal").modal("hide");
-
                                 $("#payments-grid").yiiGridView("update", {
                                         data: $(this).serialize()
                                 });
@@ -211,6 +209,10 @@ class Payments extends CActiveRecord
 
         $fecha=Yii::app()->quoteUtil->toEnglishDate($this->datex);
         $this->datex=date("Y-m-d",strtotime($fecha));
+
+        $amount=(string)$this->amount;
+        $amount=str_replace(',','',$amount);
+        $this->amount=$amount;
 
         return parent::beforeSave();
 

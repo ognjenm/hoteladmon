@@ -81,61 +81,94 @@
 
 ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbBox', array(
-    'title' => Yii::t('mx', 'Customer'),
-    'headerIcon' => 'icon-user',
-    'htmlOptions' => array('class'=>'bootstrap-widget-table'),
-    'htmlContentOptions'=>array('class'=>'box-content nopadding'),
-    'headerButtons' => array(
-        array(
-            'id'=>'CustomerEdit-button',
-            'class' => 'bootstrap.widgets.TbButton',
-            'type' => 'primary',
-            'label'=>Yii::t('mx','Edit'),
-            //'url'=>array('/customers/update','id'=>$customer->id),
-            'icon'=>'icon-edit'
-        ),
-        array(
-            'id'=>'history-button',
-            'class' =>'bootstrap.widgets.TbButton',
-            'type' =>'primary',
-            'label'=>Yii::t('mx','History'),
-            'url'=>'',
-            'icon'=>'icon-th-list'
-        )
-    )
+<div class="row-fluid">
+    <div class="span6">
 
-));?>
+        <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
+            'title' => Yii::t('mx', 'Customer'),
+            'headerIcon' => 'icon-user',
+            'htmlOptions' => array('class'=>'bootstrap-widget-table'),
+            'htmlContentOptions'=>array('class'=>'box-content nopadding'),
+            'headerButtons' => array(
+                array(
+                    'id'=>'CustomerEdit-button',
+                    'class' => 'bootstrap.widgets.TbButton',
+                    'type' => 'primary',
+                    'label'=>Yii::t('mx','Edit'),
+                    //'url'=>array('/customers/update','id'=>$customer->id),
+                    'icon'=>'icon-edit'
+                ),
+                array(
+                    'id'=>'history-button',
+                    'class' =>'bootstrap.widgets.TbButton',
+                    'type' =>'primary',
+                    'label'=>Yii::t('mx','History'),
+                    'url'=>'',
+                    'icon'=>'icon-th-list'
+                )
+            )
 
-    <?php $this->widget('bootstrap.widgets.TbDetailView',array(
-        'data'=>$customer,
-        'attributes'=>array(
-            'id',
-            'email',
-            'alternative_email',
-            'first_name',
-            'last_name',
-            'country',
-            'state',
-            'city',
-            array(
-                'name'=>Yii::t('mx','Home Phone'),
-                'value'=>$customer->international_code1.' '.$customer->home_phone
+        ));?>
+
+        <?php $this->widget('bootstrap.widgets.TbDetailView',array(
+            'data'=>$customer,
+            'attributes'=>array(
+                'id',
+                'email',
+                'alternative_email',
+                'first_name',
+                'last_name',
+                'country',
+                'state',
+                'city',
+                array(
+                    'name'=>Yii::t('mx','Home Phone'),
+                    'value'=>$customer->international_code1.' '.$customer->home_phone
+                ),
+                array(
+                    'name'=>Yii::t('mx','Work Phone'),
+                    'value'=>$customer->international_code2.' '.$customer->work_phone
+                ),
+                array(
+                    'name'=>Yii::t('mx','Cell Phone'),
+                    'value'=>$customer->international_code3.' '.$customer->cell_phone
+                ),
             ),
-            array(
-                'name'=>Yii::t('mx','Work Phone'),
-                'value'=>$customer->international_code2.' '.$customer->work_phone
-            ),
-            array(
-                'name'=>Yii::t('mx','Cell Phone'),
-                'value'=>$customer->international_code3.' '.$customer->cell_phone
-            ),
-        ),
-    ));
+        ));
 
-  ?>
+        ?>
 
-<?php $this->endWidget();?>
+        <?php $this->endWidget();?>
+    </div>
+    <div class="span6">
+
+        <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
+            'title' => Yii::t('mx', 'Sales Agents'),
+            'headerIcon' => 'icon-user',
+            'htmlOptions' => array('class'=>'bootstrap-widget-table'),
+            'htmlContentOptions'=>array('class'=>'box-content nopadding'),
+        ));?>
+
+        <?php $this->widget('bootstrap.widgets.TbDetailView',array(
+            'data'=>$poll,
+            'attributes'=>array(
+                'medio',
+                array(
+                    'name'=>Yii::t('mx','Sales Agent'),
+                    'value'=>($poll !="") ? $poll->salesAgent->name :  Yii::t('mx','Not Set')
+                ),
+            ),
+        ));
+
+        ?>
+
+        <?php $this->endWidget();?>
+    </div>
+</div>
+
+
+
+
 
 
 <div class="update" style="display: none">
@@ -231,20 +264,6 @@
                 'url'=>'',
                 'icon'=>'icon-th-list'
             ),
-            /*array(
-               'id'=>'createBudget-button',
-               'class' => 'bootstrap.widgets.TbButton',
-               'type' => 'primary',
-               'label'=>Yii::t('mx','Create Budget'),
-               'icon'=>'icon-th-list'
-           ),
-          array(
-               'id'=>'createFormats-button',
-               'class' => 'bootstrap.widgets.TbButton',
-               'type' => 'primary',
-               'label'=>Yii::t('mx','Create Formats'),
-               'icon'=>'icon-th-list'
-           ),*/
 
             array(
                 'class' => 'bootstrap.widgets.TbButtonGroup',
@@ -270,25 +289,9 @@
                     ),
                 )
             ),
-          /*  array(
-                'id'=>'payment-button',
-                'class' => 'bootstrap.widgets.TbButton',
-                'type' => 'primary',
-                'label'=>Yii::t('mx','Payments'),
-                'icon'=>'icon-th-list'
-            ),
-            array(
-                'id'=>'payment-button',
-                'class' => 'bootstrap.widgets.TbButton',
-                'type' => 'primary',
-                'label'=>Yii::t('mx','Charges'),
-                'icon'=>'icon-th-list'
-            )*/
-
         )
 
     ));?>
-
             <?php
                 if($customerReservation->see_discount==true) echo Yii::app()->quoteUtil->getTableCotizacion($model,true);  //true habilita el renglon de estatus
                 if($customerReservation->see_discount==false) echo Yii::app()->quoteUtil->getCotizacionNoDiscount($model,true); //true habilita el renglon de estatus

@@ -1066,7 +1066,6 @@ class ReservationController extends Controller
         $models=array();
         $payments=new Payments;
 
-
         $form = TbForm::createForm($reservation->getForm(),$reservation,
             array('htmlOptions'=>array('class'=>'well'),
                 'type'=>'vertical',
@@ -1259,6 +1258,14 @@ class ReservationController extends Controller
         }
 
 
+        $poll=Poll::model()->find(array(
+                'condition'=>'customer_reservation_id=:customerReservationId',
+                'params'=>array('customerReservationId'=>$id)
+        ));
+
+
+
+
         $this->render('view',array(
             'model'=>$models,
             'customerReservation'=>$customerReservation,
@@ -1273,7 +1280,8 @@ class ReservationController extends Controller
             'customerForm'=>$customerForm,
             'formPayments'=>$formPayments,
             'activities'=>$activities,
-            'reportSupplier'=>$reportSupplier
+            'reportSupplier'=>$reportSupplier,
+            'poll'=>$poll
         ));
 
     }
@@ -1538,7 +1546,6 @@ class ReservationController extends Controller
                    if (is_array($allExistingPk)) unset($allExistingPk[$idx]);
                }
 
-
                 if (is_array($allExistingPk))
                     foreach($allExistingPk as $delPks)
                         Reservation::model()->deleteByPk($delPks['id']);
@@ -1547,6 +1554,14 @@ class ReservationController extends Controller
                 $grandTotal=Yii::app()->quoteUtil->getTotalPrice($model,$customerReservation->see_discount);
                 $customerReservation->total=$grandTotal;
                 $customerReservation->save();
+
+                $charge=Charges::model()->find(array(
+                    'condition'=>'customer_reservation_id=:customerReservationId and concept_id=1',
+                    'params'=>array('customerReservationId'=>$customerReservationId)
+                ));
+
+                $charge->amount=$grandTotal;
+                $charge->save();
 
                 if($errors !=null) $res=array('ok'=>true);
 

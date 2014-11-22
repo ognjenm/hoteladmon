@@ -2256,7 +2256,7 @@ class QuoteDetails extends CApplicationComponent{
         $reservations=Reservation::model()->findAll(array(
             "condition"=>"service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio)",
             "params"=>array("inicio"=>$fecha1." 15:00","fin"=>$fecha1." 13:00"),
-            "order"=>"customer_reservation_id"
+            "order"=>"customer_reservation_id,room_id"
         ));
 
         $tabledailyreport=$this->reportHeader($this->toSpanishDateDescription(date('Y-M-d',strtotime($fecha1)))).'

@@ -55,12 +55,26 @@ class ReservationChannelController extends Controller
 	public function actionCreate()
 	{
 		$model=new ReservationChannel;
-        $res=array('ok'=>false);
 
         if(Yii::app()->request->isAjaxRequest){
+
+            $options=CHtml::tag('option', array('value'=>''),CHtml::encode(Yii::t('mx','Select')),true);
+            $res=array('ok'=>false,'options'=>$options);
+
             if(isset($_POST['ReservationChannel'])){
                 $model->attributes=$_POST['ReservationChannel'];
-                if($model->save()) $res=array('ok'=>true);
+                if($model->save()){
+
+                    $agents=ReservationChannel::model()->findAll();
+
+                    if($agents){
+                        foreach ($agents as $item) {
+                            $options.= CHtml::tag('option', array('value'=>$item->id),CHtml::encode($item->name),true);
+                        }
+                    }
+
+                    $res=array('ok'=>true,'options'=>$options);
+                }
             }
 
             echo CJSON::encode($res);

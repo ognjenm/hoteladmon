@@ -64,7 +64,6 @@ class SalesAgentsController extends Controller
                 $model->attributes=$_POST['SalesAgents'];
                 if($model->save()){
                     $agents=SalesAgents::model()->findAll();
-
                     if($agents){
                         $options=CHtml::tag('option', array('value'=>''),CHtml::encode(Yii::t('mx','Select')),true);
                         foreach ($agents as $item) {

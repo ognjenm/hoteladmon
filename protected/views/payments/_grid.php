@@ -87,7 +87,7 @@
                     'deleteConfirmation' =>Yii::t('mx','Do you really want to delete this item?'),
                     'headerHtmlOptions' => array('style' => 'width:150px;'),
                     'header'=>Yii::t('mx','Actions'),
-                    'template'=>'{view}',
+                    'template'=>'{view}{delete}',
                     'buttons'=>array(
                         'view'=>array(
                             'url'=>'Yii::app()->createUrl("payments/view", array("id"=>$data->id))',
@@ -154,7 +154,6 @@
                 'name'=>'amount',
                 'value'=>'number_format($data->amount,2)',
             ),
-
             array(
                 'class'=>'bootstrap.widgets.TbButtonColumn',
                 'deleteConfirmation' =>Yii::t('mx','Do you really want to delete this item?'),

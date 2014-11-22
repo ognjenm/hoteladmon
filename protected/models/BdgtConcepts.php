@@ -1,6 +1,20 @@
 <?php
 
-
+/**
+ * This is the model class for table "bdgt_concepts".
+ *
+ * The followings are the available columns in table 'bdgt_concepts':
+ * @property integer $id
+ * @property integer $bdgt_group_id
+ * @property string $concept
+ * @property string $description
+ * @property string $description_suppliers
+ * @property string $price
+ * @property string $supplier_price
+ *
+ * The followings are the available model relations:
+ * @property BdgtGroups $bdgtGroup
+ */
 class BdgtConcepts extends CActiveRecord
 {
 	/**
@@ -23,10 +37,10 @@ class BdgtConcepts extends CActiveRecord
 			array('bdgt_group_id', 'numerical', 'integerOnly'=>true),
 			array('concept', 'length', 'max'=>500),
 			array('price, supplier_price', 'length', 'max'=>10),
-			array('description', 'safe'),
+			array('description, description_suppliers', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, bdgt_group_id, concept, description, price, supplier_price', 'safe', 'on'=>'search'),
+			array('id, bdgt_group_id, concept, description, description_suppliers, price, supplier_price', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,13 +63,17 @@ class BdgtConcepts extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'bdgt_group_id' => Yii::t('mx','Group'),
-			'concept' => Yii::t('mx','Concept'),
-			'description' => Yii::t('mx','Description'),
-			'price' => Yii::t('mx','Price'),
-			'supplier_price' => Yii::t('mx','Supplier Price'),
+            'bdgt_group_id' => Yii::t('mx','Group'),
+            'concept' => Yii::t('mx','Concept'),
+            'description' => Yii::t('mx','Description'),
+            'description_suppliers' => Yii::t('mx','Description Of Supliers'),
+            'price' => Yii::t('mx','Price'),
+            'supplier_price' => Yii::t('mx','Supplier Price'),
+
+
 		);
 	}
+
 
 	public function search()
 	{
@@ -67,6 +85,7 @@ class BdgtConcepts extends CActiveRecord
 		$criteria->compare('bdgt_group_id',$this->bdgt_group_id);
 		$criteria->compare('concept',$this->concept,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('description_suppliers',$this->description_suppliers,true);
 		$criteria->compare('price',$this->price,true);
 		$criteria->compare('supplier_price',$this->supplier_price,true);
 
