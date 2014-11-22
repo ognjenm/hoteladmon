@@ -157,6 +157,10 @@
                     'name'=>Yii::t('mx','Sales Agent'),
                     'value'=>($poll !="") ? $poll->salesAgent->name :  Yii::t('mx','Not Set')
                 ),
+                array(
+                    'name'=>Yii::t('mx','Commission'),
+                    'value'=>$poll->salesAgent->commission.'%'
+                )
             ),
         ));
 
