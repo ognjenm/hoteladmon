@@ -2329,6 +2329,8 @@ class QuoteDetails extends CApplicationComponent{
         $counter=1;
         $reservationsId=array();
         $subtable='';
+        $discoutCabanas=0;
+        $totalx=0;
 
         $reservations=Reservation::model()->findAll(array(
             "condition"=>"service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio)",
@@ -2379,6 +2381,9 @@ class QuoteDetails extends CApplicationComponent{
 
             if($grupoant != $grupo){
                 $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item->customerReservation->customer->first_name." ".$item->customerReservation->customer->last_name).'</strong></td></tr>';
+                $totalx=0;
+            }else{
+                $totalx=$totalx+$item->price;
             }
 
             $startDate=explode(" ",$item->checkin);
@@ -2432,7 +2437,6 @@ class QuoteDetails extends CApplicationComponent{
 
             array_push($reservationsId,$item->id);
 
-
             if($counter == $totalReservation){
 
                 $ids=implode(',',$reservationsId);
@@ -2442,6 +2446,7 @@ class QuoteDetails extends CApplicationComponent{
                     'condition'=>'service_type="CABANA" AND customer_reservation_id=:customerReservationId AND id not in('.$ids.')',
                     'params'=>array('customerReservationId'=>$item->customer_reservation_id)
                 ));
+
 
                 if($reservationDesfase){
 
@@ -2495,11 +2500,16 @@ class QuoteDetails extends CApplicationComponent{
                 $saldo=$subtotal-$pagosCliente;
                 $total=$total+$saldo;
 
+                if($item->customerReservation->see_discount==1){
+                    $discoutCabanas= $this->getTotalDiscountCabanas($subtotal);
+                }
+
                 $tabledailyreport.='
                      <tr>
 		                <td colspan="6" rowspan="1">'.$subtable.'</td>
 		                <td style="vertical-align:middle">
 		                    <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
+		                    <p style="text-align:right"><strong>Descuento: $'.number_format($totalx,2).'</strong></p>
                             <p style="text-align:right"><strong>Anticipo: $'.number_format($pagosCliente,2).'</strong></p>
                             <p style="text-align:right"><strong>Debe: $'.number_format($saldo,2).'</strong></p>
 		                </td>
