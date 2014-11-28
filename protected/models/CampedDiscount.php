@@ -93,15 +93,20 @@ class CampedDiscount extends CActiveRecord
 		));
 	}
 
-    public function getDiscount($paxCamping){
+    public static function amount($amount,$pax){
 
-        $criteria=array(
+        $discount=0;
+
+        $camped=CampedDiscount::model()->find(array(
             'condition'=>':pax>=min and :pax<=max',
-            'params'=>array(':pax'=>$paxCamping),
-        );
+            'params'=>array(':pax'=>$pax)
+        ));
 
-        return $this->model()->find($criteria);
+        if($camped) $discount=($amount*$camped->discount)/100;
+
+        return $discount;
     }
+
 
     public function behaviors()
     {

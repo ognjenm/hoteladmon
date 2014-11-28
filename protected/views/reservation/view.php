@@ -110,37 +110,39 @@
 
         ));?>
 
-        <?php $this->widget('bootstrap.widgets.TbDetailView',array(
-            'data'=>$customer,
-            'attributes'=>array(
-                'id',
-                'email',
-                'alternative_email',
-                'first_name',
-                'last_name',
-                'country',
-                'state',
-                'city',
-                array(
-                    'name'=>Yii::t('mx','Home Phone'),
-                    'value'=>$customer->international_code1.' '.$customer->home_phone
+        <?php   $this->widget('bootstrap.widgets.TbDetailView',array(
+                'data'=>$customer,
+                'attributes'=>array(
+                    'id',
+                    'email',
+                    'alternative_email',
+                    'first_name',
+                    'last_name',
+                    'country',
+                    'state',
+                    'city',
+                    array(
+                        'name'=>Yii::t('mx','Home Phone'),
+                        'value'=>$customer->international_code1.' '.$customer->home_phone
+                    ),
+                    array(
+                        'name'=>Yii::t('mx','Work Phone'),
+                        'value'=>$customer->international_code2.' '.$customer->work_phone
+                    ),
+                    array(
+                        'name'=>Yii::t('mx','Cell Phone'),
+                        'value'=>$customer->international_code3.' '.$customer->cell_phone
+                    ),
                 ),
-                array(
-                    'name'=>Yii::t('mx','Work Phone'),
-                    'value'=>$customer->international_code2.' '.$customer->work_phone
-                ),
-                array(
-                    'name'=>Yii::t('mx','Cell Phone'),
-                    'value'=>$customer->international_code3.' '.$customer->cell_phone
-                ),
-            ),
-        ));
+            ));
 
         ?>
 
         <?php $this->endWidget();?>
     </div>
     <div class="span6">
+
+     <?php if($poll){ ?>
 
         <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
             'title' => Yii::t('mx', 'Sales Agents'),
@@ -150,29 +152,26 @@
         ));?>
 
         <?php $this->widget('bootstrap.widgets.TbDetailView',array(
-            'data'=>$poll,
-            'attributes'=>array(
-                'medio',
-                array(
-                    'name'=>Yii::t('mx','Sales Agent'),
-                    'value'=>($poll !="") ? $poll->salesAgent->name :  Yii::t('mx','Not Set')
+                'data'=>$poll,
+                'attributes'=>array(
+                    'medio',
+                    array(
+                        'name'=>Yii::t('mx','Sales Agent'),
+                        'value'=>($poll->sales_agent_id !='') ? $poll->salesAgent->name :  $poll->reservationChannel->name
+                    ),
+                    array(
+                        'name'=>Yii::t('mx','Commission'),
+                        'value'=>($poll->sales_agent_id !='') ? $poll->salesAgent->commission.'%' : $poll->reservationChannel->commission.'%'
+                    )
                 ),
-                array(
-                    'name'=>Yii::t('mx','Commission'),
-                    'value'=>$poll->salesAgent->commission.'%'
-                )
-            ),
-        ));
-
+            ));
         ?>
 
         <?php $this->endWidget();?>
+        <?php } ?>
+
     </div>
 </div>
-
-
-
-
 
 
 <div class="update" style="display: none">

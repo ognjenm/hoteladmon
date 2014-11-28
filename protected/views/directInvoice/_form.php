@@ -253,7 +253,7 @@ Yii::app()->clientScript->registerCss(__CLASS__ . '#direct-invoice-grid', $css);
 
             var importe= cantidad * precio;
 
-            document.getElementById("DirectInvoiceItems_amount").value=importe;
+            document.getElementById("DirectInvoiceItems_amount").value=importe.toFixed(2);
 
             discount=document.getElementById("DirectInvoiceItems_discount").value;
 
@@ -377,7 +377,7 @@ Yii::app()->clientScript->registerCss(__CLASS__ . '#direct-invoice-grid', $css);
 
             var importe= cantidad * precio;
 
-            document.getElementById("DirectInvoiceItems_amount"+index).value=importe;
+            document.getElementById("DirectInvoiceItems_amount"+index).value=importe.toFixed(2);
 
             discount=document.getElementById("DirectInvoiceItems_discount"+index).value;
             if(discount=='') discount=0;

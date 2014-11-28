@@ -809,7 +809,6 @@ class ReservationController extends Controller
             echo Yii::app()->quoteUtil->getTableCotizacion($models);
 
 
-
         }
     }
 
@@ -1411,7 +1410,6 @@ class ReservationController extends Controller
     public function actionSaveReservation(){
 
         $res=array('ok'=>false);
-        $totalPrice=0;
         $customerSave=false;
         $reservationSave=false;
         $customer=new Customers;
@@ -1421,17 +1419,27 @@ class ReservationController extends Controller
 
         if(Yii::app()->request->isAjaxRequest){
 
-
             if(isset($_POST['Customers'])){
 
                 if($_POST['Customers']['id'] ==""){
                     $customer->attributes=$_POST['Customers'];
+
                     if($customer->save()==true){
 
                         $customerId = $customer->getPrimaryKey();
                         $customerReservation->see_discount=(int)Yii::app()->getSession()->get('seeDiscount');
                         $customerReservation->customer_id=(int)$customerId;
-                        $customerReservation->total=Yii::app()->quoteUtil->getTotalPrice($reservations,$customerReservation->see_discount);
+
+                        $customerReservation->subtotal=Yii::app()->quoteUtil->getTotalPrice($reservations);
+
+                        if($customerReservation->see_discount==true){
+                            $customerReservation->discount_cabana=Yii::app()->quoteUtil->getDiscountCabanas($reservations);
+                            $customerReservation->discount_camped=Yii::app()->quoteUtil->getDiscountCamped($reservations);
+                            $customerReservation->discount_daypass=Yii::app()->quoteUtil->getDiscountDaypass($reservations);
+                        }
+
+                        $discount=$customerReservation->discount_cabana+$customerReservation->discount_camped+$customerReservation->discount_daypass;
+                        $customerReservation->total=$customerReservation->subtotal-$discount;
 
                         if($customerReservation->save()==true){
                             $customerReservationId = $customerReservation->getPrimaryKey();
@@ -1448,7 +1456,17 @@ class ReservationController extends Controller
                     $customerId = $_POST['Customers']['id'];
                     $customerReservation->see_discount=(int)Yii::app()->getSession()->get('seeDiscount');
                     $customerReservation->customer_id=(int)$customerId;
-                    $customerReservation->total=Yii::app()->quoteUtil->getTotalPrice($reservations,$customerReservation->see_discount);
+                    $customerReservation->subtotal=Yii::app()->quoteUtil->getTotalPrice($reservations);
+
+                    if($customerReservation->see_discount==true){
+                        $customerReservation->discount_cabana=Yii::app()->quoteUtil->getDiscountCabanas($reservations);
+                        $customerReservation->discount_camped=Yii::app()->quoteUtil->getDiscountCamped($reservations);
+                        $customerReservation->discount_daypass=Yii::app()->quoteUtil->getDiscountDaypass($reservations);
+                    }
+
+                    $discount=$customerReservation->discount_cabana+$customerReservation->discount_camped+$customerReservation->discount_daypass;
+                    $customerReservation->total=$customerReservation->subtotal-$discount;
+
 
                     if($customerReservation->save()==true){
                         $customerReservationId = $customerReservation->getPrimaryKey();

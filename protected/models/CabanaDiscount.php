@@ -93,15 +93,22 @@ class CabanaDiscount extends CActiveRecord
 		));
 	}
 
-    public function getDiscount($totalCabana){
+    public static function amount($amount){
 
-        $criteria=array(
+        $discount=0;
+
+        $cabana=CabanaDiscount::model()->find(array(
             'condition'=>':price>=min and :price<=max',
-            'params'=>array(':price'=>$totalCabana),
-        );
+            'params'=>array(':price'=>$amount)
+        ));
 
-        return $this->model()->find($criteria);
+        if($cabana) $discount=($amount*$cabana->discount)/100;
+
+
+        return $discount;
     }
+
+
 
     public function behaviors()
     {

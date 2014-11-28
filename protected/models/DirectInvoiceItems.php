@@ -1,26 +1,6 @@
 <?php
 
-/**
- * This is the model class for table "direct_invoice_items".
- *
- * The followings are the available columns in table 'direct_invoice_items':
- * @property integer $id
- * @property integer $direct_invoice_id
- * @property integer $article_id
- * @property string $quantity
- * @property string $price
- * @property string $amount
- * @property string $discount
- * @property string $subtotal
- * @property string $vat
- * @property string $ieps
- * @property string $retiva
- * @property string $retisr
- * @property string $total
- *
- * The followings are the available model relations:
- * @property DirectInvoice $directInvoice
- */
+
 class DirectInvoiceItems extends CActiveRecord
 {
 
@@ -38,17 +18,13 @@ class DirectInvoiceItems extends CActiveRecord
     public $article1;
     public $article2;
     public $total2;
-	/**
-	 * @return string the associated database table name
-	 */
+
 	public function tableName()
 	{
 		return 'direct_invoice_items';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
+
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -57,15 +33,10 @@ class DirectInvoiceItems extends CActiveRecord
 			array('direct_invoice_id, quantity', 'required'),
 			array('direct_invoice_id, article_id', 'numerical', 'integerOnly'=>true),
 			array('quantity, price, amount, discount, subtotal, vat, ieps, retiva, retisr, total,discount_percent,ieps_percent,retiva_percent,retisr_percent,vat_percent', 'length', 'max'=>10),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
 			array('id, direct_invoice_id, article_id, quantity, price, amount, discount, subtotal, vat, ieps, retiva, retisr, total', 'safe', 'on'=>'search'),
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
 	public function relations()
 	{
 		// NOTE: you may need to adjust the relation name and the related
@@ -76,9 +47,7 @@ class DirectInvoiceItems extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
+
 	public function attributeLabels()
 	{
 		return array(
@@ -114,7 +83,6 @@ class DirectInvoiceItems extends CActiveRecord
 
 	public function search()
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 

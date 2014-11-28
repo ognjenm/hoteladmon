@@ -336,20 +336,11 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-    public function getTotalDiscountCabanas($total=0){
-
-        $discountCabana=CabanaDiscount::model()->getDiscount($total);
-        if($discountCabana) $discountCabana=($total*$discountCabana->discount)/100;
-
-        return $discountCabana;
-
-    }
 
     public function getTotalDiscount($serviceType,$total,$pax=0) {
 
         $discountCabana=0;
         $discountCamped=0;
-        $grandTotal=0;
 
         if($serviceType=="CABANA"){
             $percentCabana=CabanaDiscount::model()->getDiscount($total);
@@ -364,6 +355,66 @@ class QuoteDetails extends CApplicationComponent{
         $grandTotal=$discountCamped+$discountCabana;
 
         return $grandTotal;
+
+    }
+
+
+    public function getDiscountCabanas($reservations){
+
+        $amount=0;
+
+        foreach($reservations as $i):
+            $item=(object)$i;
+            if($item->service_type=="CABANA") $amount+=$item->price;
+        endforeach;
+
+        $discount=CabanaDiscount::amount($amount);
+
+        return $discount;
+
+    }
+
+    public function getDiscountCamped($reservations){
+
+        $pax=0;
+        $amount=0;
+
+        foreach($reservations as $i):
+
+            $item=(object)$i;
+
+            if($item->service_type=="TENT" || $item->service_type=="CAMPED"):
+                $pax+=$item->totalpax;
+                $amount+=$item->price;
+            endif;
+
+        endforeach;
+
+        $discount=CampedDiscount::amount($amount,$pax);
+
+        return $discount;
+
+    }
+
+    public function getDiscountDaypass($reservations){
+
+        $pax=0;
+        $amount=0;
+
+        foreach($reservations as $i):
+
+            $item=(object)$i;
+
+            if($item->service_type=="TENT" || $item->service_type=="CAMPED"):
+                $pax+=$item->totalpax;
+                $amount+=$item->price;
+            endif;
+
+        endforeach;
+
+        $discount=CampedDiscount::amount($amount,$pax);
+
+        return $discount;
 
     }
 
@@ -408,14 +459,9 @@ class QuoteDetails extends CApplicationComponent{
 
         if($discount==true){
 
-            $discountCamping=CampedDiscount::model()->getDiscount($paxCamping);
-            if($discountCamping)$discountCamping=($totalCamping*$discountCamping->discount)/100;
-
-            $discountCabana=CabanaDiscount::model()->getDiscount($totalCabana);
-            if($discountCabana) $discountCabana=($totalCabana*$discountCabana->discount)/100;
-
-            $discountDaypass=CampedDiscount::model()->getDiscount($paxDaypass);
-            if($discountDaypass) $discountDaypass=($totalDaypass*$discountDaypass->discount)/100;
+            $discountCamping=CampedDiscount::amount($totalCamping,$paxCamping);
+            $discountCabana=CabanaDiscount::amount($totalCabana);
+            $discountDaypass=CampedDiscount::amount($totalDaypass,$paxDaypass);
 
             if($discountCamping != 0 or $discountCabana!=0 or $discountDaypass!=0){
                 $totalDiscount=$discountCamping+$discountCabana+$discountDaypass;
@@ -540,7 +586,6 @@ class QuoteDetails extends CApplicationComponent{
         return $table;
 
     }
-
 
     public function getTableCotizacion($models,$status=false){
 
@@ -675,7 +720,6 @@ class QuoteDetails extends CApplicationComponent{
             $inicio=strtotime($item->checkin);
             $fin=strtotime($item->checkout);
 
-            //if($item->pets > 2) $pricepets=100*($item->pets-2);
             $mascotas=(int)$item->pets;
             $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
 
@@ -815,7 +859,6 @@ class QuoteDetails extends CApplicationComponent{
                     </tr>';
             }
 
-
             if($item->service_type=="TENT"){
 
                 if($item->service_type=="TENT" and $reservationTypeId==1){
@@ -914,8 +957,6 @@ class QuoteDetails extends CApplicationComponent{
                         <td>'.number_format($item->price,2).'</td>
                     </tr>';
             }
-
-
 
 
             $totalPrice+=$item->price;
@@ -2329,7 +2370,6 @@ class QuoteDetails extends CApplicationComponent{
         $counter=1;
         $reservationsId=array();
         $subtable='';
-        $discoutCabanas=0;
         $totalx=0;
 
         $reservations=Reservation::model()->findAll(array(
@@ -2379,11 +2419,11 @@ class QuoteDetails extends CApplicationComponent{
             $tot_noch_ta=$item->nigth_ta*$item->price_ta;
             $tot_noch_tb=$item->nigth_tb*$item->price_tb;
 
+            $aux=$tot_noch_ta+$tot_noch_tb+$pricepets+$item->price_early_checkin+$item->price_late_checkout;
+            $totalx+=$aux;
+
             if($grupoant != $grupo){
                 $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item->customerReservation->customer->first_name." ".$item->customerReservation->customer->last_name).'</strong></td></tr>';
-                $totalx=0;
-            }else{
-                $totalx=$totalx+$item->price;
             }
 
             $startDate=explode(" ",$item->checkin);
@@ -2447,6 +2487,7 @@ class QuoteDetails extends CApplicationComponent{
                     'params'=>array('customerReservationId'=>$item->customer_reservation_id)
                 ));
 
+                $totalDesfase=0;
 
                 if($reservationDesfase){
 
@@ -2457,6 +2498,8 @@ class QuoteDetails extends CApplicationComponent{
                         $pricepets2=$this->pricePets((int)$desfase->pets);
                         $tot_noch_ta2=$desfase->nigth_ta*$desfase->price_ta;
                         $tot_noch_tb2=$desfase->nigth_tb*$desfase->price_tb;
+
+                        $totalDesfase=$totalDesfase+($pricepets2+$tot_noch_ta2+$tot_noch_tb2+$desfase->price_early_checkin+$desfase->price_late_checkout);
 
                         $subtable.='
                             <tr>
@@ -2501,15 +2544,17 @@ class QuoteDetails extends CApplicationComponent{
                 $total=$total+$saldo;
 
                 if($item->customerReservation->see_discount==1){
-                    $discoutCabanas= $this->getTotalDiscountCabanas($subtotal);
+                    $discoutCabanas= $this->getTotalDiscountCabanas($totalx);
+                }else{
+                    $discoutCabanas=0;
                 }
 
                 $tabledailyreport.='
                      <tr>
 		                <td colspan="6" rowspan="1">'.$subtable.'</td>
 		                <td style="vertical-align:middle">
-		                    <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
-		                    <p style="text-align:right"><strong>Descuento: $'.number_format($totalx,2).'</strong></p>
+		                    <p style="text-align:right"><strong>Subtotal: $'.number_format(($totalx+$totalDesfase),2).'</strong></p>
+		                    <p style="text-align:right"><strong>Descuento: $'.number_format($discoutCabanas,2).'</strong></p>
                             <p style="text-align:right"><strong>Anticipo: $'.number_format($pagosCliente,2).'</strong></p>
                             <p style="text-align:right"><strong>Debe: $'.number_format($saldo,2).'</strong></p>
 		                </td>
@@ -2517,6 +2562,7 @@ class QuoteDetails extends CApplicationComponent{
                 ';
 
                 $counter=0;
+                $totalx=0;
             }
 
             $counter++;

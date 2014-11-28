@@ -314,8 +314,10 @@ class DirectInvoiceController extends Controller
 
                 }
 
+
+
                 Yii::app()->user->setFlash('success','Success');
-                $this->redirect(array('view','id'=>$model->id));
+                //$this->redirect(array('view','id'=>$model->id));
             }
 
 		}

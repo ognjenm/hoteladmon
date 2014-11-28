@@ -118,7 +118,6 @@ class DirectInvoice extends CActiveRecord
         ));
     }
 
-
 	public function search()
 	{
 
@@ -156,7 +155,6 @@ class DirectInvoice extends CActiveRecord
             ),
 		));
 	}
-
 
     public function getFormFilter(){
 
