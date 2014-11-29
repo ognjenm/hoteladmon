@@ -579,6 +579,33 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+    public function tableCotizacion($customerRservationId){
+
+        $sql="SELECT customer_reservations.id,reservation.statux,reservation.service_type,SUBSTRING(reservation.checkin,1,10) as fechaEntrada,
+              SUBSTRING(reservation.checkin,12,16) as horaSalida,SUBSTRING(reservation.checkout,1,10) as fechaSalida,
+              SUBSTRING(reservation.checkout,12,16) as horaSalida,reservation.adults,reservation.children,reservation.pets,
+              reservation.nights,reservation.nigth_ta,reservation.nigth_tb,reservation.price_ta,reservation.price_tb,
+              reservation.price_early_checkin,reservation.price_late_checkout,reservation.price,customer_reservations.subtotal,
+              customer_reservations.discount_cabana,customer_reservations.discount_camped,customer_reservations.discount_daypass,
+              customer_reservations.commission,customer_reservations.total
+              FROM customer_reservations
+              INNER JOIN reservation ON customer_reservations.id=reservation.customer_reservation_id
+              WHERE customer_reservations.id=:CustomerReservationId";
+
+        $connection=Yii::app()->db;
+        $command=$connection->createCommand($sql);
+        $command->bindValue(":CustomerReservationId", $customerRservationId , PDO::PARAM_INT);
+        $data=$command->queryAll();
+
+
+
+
+
+
+
+
+    }
+
     public function getTableCotizacion($models,$status=false){
 
        $counter=0;
@@ -586,14 +613,8 @@ class QuoteDetails extends CApplicationComponent{
        $totalCabana=0;
        $totalCamping=0;
        $totalDaypass=0;
-       $discountCabana=0;
-       $discountCamping=0;
-       $discountDaypass=0;
-       $totalDiscount=0;
        $paxCamping=0;
        $paxDaypass=0;
-       $pricepets=0;
-       $footer='';
        $tablaCananaAndTent=false;
        $tablaCamped=false;
        $tablaDayPasss=false;
@@ -731,12 +752,12 @@ class QuoteDetails extends CApplicationComponent{
             $reservationType=Rates::model()->find($criteria);
             $reservationTypeId=$reservationType->typeReservation->id;
 
-
             if($tempAlta==true){
                 $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'ALTA');
                 $ratesAdultsAlta=$resultRates->adults;
                 if($item->children != 0) $ratesChildrenAlta=$resultRates->children;
             }
+
             if($tempBaja==true){
                 $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
                 $ratesAdultsBaja=$resultRates->adults;
@@ -774,6 +795,7 @@ class QuoteDetails extends CApplicationComponent{
                     $ratesAdultsAlta=$resultRates->adults;
                     $ratesChildrenAlta=$resultRates->children;
                 }
+
                 if($tempBaja==true){
                     $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
                     $ratesAdultsBaja=$resultRates->adults;
@@ -987,14 +1009,8 @@ class QuoteDetails extends CApplicationComponent{
         $totalCabana=0;
         $totalCamping=0;
         $totalDaypass=0;
-        $discountCabana=0;
-        $discountCamping=0;
-        $discountDaypass=0;
-        $totalDiscount=0;
         $paxCamping=0;
         $paxDaypass=0;
-        $pricepets=0;
-        $footer='';
         $tablaCananaAndTent=false;
         $tablaCamped=false;
         $tablaDayPasss=false;
