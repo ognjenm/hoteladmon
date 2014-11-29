@@ -91,10 +91,32 @@ class PollController extends Controller
                 $model->attributes=$_POST['Poll'];
                 $model->customer_reservation_id=$CustomerReservationId;
                 if($model->save() and $charges->save()){
+
+                    if($model->sales_agent_id!=1){
+                        $salesAgent=SalesAgents::model()->findByPk($model->sales_agent_id);
+                        $commission=($salesAgent->commission*$customerReservation->subtotal)/100;
+                        $customerReservation->commission=$commission;
+                        $customerReservation->have_commission=1;
+                    }
+
+                    if($model->reservation_channel_id!=1){
+                        $reservationChannel=ReservationChannel::model()->findByPk($model->reservation_channel_id);
+                        $commission=($reservationChannel->commission*$customerReservation->subtotal)/100;
+                        $customerReservation->commission=$commission;
+                        $customerReservation->have_commission=1;
+                    }
+
+                    $discount=$customerReservation->discount_cabana+$customerReservation->discount_camped+$customerReservation->discount_daypass;
+                    $total=$customerReservation->subtotal-$discount-$commission;
+                    $customerReservation->total=$total;
+                    $customerReservation->save();
+
                     $res=array('ok'=>true,
                         'redirect'=>Yii::app()->createUrl('reservation/view',array('id'=>$CustomerReservationId))
                     );
+
                     Yii::app()->getSession()->remove('CustomerReservation');
+
                 }else{
                     $errorPool=$model->getErrors();
                     $errorCharges=$charges->getErrors();
@@ -103,7 +125,6 @@ class PollController extends Controller
                     $res=array('ok'=>false,
                         'error'=>$errors
                     );
-
                 }
             }
 

@@ -157,11 +157,11 @@
                     'medio',
                     array(
                         'name'=>Yii::t('mx','Sales Agent'),
-                        'value'=>($poll->sales_agent_id !='') ? $poll->salesAgent->name :  $poll->reservationChannel->name
+                        'value'=>($poll->sales_agent_id !=1) ? $poll->salesAgent->name :  $poll->reservationChannel->name
                     ),
                     array(
                         'name'=>Yii::t('mx','Commission'),
-                        'value'=>($poll->sales_agent_id !='') ? $poll->salesAgent->commission.'%' : $poll->reservationChannel->commission.'%'
+                        'value'=>($poll->sales_agent_id !=1) ? $poll->salesAgent->commission.'%' : $poll->reservationChannel->commission.'%'
                     )
                 ),
             ));

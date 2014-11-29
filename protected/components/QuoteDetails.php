@@ -480,9 +480,6 @@ class QuoteDetails extends CApplicationComponent{
         $totalCabana=0;
         $totalCamping=0;
         $totalDaypass=0;
-        $discountCabana=0;
-        $discountCamping=0;
-        $discountDaypass=0;
         $totalDiscount=0;
         $paxCamping=0;
         $paxDaypass=0;
@@ -518,10 +515,9 @@ class QuoteDetails extends CApplicationComponent{
             endforeach;
 
 
-                $discountCamping=CampedDiscount::model()->getDiscount($paxCamping);
+                $discountCamping=CampedDiscount::amount($totalCamping,$paxCamping);
 
                 if($discountCamping){
-                    $discountCamping=($totalCamping*$discountCamping->discount)/100;
                     $footer.='
                         <tr>
                             <td>'.Yii::t('mx','Camped Discount').'</td>
@@ -530,25 +526,21 @@ class QuoteDetails extends CApplicationComponent{
                     ';
                 }
 
-                $discountCabana=CabanaDiscount::model()->getDiscount($totalCabana);
+                $discountCabana=CabanaDiscount::amount($totalCabana);
 
                 if($discountCabana){
-                    $discountCabana=($totalCabana*$discountCabana->discount)/100;
                     $footer.='
                         <tr>
                             <td>'.Yii::t('mx','Cabana Discount').'</td>
                             <td style="text-align: right;">$ '.number_format($discountCabana,2).' MX</td>
                         </tr>
                     ';
-
                 }
 
-            $discountDaypass=CampedDiscount::model()->getDiscount($paxDaypass);
 
+            $discountDaypass=CampedDiscount::amount($totalDaypass,$paxDaypass);
 
             if($discountDaypass){
-                $discountDaypass=($totalDaypass*$discountDaypass->discount)/100;
-
                 $footer.='
                 <tr>
                     <td>'.Yii::t('mx','Day Pass Discount').'</td>
