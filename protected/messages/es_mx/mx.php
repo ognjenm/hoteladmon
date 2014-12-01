@@ -782,7 +782,9 @@ return array(
     'Activities,Packages,Food,And Others'=>'Actividades,Paquetes,Comidas, y Otros',
     'Supplier Price'=>'Precio de proveedor',
     'Report Supplier'=>'Reporte para proveedor',
-    'Description Of Supliers'=>'Descripción para proveedores'
+    'Description Of Supliers'=>'Descripción para proveedores',
+    'Commission'=>'Comisión',
+    'Channel Reservation'=>'Canal de reserva'
 
 
 

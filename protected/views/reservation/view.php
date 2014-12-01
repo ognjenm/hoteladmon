@@ -141,38 +141,64 @@
         <?php $this->endWidget();?>
     </div>
     <div class="span6">
+        <?php if($poll){ ?>
+            <div class="row-fluid">
+                <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
+                    'title' => Yii::t('mx', 'Sales Agents'),
+                    'headerIcon' => 'icon-user',
+                    'htmlOptions' => array('class'=>'bootstrap-widget-table'),
+                    'htmlContentOptions'=>array('class'=>'box-content nopadding'),
+                ));?>
 
-     <?php if($poll){ ?>
+                    <?php $this->widget('bootstrap.widgets.TbDetailView',array(
+                        'data'=>$poll,
+                        'attributes'=>array(
+                            array(
+                                'name'=>Yii::t('mx','Medio'),
+                                'value'=>($poll->sales_agent_id !=1) ? $poll->medio :  Yii::t('mx','Not set')
+                            ),
+                            array(
+                                'name'=>Yii::t('mx','Sales Agent'),
+                                'value'=>($poll->sales_agent_id !=1) ? $poll->salesAgent->name :  Yii::t('mx','Not set')
+                            ),
+                            array(
+                                'name'=>Yii::t('mx','Commission'),
+                                'value'=>($poll->sales_agent_id !=1) ? $poll->salesAgent->commission.'%' : '0%'
+                            )
+                        ),
+                    ));
+                    ?>
+                <?php $this->endWidget();?>
 
-        <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
-            'title' => Yii::t('mx', 'Sales Agents'),
-            'headerIcon' => 'icon-user',
-            'htmlOptions' => array('class'=>'bootstrap-widget-table'),
-            'htmlContentOptions'=>array('class'=>'box-content nopadding'),
-        ));?>
+            </div>
+            <div class="row-fluid">
+                    <?php $this->beginWidget('bootstrap.widgets.TbBox', array(
+                        'title' => Yii::t('mx', 'Channel Reservation'),
+                        'headerIcon' => 'icon-user',
+                        'htmlOptions' => array('class'=>'bootstrap-widget-table'),
+                        'htmlContentOptions'=>array('class'=>'box-content nopadding'),
+                    ));?>
 
-        <?php $this->widget('bootstrap.widgets.TbDetailView',array(
-                'data'=>$poll,
-                'attributes'=>array(
-                    'medio',
-                    array(
-                        'name'=>Yii::t('mx','Sales Agent'),
-                        'value'=>($poll->sales_agent_id !=1) ? $poll->salesAgent->name :  $poll->reservationChannel->name
-                    ),
-                    array(
-                        'name'=>Yii::t('mx','Commission'),
-                        'value'=>($poll->sales_agent_id !=1) ? $poll->salesAgent->commission.'%' : $poll->reservationChannel->commission.'%'
-                    )
-                ),
-            ));
-        ?>
-
-        <?php $this->endWidget();?>
+                        <?php $this->widget('bootstrap.widgets.TbDetailView',array(
+                            'data'=>$poll,
+                            'attributes'=>array(
+                                'medio',
+                                array(
+                                    'name'=>Yii::t('mx','Channel Reservation'),
+                                    'value'=>($poll->reservation_channel_id !=1) ? $poll->reservationChannel->name : Yii::t('mx','Not set')
+                                ),
+                                array(
+                                    'name'=>Yii::t('mx','Commission'),
+                                    'value'=>($poll->reservation_channel_id !=1) ? $poll->reservationChannel->commission.'%' : '0%'
+                                )
+                            ),
+                        ));
+                        ?>
+                    <?php $this->endWidget();?>
+            </div>
         <?php } ?>
-
     </div>
 </div>
-
 
 <div class="update" style="display: none">
 
@@ -295,10 +321,8 @@
         )
 
     ));?>
-            <?php
-                if($customerReservation->see_discount==true) echo Yii::app()->quoteUtil->getTableCotizacion($model,true);  //true habilita el renglon de estatus
-                if($customerReservation->see_discount==false) echo Yii::app()->quoteUtil->getCotizacionNoDiscount($model,true); //true habilita el renglon de estatus
-            ?>
+
+    <?php echo Yii::app()->quoteUtil->tableCotization($customerReservation->id,true); ?>
 
     <?php $this->endWidget();?>
 </div>
