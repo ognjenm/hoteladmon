@@ -1264,8 +1264,6 @@ class ReservationController extends Controller
         ));
 
 
-
-
         $this->render('view',array(
             'model'=>$models,
             'customerReservation'=>$customerReservation,

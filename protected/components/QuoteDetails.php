@@ -786,12 +786,7 @@ class QuoteDetails extends CApplicationComponent{
                         <td>$'.$item->price_late_checkout.'</td>
                         <td>$'.number_format($item->price,2).'</td>
                     </tr>';
-                    $footer.='
-                        <tr>
-                            <td>'.Yii::t('mx','Cabana Discount').'</td>
-                            <td style="text-align: right;">$ '.number_format($item->discount_cabana,2).' MX</td>
-                        </tr>
-                    ';
+
                     break;
 
                 case 'DAYPASS':
@@ -822,12 +817,7 @@ class QuoteDetails extends CApplicationComponent{
                         <td>$'.$item->price_late_checkout.'</td>
                         <td>$'.number_format($item->price,2).'</td>
                     </tr>';
-                    $footer.='
-                    <tr>
-                        <td>'.Yii::t('mx','Day Pass Discount').'</td>
-                            <td  style="text-align: right;">$ '.number_format($item->discount_daypass,2).' MX</td>
-                        </tr>
-                    ';
+
                     break;
 
                 case 'TENT':
@@ -926,12 +916,7 @@ class QuoteDetails extends CApplicationComponent{
                         <td>'.$item->price_late_checkout.'</td>
                         <td>'.number_format($item->price,2).'</td>
                     </tr>';
-                    $footer.='
-                        <tr>
-                            <td>'.Yii::t('mx','Camped Discount').'</td>
-                            <td  style="text-align: right;">$ '.number_format($item->discount_camped,2).' MX</td>
-                        </tr>
-                    ';
+
                     break;
             }
 
@@ -942,16 +927,34 @@ class QuoteDetails extends CApplicationComponent{
         if($tablaCananaAndTent==true){
             $tableCananaAndTent.='</table>';
             $allTables.=$tableCananaAndTent;
+            $footer.='
+                        <tr>
+                            <td>'.Yii::t('mx','Cabana Discount').'</td>
+                            <td style="text-align: right;">$ '.number_format($item->discount_cabana,2).' MX</td>
+                        </tr>
+                    ';
         }
 
         if($tablaCamped==true){
             $tableCamped.='</table>';
             $allTables.=$tableCamped;
+            $footer.='
+                        <tr>
+                            <td>'.Yii::t('mx','Camped Discount').'</td>
+                            <td  style="text-align: right;">$ '.number_format($item->discount_camped,2).' MX</td>
+                        </tr>
+                    ';
         }
 
         if($tablaDayPasss==true){
             $tableDayPasss.='</table>';
             $allTables.=$tableDayPasss;
+            $footer.='
+                    <tr>
+                        <td>'.Yii::t('mx','Day Pass Discount').'</td>
+                            <td  style="text-align: right;">$ '.number_format($item->discount_daypass,2).' MX</td>
+                        </tr>
+                    ';
         }
 
         //$totalDiscount=$item->discount_cabana+$item->discount_camped+$item->discount_daypass;
