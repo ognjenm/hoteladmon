@@ -60,6 +60,11 @@
     ");
 
 
+        echo CHtml::script('function alertIds(newElem,sourceElem){
+                var newOption=newElem.attr("id");
+                $("#"+newOption).prop("selectedIndex",0);
+                }'
+            );
 
 
 ?>

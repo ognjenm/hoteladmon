@@ -220,7 +220,7 @@
             'tableView'=>true,
             'tableHtmlOptions'=>array('class'=>'items table table-hover table-condensed'),
             'data' => $data,
-            'hideCopyTemplate'=>true,
+            'hideCopyTemplate'=>false,
             'clearInputs'=>false,
             //'options'=>array('clearInputs'=>false),
             'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),

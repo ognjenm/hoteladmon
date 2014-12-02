@@ -2017,11 +2017,11 @@ class QuoteDetails extends CApplicationComponent{
             }
 
             $startDate=explode(" ",$item->checkin);
-            $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
+            $fechaEntrada=$startDate[0];
             $horaEntrada=$startDate[1];
 
             $endDate=explode(" ",$item->checkout);
-            $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
+            $fechaSalida=$endDate[0];
             $horaSalida=$endDate[1];
 
 

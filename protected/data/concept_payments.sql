@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS `concept_payments` (
-  `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `concept` VARCHAR(100) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL COMMENT 'Concept',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1

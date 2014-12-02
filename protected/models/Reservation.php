@@ -765,7 +765,12 @@ class Reservation extends CActiveRecord
                                 }
                             })
 
-                            .done(function(data) { $("#Reservation_adults"+index).html(data); })
+                            .done(function(data) {
+
+                             $("#Reservation_adults"+index).html(data);
+
+                             })
+
                             .fail(function() { alert( "error" ); })
                             .always(function() { $("#maindiv").removeClass("loading"); });
                     ',
