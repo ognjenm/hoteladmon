@@ -14,12 +14,14 @@
                 'removeText' =>Yii::t('mx','Remove'),
                 'removeConfirm'=>Yii::t('mx','Delete this item?'),
                 'addItemText'=>Yii::t('mx','Add'),
+                'addItemAsButton'=>true,
                 'tableView'=>true,
                 'tableHtmlOptions'=>array('class'=>'items table table-hover table-condensed'),
                 'data' => $reservation->findAll('customer_reservation_id=:groupId', array(':groupId'=>$model->id)),
                 'hideCopyTemplate'=>false,
-                'options'=>array('clearInputs'=>false),
+                'clearInputs'=>false,
                 'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),
+                'jsAfterCloneCallback'=>'alertIds'
                 //'jsBeforeClone'=>$formConfig,
                 //'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkout']),
             ));

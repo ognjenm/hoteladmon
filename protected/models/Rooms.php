@@ -108,6 +108,7 @@ class Rooms extends CActiveRecord
         return CHtml::listData($this->model()->findAll(array('order'=>'room')),'room','room');
     }
 
+
     public function getRoomsJson(){
 
         $json="[\n";

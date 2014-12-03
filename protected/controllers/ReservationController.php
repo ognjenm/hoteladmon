@@ -1023,6 +1023,31 @@ class ReservationController extends Controller
 
     }
 
+    public function actionRoomsJson(){
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            $roomType=$_POST['roomType'];
+            $checkin=$_POST['checkin'];
+            $checkout=$_POST['checkout'];
+            $serviceType=$_POST['serviceType'];
+
+            $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($serviceType,$checkin,$checkout);
+            $options=Rooms::model()->getRoomsavailable($roomUnavailable,$roomType);
+
+
+            if($options){
+                foreach ($options as $key => $value) {
+                    $array[]=array('key'=>$key,'value'=>$value);
+                }
+            }
+
+            echo CJSON::encode($array);
+            Yii::app()->end();
+
+        }
+    }
+
     public function actionGetRooms(){
 
         //$model = new FBReservation;

@@ -729,15 +729,25 @@ class Reservation extends CActiveRecord
                         var serviceType=$("#Reservation_service_type"+index).val();
 
                         $.ajax({
-                            url: "'.CController::createUrl('/reservation/getRooms').'",
+                            url: "'.CController::createUrl('/reservation/roomsJson').'",
                             data: { serviceType: serviceType, roomType: roomType, checkin: checkin, checkout: checkout  },
                             type: "POST",
+                            dataType:"JSON",
                             beforeSend: function() {
                                 $("#maindiv").addClass("loading");
                             }
                         })
 
-                        .done(function(data) {$("#Reservation_room_id"+index).html(data); })
+                        .done(function(data) {
+
+                            $("#Reservation_room_id"+index).html("");
+
+                            $.each(data, function(idx, obj) {
+                                $("#Reservation_room_id"+index).append(new Option(obj.value, obj.key));
+                            });
+
+                        })
+
                         .fail(function() { alert( "error" ); })
                         .always(function() { $("#maindiv").removeClass("loading"); });
 
@@ -748,7 +758,7 @@ class Reservation extends CActiveRecord
                 "room_id"=>array(
                     'type'=>'dropdownlist',
                     'class' => 'input-medium',
-                    'items'=>Rooms::model()->listAllRooms(),
+                    'items'=>array(),//Rooms::model()->listAllRooms(),
                     'prompt'=>Yii::t('mx','Select'),
                     'onchange'=>'
 

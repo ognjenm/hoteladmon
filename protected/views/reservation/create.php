@@ -44,7 +44,6 @@
          var startDateTextBox = $('#Reservation_checkin');
          var endDateTextBox = $('#Reservation_checkout');
 
-
             $('#customerReservationForm').submit(function(){
 
                 $('#customerReservationsFilter').yiiGridView('update', {
@@ -61,8 +60,8 @@
 
 
         echo CHtml::script('function alertIds(newElem,sourceElem){
-                var newOption=newElem.attr("id");
-                $("#"+newOption).prop("selectedIndex",0);
+                    var newOption=newElem.attr("id");
+                    $("#"+newOption).prop("selectedIndex",0);
                 }'
             );
 
