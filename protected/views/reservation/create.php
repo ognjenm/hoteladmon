@@ -56,14 +56,18 @@
 
             $('#buttonUndiscountedBudget').attr('disabled', true);
 
-    ");
 
+    ");
 
         echo CHtml::script('function alertIds(newElem,sourceElem){
                     var newOption=newElem.attr("id");
-                    $("#"+newOption).prop("selectedIndex",0);
+                     var checkinx=$("#FBReservation_checkin").val()+" 15:00";
+                     var checkoutx=$("#FBReservation_checkout").val()+" 13:00";
+                    $("#"+newOption).val(checkinx);
                 }'
             );
+
+        echo CHtml::script('var roomOptionsRemove = new Array();');
 
 
 ?>

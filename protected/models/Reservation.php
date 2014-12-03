@@ -742,9 +742,35 @@ class Reservation extends CActiveRecord
 
                             $("#Reservation_room_id"+index).html("");
 
-                            $.each(data, function(idx, obj) {
+                             $.each(data, function(idx, obj) {
                                 $("#Reservation_room_id"+index).append(new Option(obj.value, obj.key));
-                            });
+                             });
+
+                            if(index != ""){
+
+                                $("#Reservation_room_id"+index).html("");
+                                var indexAnterior=index-1;
+                                var del=$("#Reservation_room_id").val();
+
+                                if(indexAnterior > 1) var del=$("#Reservation_room_id"+indexAnterior).val();
+
+                                roomOptionsRemove.push(del);
+
+                                for(var x=0;x<roomOptionsRemove.length;x++){
+                                    for(var i=0; i<data.length; i++) {
+                                        if(data[i].key == roomOptionsRemove[x]) {
+                                            data.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                $.each(data, function(idx, obj) {
+                                    $("#Reservation_room_id"+index).append(new Option(obj.value, obj.key));
+                                });
+
+                            }
+
 
                         })
 

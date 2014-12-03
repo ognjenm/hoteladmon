@@ -19,9 +19,10 @@
                 'tableHtmlOptions'=>array('class'=>'items table table-hover table-condensed'),
                 'data' => $reservation->findAll('customer_reservation_id=:groupId', array(':groupId'=>$model->id)),
                 'hideCopyTemplate'=>false,
-                'clearInputs'=>false,
+                'clearInputs'=>true,
                 'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),
-                'jsAfterCloneCallback'=>'alertIds'
+                'jsAfterCloneCallback'=>'alertIds',
+                'bootstrapLayout'=>true
                 //'jsBeforeClone'=>$formConfig,
                 //'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkout']),
             ));
