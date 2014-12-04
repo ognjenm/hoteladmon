@@ -21,7 +21,7 @@
                 'hideCopyTemplate'=>false,
                 'clearInputs'=>true,
                 'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkin'],$formConfig['elements']['checkout']),
-                'jsAfterCloneCallback'=>'alertIds',
+                //'jsAfterCloneCallback'=>'alertIds',
                 'bootstrapLayout'=>true
                 //'jsBeforeClone'=>$formConfig,
                 //'jsAfterNewId' => MultiModelForm::afterNewIdDateTimePicker($formConfig['elements']['checkout']),

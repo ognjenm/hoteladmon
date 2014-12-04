@@ -1031,10 +1031,10 @@ class ReservationController extends Controller
             $checkin=$_POST['checkin'];
             $checkout=$_POST['checkout'];
             $serviceType=$_POST['serviceType'];
+            $array=array();
 
             $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($serviceType,$checkin,$checkout);
             $options=Rooms::model()->getRoomsavailable($roomUnavailable,$roomType);
-
 
             if($options){
                 foreach ($options as $key => $value) {

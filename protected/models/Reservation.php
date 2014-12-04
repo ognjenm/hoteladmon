@@ -657,8 +657,8 @@ class Reservation extends CActiveRecord
                             var index=$(this).attr("id");
                             index=index.substring(24,26);
 
-                            //$("#Reservation_checkin"+index).val($("#FBReservation_checkin").val()+" 15:00");
-                            //$("#Reservation_checkout"+index).val($("#FBReservation_checkout").val()+" 13:00");
+                            $("#Reservation_checkin"+index).val($("#FBReservation_checkin").val()+" 15:00");
+                            $("#Reservation_checkout"+index).val($("#FBReservation_checkout").val()+" 13:00");
 
                             $.ajax({
                                     url: "'.CController::createUrl('/roomsType/getAccommodationType').'",
@@ -693,8 +693,8 @@ class Reservation extends CActiveRecord
 
                             if(serviceType=="DAYPASS"){
 
-                                $("#Reservation_checkin").val($("#FBReservation_checkin"+index).val()+" 09:00");
-                                $("#Reservation_checkout").val($("#FBReservation_checkout"+index).val()+" 18:00");
+                                $("#Reservation_checkin"+index).val($("#FBReservation_checkin").val()+" 09:00");
+                                $("#Reservation_checkout"+index).val($("#FBReservation_checkout").val()+" 18:00");
 
                                 $.ajax({
                                     url: "'.CController::createUrl('/reservation/getRoomCapacity').'",
