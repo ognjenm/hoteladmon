@@ -23,6 +23,7 @@
 
 <script type="text/javascript">
     var index=1;
+    var itemCount = 0;
 
     $(document).ready(function() {
 
@@ -62,6 +63,46 @@
             //$("#table-2").append(nuevaFila);
 
             index++;
+
+        });
+
+
+        var objs=[];
+        var temp_objs=[];
+
+        $( "#add_button" ).click(function() {
+
+            var html = "";
+
+            var obj={
+                "ROW_ID" : itemCount,
+                "ITEM_NAME" :  $("#item_article").val(),
+                "ITEM_PRICE" : $("#item_price").val(),
+                "ITEM_QUANTITY" : $("#item_quantity").val()
+            }
+
+            objs.push(obj);
+
+            itemCount++;
+            html = "<tr id='tr"+ itemCount + "'>" +
+                        "<td>"+ obj['ITEM_NAME'] + "</td>" +
+                        "<td>" +  obj['ITEM_PRICE'] + " </td>" +
+                        "<td>" +  obj['ITEM_QUANTITY'] + " </td>" +
+                        "<td><input type='button'  id='" + itemCount + "' value='remove'></td>" +
+                    "</tr>";
+
+            $("#bill_table").append(html)
+
+            $("#"+itemCount).click(function() {
+                var buttonId = $(this).attr("id");
+                $("#tr"+ buttonId).remove();
+            });
+
+            //$("#PurchaseOrder_provider_id").prop("selectedIndex",0);
+            $("#PurchaseOrderItems_article_id").prop("selectedIndex",0);
+            $("#item_price").val("");
+            $("#item_quantity").val("");
+
 
         });
 
