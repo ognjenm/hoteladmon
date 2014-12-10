@@ -91,12 +91,12 @@
     <p>
         <?php
 
-        echo $FNoBill->renderBegin();
+        echo $fOperations->renderBegin();
 
-        echo $FNoBill['typeCheq'];
-        echo $FNoBill['account_id'];
-        echo $FNoBill['authorized'];
-        echo $FNoBill['released'];
+        echo $fOperations['typeCheq2'];
+        echo $fOperations['account_id2'];
+        echo $fOperations['authorized2'];
+        echo $fOperations['released2'];
 
         echo '<div class="pull-right">';
 
@@ -112,12 +112,12 @@
 
         echo '</div>';
 
-        echo $FNoBill['concept'];
-        echo $FNoBill['amount'];
-        echo $FNoBill['abonoencuenta'];
-        echo $FNoBill->renderElement('saveOperation');
+        echo $fOperations['concept2'];
+        echo $fOperations['amount2'];
+        echo $fOperations['abonoencuenta2'];
+        echo $fOperations->renderElement('savePolizaNoBill');
 
-        echo $FNoBill->renderEnd();
+        echo $fOperations->renderEnd();
 
         ?>
     </p>
@@ -133,8 +133,6 @@
 
 </div>
 <?php $this->endWidget(); ?>
-
-
 
 
     <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id' => 'modal-operations')); ?>

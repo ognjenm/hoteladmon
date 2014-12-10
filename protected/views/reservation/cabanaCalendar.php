@@ -76,6 +76,7 @@
             <div class="dhx_cal_next_button">&nbsp;</div>
             <div class="dhx_cal_today_button"></div>
             <div class="dhx_cal_date"></div>
+            <div class='dhx_cal_export pdf' id='export_pdf' title='Export to PDF' onclick='scheduler.toPDF("<?php echo Yii::app()->baseUrl.'/scheduler-pdf/generate.php'; ?>", "fullcolor",false)'>&nbsp;</div>
             <div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
             <div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
             <div class="dhx_cal_tab" name="agenda_tab" style="right:280px;"></div>

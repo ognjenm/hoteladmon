@@ -4,10 +4,17 @@ class Operations extends CActiveRecord
 {
     public $inicio;
     public $fin;
-    public $authorized;
+
     public $typeCheq;
-    public $abonoencuenta;
+    public $account_id2;
+    public $authorized;
+    public $authorized2;
+    public $released2;
+    public $concept2;
     public $amount;
+    public $abonoencuenta;
+    public $abonoencuenta2;
+
 
 	public function tableName()
 	{
@@ -45,6 +52,7 @@ class Operations extends CActiveRecord
 		return array(
 			'id' => 'ID',
             'account_id' => Yii::t('mx','Account'),
+            'account_id2' => Yii::t('mx','Account'),
             'payment_type' => Yii::t('mx','Payment Type'),
             'cheq' => Yii::t('mx','Cheq'),
             'datex' => Yii::t('mx','Date'),

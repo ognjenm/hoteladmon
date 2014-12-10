@@ -91,14 +91,13 @@ class PolizasController extends Controller
 
         if(Yii::app()->request->isPostRequest){
 
-            $accounId=(int)$_POST['Operations']['account_id'];
-            $providerId=(int)$_POST['Operations']['released'];
-            $authorized=(int)$_POST['Operations']['authorized'];
-            $conceptId=(int)$_POST['Operations']['concept'];
-            $paymentMethod=(int)$_POST['Operations']['typeCheq'];
-            $forBeneficiaryAccount=$_POST['Operations']['abonoencuenta'];
+            $accounId=(int)$_POST['Operations']['account_id2'];
+            $providerId=(int)$_POST['Operations']['released2'];
+            $authorized=(int)$_POST['Operations']['authorized2'];
+            $conceptId=(int)$_POST['Operations']['concept2'];
+            $paymentMethod=(int)$_POST['Operations']['typeCheq2'];
+            $forBeneficiaryAccount=$_POST['Operations']['abonoencuenta2'];
             $totalPoliza=$_POST['Operations']['amount'];
-
 
             $account=BankAccounts::model()->findByPk($accounId);
             $balance=$account->initial_balance-$totalPoliza;
