@@ -315,9 +315,8 @@ class DirectInvoiceController extends Controller
                 }
 
 
-
                 Yii::app()->user->setFlash('success','Success');
-                //$this->redirect(array('view','id'=>$model->id));
+                $this->redirect(array('view','id'=>$model->id));
             }
 
 		}
@@ -455,12 +454,6 @@ class DirectInvoiceController extends Controller
             )
         );
 
-        $FNoBill= TbForm::createForm($operations->getFormNoBill(),$operations,
-            array('htmlOptions'=>array('class'=>'well'),
-                'type'=>'horizontal',
-            )
-        );
-
 
 
         $model=new DirectInvoice('search');
@@ -482,7 +475,6 @@ class DirectInvoiceController extends Controller
             'fOperations'=>$fOperations,
             'filter'=>$Filter,
             'FconceptPayments'=>$FconceptPayments,
-            'FNoBill'=>$FNoBill
         ));
 
 	}

@@ -14,9 +14,6 @@ class Operations extends CActiveRecord
 		return 'operations';
 	}
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
 	public function rules()
 	{
 		// NOTE: you should only define rules for those attributes that
@@ -33,9 +30,6 @@ class Operations extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
 	public function relations()
 	{
 		// NOTE: you may need to adjust the relation name and the related
@@ -46,9 +40,6 @@ class Operations extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
 	public function attributeLabels()
 	{
 		return array(
@@ -203,7 +194,6 @@ class Operations extends CActiveRecord
                             .always(function() { $(".modal-body").removeClass("loading"); });
                     ',
                 ),
-
                 'account_id'=>array(
                     'type'=>'dropdownlist',
                     'items'=>array(),
@@ -229,12 +219,10 @@ class Operations extends CActiveRecord
                             .always(function() { $(".modal-body").removeClass("loading"); });
                     ',
                 ),
-
                 'authorized'=>array(
                     'type'=>'dropdownlist',
                     'items'=>array(''=>Yii::t('mx','Select')),
                 ),
-
                 'released'=>array(
                     'type'=>'select2',
                     'data'=>Providers::model()->listAllOrganization(),
@@ -274,7 +262,7 @@ class Operations extends CActiveRecord
             ),
 
             'buttons' => array(
-                'saveOperation' => array(
+                'savepolizaNoBill' => array(
                     'type' => 'button',
                     'icon'=>'icon-ok',
                     'layoutType' => 'primary',
@@ -321,7 +309,6 @@ class Operations extends CActiveRecord
                         "
                     )
                 ),
-
             )
         );
     }
@@ -399,7 +386,6 @@ class Operations extends CActiveRecord
                             .always(function() { $(".modal-body").removeClass("loading"); });
                     ',
                 ),
-
                 'account_id'=>array(
                     'type'=>'dropdownlist',
                     'items'=>array(),
@@ -425,12 +411,10 @@ class Operations extends CActiveRecord
                             .always(function() { $(".modal-body").removeClass("loading"); });
                     ',
                 ),
-
                 'authorized'=>array(
                     'type'=>'dropdownlist',
                     'items'=>array(''=>Yii::t('mx','Select')),
                 ),
-
                 'released'=>array(
                     'type'=>'select2',
                     'data'=>Providers::model()->listAllOrganization(),
@@ -459,6 +443,10 @@ class Operations extends CActiveRecord
                 'concept'=>array(
                     'type'=>'dropdownlist',
                     'items'=>array(''=>Yii::t('mx','Select')),
+                ),
+                'amount'=>array(
+                    'type'=>'text',
+                    'prepend'=>'$'
                 ),
                 'abonoencuenta'=>array(
                     'type'=>'checkbox',
@@ -508,7 +496,53 @@ class Operations extends CActiveRecord
                         "
                     )
                 ),
+                'savePolizaNoBill' => array(
+                    'type' => 'button',
+                    'icon'=>'icon-ok',
+                    'layoutType' => 'primary',
+                    'label' => Yii::t('mx','Create'),
+                    'url'=>Yii::app()->createUrl('/polizas/createPolizaNoBill'),
+                    'htmlOptions'=>array(
+                        'onclick'=>"
 
+                            var invoice=$.fn.yiiGridView.getChecked('direct-invoice-grid','chk').toString();
+                            var transporte=$('#Transport-form').serialize();
+                            var operations=$('#operations-form').serialize();
+                            var dataString=transporte+operations+'&invoice='+invoice;
+
+                             $.ajax({
+                                url: '".CController::createUrl('/polizas/createPolizaNoBill')."',
+                                data: dataString,
+                                type: 'POST',
+                                dataType: 'json',
+                                beforeSend: function() { $('.modal-body').addClass('saving'); }
+                            })
+
+                            .done(function(data) {
+
+                            if(data.ok==true){
+                                $('#modal-operations').modal('hide');
+
+                                 $('#direct-invoice-grid').yiiGridView('update', {
+                                            data: $(this).serialize()
+                                 });
+
+                                 window.location.href=data.url;
+
+                            }else{
+                                     bootbox.alert(data.errors);
+                            }
+
+
+
+                             })
+
+                            .fail(function() { bootbox.alert('Error');  })
+                            .always(function() { $('.modal-body').removeClass('saving'); });
+
+                        "
+                    )
+                ),
             )
         );
     }

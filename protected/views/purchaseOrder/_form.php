@@ -40,7 +40,17 @@
                         'placeholder' =>Yii::t('mx','Select'),
                     ),
                     'events' =>array(
+
                         'change'=>'js:function(e){
+
+                        providers++;
+
+                        html+="<tr><td><table id=\'providers"+providers+"\' style="width:100%"><tbody><tr><th colspan=\'4\' scope=\'row\'>"+ $(this).val() +"</th></tr></tbody></table></td></tr>";
+
+                        $("#bill_table").append(html);
+
+                        html="";
+
                         $.ajax({
                             url: "'.CController::createUrl('/articles/getArticleDescription').'",
                             data: { provider: $(this).val() },
@@ -71,9 +81,7 @@
                 ?>
             </td>
             <td>
-
                 <input name="item_article" type="hidden" id="item_article" size="100"/>
-
                 <?php echo $form->dropDownList($items,'article_id',array(),array(
                     'class'=>'span12',
                     'prompt'=>Yii::t('mx','Select'),
@@ -116,13 +124,16 @@
             </td>
             <td><input name="item_price" type="text" id="item_price" size="20"/></td>
             <td><input name="item_quantity" type="text" id="item_quantity" size="20"/></td>
-            <td><input name="add_button" type="button" id="add_button" size="20" value="Add" /></td>
+            <td>
+
+                <input name="add_button" type="button" id="add_button" size="20" value="Add" />
+                <input name="add_note" type="button" id="add_note" size="20" value="Nota" />
+            </td>
     </table>
 
 
     <div id="billing_items_div">
-        <table border='1' id='bill_table'  width='50%' align='center'  style='border-collapse:collapse' cellspacing='3' cellpadding='5'>
-        </table>
+        <table id='bill_table'  width='50%' align='center'  class='items table table-hover table-condensed'></table>
     </div>
 
     <?php $this->beginWidget('bootstrap.widgets.TbBox', array(

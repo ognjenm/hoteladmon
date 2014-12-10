@@ -583,7 +583,154 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-    public function tableCotization($customerRservationId,$discount=false){
+    public function getTableCotization($model){
+
+        $ratesAdultsAlta=0;
+        $ratesAdultsAlta=0;
+        $tableStatus='';
+        $pricepets=0;
+        $ratesAdultsBaja=0;
+
+
+        $tableCananaAndTent='
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+                <thead>
+                    <tr>
+                        '.$tableStatus.'
+                        <th>'.Yii::t('mx','Room Type').'</th>
+                        <th>'.Yii::t('mx','Check In').'</th>
+                        <th>'.Yii::t('mx','Check In Time').'</th>
+                        <th>'.Yii::t('mx','Check Out').'</th>
+                        <th>'.Yii::t('mx','Check Out Time').'</th>
+
+                        <th>'.Yii::t('mx','Adults').'</th>
+                        <th>'.Yii::t('mx','Children').'</th>
+                        <th>'.Yii::t('mx','Pets').'</th>
+
+                        <th># '.Yii::t('mx','Nights').'</th>
+                        <th># '.Yii::t('mx','Nights').' Ta</th>
+                        <th># '.Yii::t('mx','Nights').' Tb</th>
+
+                        <th>'.Yii::t('mx','Price x Night').' Ta</th>
+                        <th>'.Yii::t('mx','Price x Night').' Tb</th>
+                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+
+                        <th>'.Yii::t('mx','Price Early Check In').'</th>
+                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                        <th>'.Yii::t('mx','Price').'</th>
+                    </tr>
+                </thead>
+            <tbody>
+        ';
+
+        $tableCamped='
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+            <thead>
+                <tr>
+                    '.$tableStatus.'
+                    <th>'.Yii::t('mx','Room Type').'</th>
+                    <th>'.Yii::t('mx','Check In').'</th>
+                    <th>'.Yii::t('mx','Check In Time').'</th>
+                    <th>'.Yii::t('mx','Check Out').'</th>
+                    <th>'.Yii::t('mx','Check Out Time').'</th>
+
+                    <th>'.Yii::t('mx','Adults').'</th>
+                    <th>'.Yii::t('mx','Children').'</th>
+                    <th>'.Yii::t('mx','Pets').'</th>
+
+                    <th># '.Yii::t('mx','Nights').'</th>
+                    <th># '.Yii::t('mx','Nights').' Ta</th>
+                    <th># '.Yii::t('mx','Nights').' Tb</th>
+
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Ta</th>
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Ta</th>
+
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Tb</th>
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Tb</th>
+                    <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+
+                    <th>'.Yii::t('mx','Price Early Check In').'</th>
+                    <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                    <th>'.Yii::t('mx','Price').'</th>
+                </tr>
+            </thead>
+            <tbody>
+        ';
+
+        $tableDayPasss='
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+                <thead>
+                    <tr>
+                        '.$tableStatus.'
+                        <th>'.Yii::t('mx','Room Type').'</th>
+                        <th>'.Yii::t('mx','Check In').'</th>
+                        <th>'.Yii::t('mx','Check In Time').'</th>
+                        <th>'.Yii::t('mx','Check Out').'</th>
+                        <th>'.Yii::t('mx','Check Out Time').'</th>
+
+                        <th>'.Yii::t('mx','Adults').'</th>
+                        <th>'.Yii::t('mx','Children').'</th>
+                        <th>'.Yii::t('mx','Pets').'</th>
+
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Ta</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Ta</th>
+
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Tb</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Tb</th>
+                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+
+                        <th>'.Yii::t('mx','Price Early Check In').'</th>
+                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                        <th>'.Yii::t('mx','Price').'</th>
+                    </tr>
+                </thead>
+            <tbody>
+        ';
+
+        foreach($model as $i){
+
+
+            $item=(object)$i;
+            $inicio=strtotime($item->fechaEntrada);
+            $fin=strtotime($item->fechaSalida);
+
+            $mascotas=(int)$item->pets;
+            $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
+
+            for($x=$inicio;$x<$fin;$x+=86400):
+                $day=date("d", $x);
+                $month=date("m", $x);
+                $temporada=CalendarSeason::model()->season($day,$month);
+                if($temporada->tipe=='BAJA') $tempBaja=true;
+                if($temporada->tipe=='ALTA') $tempAlta=true;
+            endfor;
+
+            $reservationType=Rates::model()->find(array(
+                'condition'=>'service_type=:serviceType and room_type_id=:roomTypeId',
+                'params'=>array('serviceType'=>$item->service_type,'roomTypeId'=>$item->room_type_id)
+            ));
+
+            $reservationTypeId=$reservationType->typeReservation->id;
+
+            if($tempAlta==true){
+                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'ALTA');
+                $ratesAdultsAlta=$resultRates->adults;
+                if($item->children != 0) $ratesChildrenAlta=$resultRates->children;
+            }
+
+            if($tempBaja==true){
+                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
+                $ratesAdultsBaja=$resultRates->adults;
+                if($item->children != 0) $ratesChildrenBaja=$resultRates->children;
+            }
+
+            if($status==true) $valueStatus='<td>'.Yii::t('mx',$item->statux).'</td>';
+
+
+        }
+    }
+
+    public function tableCotization($customerReservationId,$discount=false){
 
         $tempAlta=false;
         $tempBaja=false;
@@ -617,7 +764,7 @@ class QuoteDetails extends CApplicationComponent{
 
         $connection=Yii::app()->db;
         $command=$connection->createCommand($sql);
-        $command->bindValue(":CustomerReservationId", $customerRservationId , PDO::PARAM_INT);
+        $command->bindValue(":CustomerReservationId", $customerReservationId , PDO::PARAM_INT);
         $data=$command->queryAll();
 
         if($status==true) $tableStatus="<th>".Yii::t('mx','Status')."</th>";
@@ -2277,6 +2424,7 @@ class QuoteDetails extends CApplicationComponent{
             );
 
             $grupoant=$grupo;
+
             $grupo=$item['first_name'];
 
             $in= date("Y-m-d H:i",strtotime($item['checkin']));

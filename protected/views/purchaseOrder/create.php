@@ -24,6 +24,8 @@
 <script type="text/javascript">
     var index=1;
     var itemCount = 0;
+    var html = "";
+    var providers=0;
 
     $(document).ready(function() {
 
@@ -68,11 +70,15 @@
 
 
         var objs=[];
-        var temp_objs=[];
+
+        $( "#add_note" ).click(function() {
+            html+="</td></tr></table>";
+            $("#bill_table").append(html);
+            html="";
+        });
 
         $( "#add_button" ).click(function() {
 
-            var html = "";
 
             var obj={
                 "ROW_ID" : itemCount,
@@ -83,22 +89,25 @@
 
             objs.push(obj);
 
+            //anade una fila
             itemCount++;
-            html = "<tr id='tr"+ itemCount + "'>" +
-                        "<td>"+ obj['ITEM_NAME'] + "</td>" +
+
+
+            html= "<tr id='tr"+ itemCount + "'>" +
+                        "<td><input name='item_name[]' type='text' id='item_name"+itemCount+"' value='"+obj['ITEM_NAME']+"'/></td>" +
                         "<td>" +  obj['ITEM_PRICE'] + " </td>" +
                         "<td>" +  obj['ITEM_QUANTITY'] + " </td>" +
                         "<td><input type='button'  id='" + itemCount + "' value='remove'></td>" +
                     "</tr>";
 
-            $("#bill_table").append(html)
+            $("#providers"+providers).append(html);
+            html="";
 
             $("#"+itemCount).click(function() {
                 var buttonId = $(this).attr("id");
                 $("#tr"+ buttonId).remove();
             });
 
-            //$("#PurchaseOrder_provider_id").prop("selectedIndex",0);
             $("#PurchaseOrderItems_article_id").prop("selectedIndex",0);
             $("#item_price").val("");
             $("#item_quantity").val("");

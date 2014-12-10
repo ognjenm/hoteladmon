@@ -351,6 +351,7 @@ class ReservationController extends Controller
                $budget_table=Yii::app()->quoteUtil->getTableCotizacion($models);
                $amountReservations=Yii::app()->quoteUtil->getTotalPrice($models,true);
            }
+
            if($customerReservation->see_discount==false){
                $budget_table=Yii::app()->quoteUtil->getCotizacionNoDiscount($models);
                $amountReservations=Yii::app()->quoteUtil->getTotalPrice($models,false);
@@ -806,7 +807,7 @@ class ReservationController extends Controller
             Yii::app()->getSession()->add('modelExport',$models);
             Yii::app()->getSession()->add('seeDiscount',true);
 
-            echo Yii::app()->quoteUtil->getTableCotizacion($models);
+            echo Yii::app()->quoteUtil->tableCotization($models);
 
 
         }
