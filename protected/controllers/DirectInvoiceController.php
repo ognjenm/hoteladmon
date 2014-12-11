@@ -454,7 +454,11 @@ class DirectInvoiceController extends Controller
             )
         );
 
-
+        $fNoBill= TbForm::createForm($operations->getFormNoBill(),$operations,
+            array('htmlOptions'=>array('class'=>'well'),
+                'type'=>'horizontal',
+            )
+        );
 
         $model=new DirectInvoice('search');
         $model->unsetAttributes();  // clear any default values
@@ -473,6 +477,7 @@ class DirectInvoiceController extends Controller
             'model'=>$model,
             'fTransporte'=>$fTransporte,
             'fOperations'=>$fOperations,
+            'fNoBill'=>$fNoBill,
             'filter'=>$Filter,
             'FconceptPayments'=>$FconceptPayments,
         ));

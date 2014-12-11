@@ -6,6 +6,7 @@ class Operations extends CActiveRecord
     public $fin;
 
     public $typeCheq;
+    public $typeCheq2;
     public $account_id2;
     public $authorized;
     public $authorized2;
@@ -57,7 +58,9 @@ class Operations extends CActiveRecord
             'cheq' => Yii::t('mx','Cheq'),
             'datex' => Yii::t('mx','Date'),
             'released' => Yii::t('mx','Rid To'),
+            'released2' => Yii::t('mx','Rid To'),
             'concept' => Yii::t('mx','Concept'),
+            'concept2' => Yii::t('mx','Concept'),
             'person' => Yii::t('mx','Person'),
             'bank_concept' => Yii::t('mx','Bank Concept'),
             'retirement' => Yii::t('mx','Retirement'),
@@ -67,8 +70,11 @@ class Operations extends CActiveRecord
             'inicio'=>'',
             'fin'=>'',
             'authorized'=>Yii::t('mx','Authorized by'),
+            'authorized2'=>Yii::t('mx','Authorized by'),
             'typeCheq'=>Yii::t('mx','Payment Type'),
+            'typeCheq2'=>Yii::t('mx','Payment Type'),
             'abonoencuenta'=>Yii::t('mx','For credit to the beneficiary account'),
+            'abonoencuenta2'=>Yii::t('mx','For credit to the beneficiary account'),
             'amount'=>Yii::t('mx','Amount'),
             'vat_commission' => Yii::t('mx','Vat Commission'),
             'commission_fee' => Yii::t('mx','Commission Fee'),
@@ -170,157 +176,6 @@ class Operations extends CActiveRecord
         );
     }
 
-    public function getFormNoBill(){
-
-        return array(
-            'id'=>'operations-form',
-            'showErrorSummary' => true,
-            'elements'=>array(
-                "typeCheq"=>array(
-                    'label'=>Yii::t('mx','Type Check'),
-                    'type' => 'select2',
-                    'data'=>TypeCheck::model()->listAll(),
-                    'onchange'=>'
-
-                            $.ajax({
-                                url: "'.CController::createUrl('/bankAccounts/getAccounts').'",
-                                data: { paymentMethodId: $(this).val()  },
-                                type: "POST",
-                                dataType:"json",
-                                beforeSend: function() { $(".modal-body").addClass("loading"); }
-                            })
-
-                            .done(function(data) {
-                                if(data.ok==true){
-                                    $("#Operations_account_id").html(data.accounts);
-                                }else{
-                                    bootbox.alert(data.msg);
-                                }
-                            })
-
-                            .fail(function() {  bootbox.alert("error"); })
-                            .always(function() { $(".modal-body").removeClass("loading"); });
-                    ',
-                ),
-                'account_id'=>array(
-                    'type'=>'dropdownlist',
-                    'items'=>array(),
-                    'prompt'=>Yii::t('mx','Select'),
-                    'onchange'=>'
-
-                            $.ajax({
-                                url: "'.CController::createUrl('/authorizingPersons/getAuthorized').'",
-                                data: { bankId: $(this).val()  },
-                                type: "POST",
-                                dataType:"json",
-                                beforeSend: function() { $(".modal-body").addClass("loading"); }
-                            })
-
-                            .done(function(data) {
-                                if(data.ok==true){
-                                    $("#Operations_authorized").html(data.authorized);
-                                }else{
-                                    bootbox.alert(data.msg);
-                                }
-                            })
-                            .fail(function() {  bootbox.alert("error"); })
-                            .always(function() { $(".modal-body").removeClass("loading"); });
-                    ',
-                ),
-                'authorized'=>array(
-                    'type'=>'dropdownlist',
-                    'items'=>array(''=>Yii::t('mx','Select')),
-                ),
-                'released'=>array(
-                    'type'=>'select2',
-                    'data'=>Providers::model()->listAllOrganization(),
-                    'onchange'=>'
-
-                            $.ajax({
-                                url: "'.CController::createUrl('/typeCheck/getTypeCheck').'",
-                                data: { providerId: $(this).val()  },
-                                type: "POST",
-                                dataType:"json",
-                                beforeSend: function() { $(".modal-body").addClass("loading"); }
-                            })
-
-                            .done(function(data) {
-                                if(data.ok==true){
-                                    $("#Operations_concept").html(data.concept);
-                                }else{
-                                    bootbox.alert(data.msg);
-                                }
-                            })
-
-                            .fail(function() {  bootbox.alert("error"); })
-                            .always(function() { $(".modal-body").removeClass("loading"); });
-                    ',
-                ),
-                'concept'=>array(
-                    'type'=>'dropdownlist',
-                    'items'=>array(''=>Yii::t('mx','Select')),
-                ),
-                'amount'=>array(
-                    'type'=>'text',
-                    'prepend'=>'$'
-                ),
-                'abonoencuenta'=>array(
-                    'type'=>'checkbox',
-                )
-            ),
-
-            'buttons' => array(
-                'savepolizaNoBill' => array(
-                    'type' => 'button',
-                    'icon'=>'icon-ok',
-                    'layoutType' => 'primary',
-                    'label' => Yii::t('mx','Create'),
-                    'url'=>Yii::app()->createUrl('/polizas/createPolizaNoBill'),
-                    'htmlOptions'=>array(
-                        'onclick'=>"
-
-                            var invoice=$.fn.yiiGridView.getChecked('direct-invoice-grid','chk').toString();
-                            var transporte=$('#Transport-form').serialize();
-                            var operations=$('#operations-form').serialize();
-                            var dataString=transporte+operations+'&invoice='+invoice;
-
-                             $.ajax({
-                                url: '".CController::createUrl('/polizas/createPolizaNoBill')."',
-                                data: dataString,
-                                type: 'POST',
-                                dataType: 'json',
-                                beforeSend: function() { $('.modal-body').addClass('saving'); }
-                            })
-
-                            .done(function(data) {
-
-                            if(data.ok==true){
-                                $('#modal-operations').modal('hide');
-
-                                 $('#direct-invoice-grid').yiiGridView('update', {
-                                            data: $(this).serialize()
-                                 });
-
-                                 window.location.href=data.url;
-
-                            }else{
-                                     bootbox.alert(data.errors);
-                            }
-
-
-
-                             })
-
-                            .fail(function() { bootbox.alert('Error');  })
-                            .always(function() { $('.modal-body').removeClass('saving'); });
-
-                        "
-                    )
-                ),
-            )
-        );
-    }
-
     public function getFormPayment(){
         return array(
             'id'=>'form-payment',
@@ -362,6 +217,157 @@ class Operations extends CActiveRecord
         );
     }
 
+    public function getFormNoBill(){
+
+        return array(
+            'id'=>'operations-noBill',
+            'showErrorSummary' => true,
+            'elements'=>array(
+                "typeCheq2"=>array(
+                    'label'=>Yii::t('mx','Type Check'),
+                    'type' => 'select2',
+                    'data'=>TypeCheck::model()->listAll(),
+                    'onchange'=>'
+
+                            $.ajax({
+                                url: "'.CController::createUrl('/bankAccounts/getAccounts').'",
+                                data: { paymentMethodId: $(this).val()  },
+                                type: "POST",
+                                dataType:"json",
+                                beforeSend: function() { $(".modal-body").addClass("loading"); }
+                            })
+
+                            .done(function(data) {
+                                if(data.ok==true){
+                                    $("#Operations_account_id2").html(data.accounts);
+                                }else{
+                                    bootbox.alert(data.msg);
+                                }
+                            })
+
+                            .fail(function() {  bootbox.alert("error"); })
+                            .always(function() { $(".modal-body").removeClass("loading"); });
+                    ',
+                ),
+                'account_id2'=>array(
+                    'type'=>'dropdownlist',
+                    'items'=>array(),
+                    'prompt'=>Yii::t('mx','Select'),
+                    'onchange'=>'
+
+                            $.ajax({
+                                url: "'.CController::createUrl('/authorizingPersons/getAuthorized').'",
+                                data: { bankId: $(this).val()  },
+                                type: "POST",
+                                dataType:"json",
+                                beforeSend: function() { $(".modal-body").addClass("loading"); }
+                            })
+
+                            .done(function(data) {
+                                if(data.ok==true){
+                                    $("#Operations_authorized2").html(data.authorized);
+                                }else{
+                                    bootbox.alert(data.msg);
+                                }
+                            })
+                            .fail(function() {  bootbox.alert("error"); })
+                            .always(function() { $(".modal-body").removeClass("loading"); });
+                    ',
+                ),
+                'authorized2'=>array(
+                    'type'=>'dropdownlist',
+                    'items'=>array(''=>Yii::t('mx','Select')),
+                ),
+                'released2'=>array(
+                    'type'=>'select2',
+                    'data'=>Providers::model()->listAllOrganization(),
+                    'onchange'=>'
+
+                            $.ajax({
+                                url: "'.CController::createUrl('/typeCheck/getTypeCheck').'",
+                                data: { providerId: $(this).val()  },
+                                type: "POST",
+                                dataType:"json",
+                                beforeSend: function() { $(".modal-body").addClass("loading"); }
+                            })
+
+                            .done(function(data) {
+                                if(data.ok==true){
+                                    $("#Operations_concept2").html(data.concept);
+                                }else{
+                                    bootbox.alert(data.msg);
+                                }
+                            })
+
+                            .fail(function() {  bootbox.alert("error"); })
+                            .always(function() { $(".modal-body").removeClass("loading"); });
+                    ',
+                ),
+                'concept2'=>array(
+                    'type'=>'dropdownlist',
+                    'items'=>array(''=>Yii::t('mx','Select')),
+                ),
+                'amount'=>array(
+                    'type'=>'text',
+                    'prepend'=>'$'
+                ),
+                'abonoencuenta2'=>array(
+                    'type'=>'checkbox',
+                )
+            ),
+
+            'buttons' => array(
+                'savepolizaNoBill' => array(
+                    'type' => 'button',
+                    'icon'=>'icon-ok',
+                    'layoutType' => 'primary',
+                    'label' => Yii::t('mx','Create'),
+                    'url'=>Yii::app()->createUrl('/polizas/createPolizaNoBill'),
+                    'htmlOptions'=>array(
+                        'onclick'=>"
+
+                            var invoice=$.fn.yiiGridView.getChecked('direct-invoice-grid','chk').toString();
+                            var transporte=$('#Transport-form').serialize();
+                            var operations=$('#operations-noBill').serialize();
+                            var dataString=transporte+operations+'&invoice='+invoice;
+
+                             $.ajax({
+                                url: '".CController::createUrl('/polizas/createPolizaNoBill')."',
+                                data: dataString,
+                                type: 'POST',
+                                dataType: 'json',
+                                beforeSend: function() { $('.modal-body').addClass('saving'); }
+                            })
+
+                            .done(function(data) {
+
+                            if(data.ok==true){
+                                $('#modal-operations').modal('hide');
+
+                                 $('#direct-invoice-grid').yiiGridView('update', {
+                                            data: $(this).serialize()
+                                 });
+
+                                 window.location.href=data.url;
+
+                            }else{
+                                     bootbox.alert(data.errors);
+                            }
+
+
+
+                             })
+
+                            .fail(function() { bootbox.alert('Error');  })
+                            .always(function() { $('.modal-body').removeClass('saving'); });
+
+                        "
+                    )
+                ),
+            )
+        );
+    }
+
     public function getForm(){
 
         return array(
@@ -373,7 +379,6 @@ class Operations extends CActiveRecord
                     'type' => 'select2',
                     'data'=>TypeCheck::model()->listAll(),
                     'onchange'=>'
-
                             $.ajax({
                                 url: "'.CController::createUrl('/bankAccounts/getAccounts').'",
                                 data: { paymentMethodId: $(this).val()  },
@@ -458,19 +463,17 @@ class Operations extends CActiveRecord
                 ),
                 'abonoencuenta'=>array(
                     'type'=>'checkbox',
-                )
+                ),
             ),
-
             'buttons' => array(
                 'saveOperation' => array(
                     'type' => 'button',
                     'icon'=>'icon-ok',
                     'layoutType' => 'primary',
                     'label' => Yii::t('mx','Create'),
-                    'url'=>Yii::app()->createUrl('/directInvoice/poliza'),
+                    //'url'=>Yii::app()->createUrl('/directInvoice/poliza'),
                     'htmlOptions'=>array(
                         'onclick'=>"
-
                             var invoice=$.fn.yiiGridView.getChecked('direct-invoice-grid','chk').toString();
                             var transporte=$('#Transport-form').serialize();
                             var operations=$('#operations-form').serialize();
@@ -495,53 +498,6 @@ class Operations extends CActiveRecord
                                  $('#suma').html('');
 
                                  window.location.href=data.url;
-
-                             })
-
-                            .fail(function() { bootbox.alert('Error');  })
-                            .always(function() { $('.modal-body').removeClass('saving'); });
-
-                        "
-                    )
-                ),
-                'savePolizaNoBill' => array(
-                    'type' => 'button',
-                    'icon'=>'icon-ok',
-                    'layoutType' => 'primary',
-                    'label' => Yii::t('mx','Create'),
-                    'url'=>Yii::app()->createUrl('/polizas/createPolizaNoBill'),
-                    'htmlOptions'=>array(
-                        'onclick'=>"
-
-                            var invoice=$.fn.yiiGridView.getChecked('direct-invoice-grid','chk').toString();
-                            var transporte=$('#Transport-form').serialize();
-                            var operations=$('#operations-form').serialize();
-                            var dataString=transporte+operations+'&invoice='+invoice;
-
-                             $.ajax({
-                                url: '".CController::createUrl('/polizas/createPolizaNoBill')."',
-                                data: dataString,
-                                type: 'POST',
-                                dataType: 'json',
-                                beforeSend: function() { $('.modal-body').addClass('saving'); }
-                            })
-
-                            .done(function(data) {
-
-                            if(data.ok==true){
-                                $('#modal-operations').modal('hide');
-
-                                 $('#direct-invoice-grid').yiiGridView('update', {
-                                            data: $(this).serialize()
-                                 });
-
-                                 window.location.href=data.url;
-
-                            }else{
-                                     bootbox.alert(data.errors);
-                            }
-
-
 
                              })
 

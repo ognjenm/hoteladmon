@@ -85,6 +85,7 @@ class ConceptPayments extends CActiveRecord
         return $list;
     }
 
+
     public function getForm(){
 
         return array(
@@ -107,9 +108,7 @@ class ConceptPayments extends CActiveRecord
                     'label' => Yii::t('mx','Create'),
                     'htmlOptions'=>array(
                         'onclick'=>"
-
                              var formulario=$('#Concept-payment-form').serialize();
-
                              $.ajax({
                                 url: '".CController::createUrl('/conceptPayments/create')."',
                                 data: formulario,
@@ -119,9 +118,9 @@ class ConceptPayments extends CActiveRecord
                             })
 
                             .done(function(data) {
-
                                   if(data.ok==true){
                                         $('#Operations_concept').html(data.concepts);
+                                        $('#Operations_concept2').html(data.concepts);
                                         $('#body-conceptPayment').removeClass('saving');
                                         $('#modal-conceptx').modal('hide');
                                     }

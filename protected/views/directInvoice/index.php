@@ -91,12 +91,12 @@
     <p>
         <?php
 
-        echo $fOperations->renderBegin();
+        echo $fNoBill->renderBegin();
 
-        echo $fOperations['typeCheq2'];
-        echo $fOperations['account_id2'];
-        echo $fOperations['authorized2'];
-        echo $fOperations['released2'];
+        echo $fNoBill['typeCheq2'];
+        echo $fNoBill['account_id2'];
+        echo $fNoBill['authorized2'];
+        echo $fNoBill['released2'];
 
         echo '<div class="pull-right">';
 
@@ -112,12 +112,12 @@
 
         echo '</div>';
 
-        echo $fOperations['concept2'];
-        echo $fOperations['amount2'];
-        echo $fOperations['abonoencuenta2'];
-        echo $fOperations->renderElement('savePolizaNoBill');
+        echo $fNoBill['concept2'];
+        echo $fNoBill['amount'];
+        echo $fNoBill['abonoencuenta2'];
+        echo $fNoBill->renderElement('savepolizaNoBill');
 
-        echo $fOperations->renderEnd();
+        echo $fNoBill->renderEnd();
 
         ?>
     </p>
@@ -145,9 +145,7 @@
 
         <div class="modal-body">
             <p>
-                <?php
-
-               echo $fOperations->renderBegin();
+                <?php echo $fOperations->renderBegin();
 
                     echo $fOperations['typeCheq'];
                     echo $fOperations['account_id'];
@@ -172,7 +170,7 @@
                     echo $fOperations['abonoencuenta'];
                     echo $fOperations->renderElement('saveOperation');
 
-                echo $fOperations->renderEnd();
+                    echo $fOperations->renderEnd();
 
                 ?>
             </p>
