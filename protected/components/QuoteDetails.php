@@ -3688,11 +3688,11 @@ class QuoteDetails extends CApplicationComponent{
 
             $cheque=$poliza->operations->cheq;
 
-
             $cuenta=$poliza->operations->accountBank->bank->bank."-".substr($poliza->operations->accountBank->account_number,-3);
             $concepto=$poliza->operations->concept;
             $released=$poliza->operations->released;
             $date=$poliza->operations->datex;
+            //$date=Yii::app()->quoteUtil->toSpanishDateFromDb(date("Y-M-d",strtotime($poliza->operations->datex)));
             $retirement=$poliza->operations->retirement;
 
         }
@@ -3704,6 +3704,7 @@ class QuoteDetails extends CApplicationComponent{
             $concepto=$poliza->accountDebit->concept;
             $released=$poliza->accountDebit->released;
             $date=$poliza->accountDebit->datex;
+            //$date=Yii::app()->quoteUtil->toSpanishDateFromDb(date("Y-M-d",strtotime($poliza->accountDebit->datex)));
             $retirement=$poliza->accountDebit->retirement;
 
         }
@@ -3715,6 +3716,8 @@ class QuoteDetails extends CApplicationComponent{
             $concepto=$poliza->accountCredit->concept;
             $released=$poliza->accountCredit->released;
             $date=$poliza->accountCredit->datex;
+            //$date=Yii::app()->quoteUtil->toSpanishDateFromDb(date("Y-M-d",strtotime($poliza->accountCredit->datex)));
+
             $retirement=$poliza->accountCredit->retirement;
 
         }
@@ -3938,6 +3941,9 @@ class QuoteDetails extends CApplicationComponent{
         $poliza=Polizas::model()->findByPk($operationId);
         $beneficiary=($poliza->for_beneficiary_account==1) ? Yii::t('mx','For credit to the beneficiary account') : "";
 
+        $date=Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($poliza->operations->datex);
+        $date=date("Y-M-d",strtotime($date));
+
         //border-style: solid; border-top-width: 1px;border-left-width: 1px
         $table='
             <table border="0" cellpadding="1" cellspacing="1" style="width: 570px;">
@@ -3964,7 +3970,7 @@ class QuoteDetails extends CApplicationComponent{
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
-                        <td style="text-align: right;">'.$this->toSpanishDateDescription(date('Y-M-d',strtotime($poliza->operations->datex))).'</td>
+                        <td style="text-align: right;">'.$this->toSpanishDateDescription($date).'</td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>

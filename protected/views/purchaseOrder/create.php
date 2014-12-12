@@ -29,56 +29,43 @@
 
     $(document).ready(function() {
 
-        $("#table-2").tableDnD({
+        $("#bill_table").tableDnD({
             onDragClass: "myDragClass",
 
             onDrop: function(table, row) {
 
                 var rows = table.tBodies[0].rows;
 
-                for (var i=0; i<rows.length; i++) {
+                /*for (var i=0; i<rows.length; i++) {
                     if(i==0) $("#PurchaseOrderItems_order").val(i);
                     else $("#PurchaseOrderItems_order"+i).val(i);
-                }
+                }*/
             }
 
         });
 
 
-        $("#table-2 tr").hover(function() {
+        $("#bill_table tr").hover(function() {
             $(this.cells[0]).addClass('showDragHandle');
 
         }, function() {
             $(this.cells[0]).removeClass('showDragHandle');
         });
 
-
-        $("#ButtonText").click(function(){
-
-            var nuevaFila='<tr class="copy newcopy'+ index +'" id="t'+(index+1)+'" style="cursor: move">'+
-                            '<td style="width: 50px;" class="">'+'</td>'+
-                            '<td colspan="4"><textarea rows="2" placeholder="Nota" class="span-12" name="PurchaseOrderItems[note][]" id="PurchaseOrderItems_note' + index + '"></textarea></td>'+
-                            '<td><a class="btn btn-danger" onclick="$(this).parents().get(1).remove(); index--; return false;" href="#"><i class="icon-remove icon-white"></i></a></td>'+
-                          "</tr>";
-
-            $("#table-2").find('tbody').append(nuevaFila);
-            //$("#table-2").append(nuevaFila);
-
-            index++;
-
-        });
-
-
         var objs=[];
 
-        $( "#add_note" ).click(function() {
-            html+="</td></tr></table>";
-            $("#bill_table").append(html);
+        $("#add_note").click(function() {
+
+            html="<tr id='tr'>"+
+                "<td colspan='4' scope='row'>"+
+                "<textarea rows='3' style='width: 100%;'></textarea>"
+                "</td></tr>";
+            $("#providers"+providers).append(html);
             html="";
+
         });
 
         $( "#add_button" ).click(function() {
-
 
             var obj={
                 "ROW_ID" : itemCount,
@@ -90,8 +77,8 @@
             objs.push(obj);
 
             //anade una fila
-            itemCount++;
 
+            itemCount++;
 
             html= "<tr id='tr"+ itemCount + "'>" +
                         "<td><input name='item_name[]' type='text' id='item_name"+itemCount+"' value='"+obj['ITEM_NAME']+"'/></td>" +

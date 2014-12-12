@@ -2,22 +2,15 @@
 
 class PolizasController extends Controller
 {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
+
 	public $layout='//layouts/column2';
 
-	/**
-	 * @return array action filters
-	 */
 	public function filters()
 	{
 		return array(
             array('CrugeAccessControlFilter'), // perform access control for CRUD operations
 		);
 	}
-
 
 	public function accessRules()
 	{
@@ -47,7 +40,6 @@ class PolizasController extends Controller
         ));
 
     }
-
 
     public function actionClose($id){
 
@@ -191,7 +183,6 @@ class PolizasController extends Controller
 		));
 	}
 
-
 	public function actionCreate()
 	{
 		$model=new Polizas;
@@ -211,7 +202,6 @@ class PolizasController extends Controller
 			'model'=>$model,
 		));
 	}
-
 
 	public function actionUpdate($id)
 	{
@@ -233,7 +223,6 @@ class PolizasController extends Controller
 		));
 	}
 
-
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
@@ -249,9 +238,6 @@ class PolizasController extends Controller
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	/**
-	 * Lists all models.
-	 */
 	public function actionIndex()
 	{
         $model=new Polizas('search');
@@ -265,15 +251,6 @@ class PolizasController extends Controller
 
 	}
 
-	/**
-	 * Manages all models.
-	 */
-
-	/**
-	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer the ID of the model to be loaded
-	 */
 	public function loadModel($id)
 	{
 		$model=Polizas::model()->findByPk($id);
@@ -282,10 +259,6 @@ class PolizasController extends Controller
 		return $model;
 	}
 
-	/**
-	 * Performs the AJAX validation.
-	 * @param CModel the model to be validated
-	 */
 	protected function performAjaxValidation($model)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='polizas-form')

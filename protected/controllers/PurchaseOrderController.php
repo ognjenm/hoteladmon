@@ -2,16 +2,9 @@
 
 class PurchaseOrderController extends Controller
 {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
+
 	public $layout='//layouts/column2';
 
-
-	/**
-	 * @return array action filters
-	 */
 	public function filters()
 	{
 		return array(
@@ -19,11 +12,6 @@ class PurchaseOrderController extends Controller
 		);
 	}
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
 	public function accessRules()
 	{
 
@@ -38,7 +26,6 @@ class PurchaseOrderController extends Controller
 			),
 		);
 	}
-
 
 	public function actionView($id){
 
@@ -148,10 +135,6 @@ class PurchaseOrderController extends Controller
 
 	}
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
 	public function actionCreate()
 	{
         Yii::import('ext.jqrelcopy.JQRelcopy');
@@ -208,7 +191,6 @@ class PurchaseOrderController extends Controller
 		));
 	}
 
-
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
@@ -229,7 +211,6 @@ class PurchaseOrderController extends Controller
 		));
 	}
 
-
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
@@ -245,9 +226,6 @@ class PurchaseOrderController extends Controller
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	/**
-	 * Lists all models.
-	 */
 	public function actionIndex()
 	{
         $model=new PurchaseOrder('search');
@@ -270,7 +248,6 @@ class PurchaseOrderController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
 	}
-
 
 	protected function performAjaxValidation($model)
 	{

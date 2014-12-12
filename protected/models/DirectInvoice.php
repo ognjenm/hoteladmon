@@ -204,7 +204,8 @@ class DirectInvoice extends CActiveRecord
 
     public function afterFind() {
 
-        $this->datex=date("d-M-Y",strtotime($this->datex));
+        $this->datex=Yii::app()->quoteUtil->toSpanishDateFromDb(date("Y-M-d",strtotime($this->datex)));
+        //$this->datex=date("d-M-Y",strtotime($this->datex));
 
         return  parent::afterFind();
     }

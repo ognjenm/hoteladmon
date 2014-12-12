@@ -10,7 +10,7 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->dropDownListRow($model,'bank_id',Banks::model()->listAllBanks(),array(
+    <?php echo $form->dropDownListRow($model,'bank_id',Banks::model()->listAll(),array(
         'class'=>'span5',
         'prompt'=>Yii::t('mx','Select')
     )); ?>

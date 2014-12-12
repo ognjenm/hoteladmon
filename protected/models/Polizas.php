@@ -46,9 +46,6 @@ class Polizas extends CActiveRecord
 		);
 	}
 
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
 	public function attributeLabels()
 	{
 		return array(
@@ -131,7 +128,6 @@ class Polizas extends CActiveRecord
         return $invoices;
 
     }
-
 
     public function getPending() {
 

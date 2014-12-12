@@ -60,6 +60,7 @@ class PaymentsController extends Controller
             if(isset($_POST['Payments'])){
 
                 $model->attributes=$_POST['Payments'];
+                $model->amount=str_replace(",","",$_POST['Payments']['amount']);
                 $model->customer_reservation_id=$id;
                 $model->user_id=Yii::app()->user->id;
                 $model->baucher=$_POST['Payments']['baucher'];
