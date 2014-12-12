@@ -135,6 +135,22 @@ class PurchaseOrderController extends Controller
 
 	}
 
+    public function actionCreate(){
+        $model=new PurchaseOrder;
+        $items=new PurchaseOrderItems;
+
+        if(isset($_POST['purchaseOrder']))
+        {
+            print_r($_POST);
+        }
+
+        $this->render('create',array(
+            'model'=>$model,
+            'items'=>$items
+        ));
+
+    }
+/*
 	public function actionCreate()
 	{
         Yii::import('ext.jqrelcopy.JQRelcopy');
@@ -190,7 +206,7 @@ class PurchaseOrderController extends Controller
             'items'=>$items
 		));
 	}
-
+*/
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
