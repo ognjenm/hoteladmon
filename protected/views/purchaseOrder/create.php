@@ -29,7 +29,7 @@
     var items=[];
     var orders=[];
     var purchaseOrders=[];
-    var aux=new Array();
+    var aux={};
 
     $(document).ready(function() {
 
@@ -46,7 +46,7 @@
 
             $.ajax({
                 url: "<?php echo CController::createUrl('/purchaseOrder/create'); ?>",
-                data: { purchaseOrder: orders },
+                data: $("#purchase-order-form").serialize(), //{ purchaseOrder: orders },
                 type: "POST",
                 dataType: "json",
                 beforeSend: function() {}
@@ -85,9 +85,9 @@
             itemCount++;
 
             html= "<tr id='tr"+ itemCount + "'>" +
-                        "<td>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
-                        "<td>" +  item['ITEM_PRICE'] + " </td>" +
-                        "<td>" +  item['ITEM_QUANTITY'] + " </td>" +
+                        "<td><input type='hidden' value='"+item['ITEM_ARTICLE_ID']+"' name='article_id[]'/>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
+                        "<td><input type='hidden' value='"+item['ITEM_PRICE']+"' name='price[]'/>" +  item['ITEM_PRICE'] + " </td>" +
+                        "<td><input type='hidden' value='"+item['ITEM_QUANTITY']+"' name='quantity[]'/>" +  item['ITEM_QUANTITY'] + " </td>" +
                         "<td><input type='button'  id='" + itemCount + "' value='remove'></td>" +
                     "</tr>";
 

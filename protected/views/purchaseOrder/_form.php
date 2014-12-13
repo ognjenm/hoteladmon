@@ -28,11 +28,12 @@
                     'events' =>array(
                         'change'=>'js:function(e){
 
-                        aux["PROVIDER"][providers]= $(this).val();
-                        //booxbox.alert(aux["PROVIDER"][providers]);
+                        //aux.push({"provider":$(this).val()});
+
+                        //bootbox.alert(aux);
 
                         /*if(providers>0){
-                            orders.push(aux["PROVIDER"][providers-1],{"items": items});
+                            orders.push(aux[providers-1],{"items": items});
                         }*/
 
                         providers++;

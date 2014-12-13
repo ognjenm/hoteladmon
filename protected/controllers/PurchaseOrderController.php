@@ -139,10 +139,11 @@ class PurchaseOrderController extends Controller
         $model=new PurchaseOrder;
         $items=new PurchaseOrderItems;
 
-        if(isset($_POST['purchaseOrder']))
+        print_r($_POST);
+        /*if(isset($_POST['purchaseOrder']))
         {
             print_r($_POST);
-        }
+        }*/
 
         $this->render('create',array(
             'model'=>$model,
