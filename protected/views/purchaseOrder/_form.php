@@ -7,10 +7,6 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-    <?php echo CHtml::label(Yii::t('mx','Providers'),'provider_id'); ?>
-
-
-
     <table border='0' width='100%' align='center' class="items table table-condensed table-bordered">
         <th>Provider</th>
         <th>Article</th>
@@ -31,21 +27,30 @@
                     ),
                     'events' =>array(
                         'change'=>'js:function(e){
+
+                        aux.push({"PROVIDER" :  $(this).val()});
+
+                        if(providers>0){
+                            orders.push(aux[providers-1],{"items": items});
+                        }
+
                         providers++;
 
                         var prov=$("#PurchaseOrder_provider_id option:selected").text();
 
-                        html+="<tr>"+
+                        html+="<tr id=\'"+providers+"\' style=\'cursor: move;\'>"+
                                     "<td>index</td>"+
                                     "<td>"+
-                                        "<table id=\'providers"+providers+"\' style=\'width:100%\'><tbody><tr><th colspan=\'4\' scope=\'row\'><input type=\'hidden\' value=\'"+providers+"\' name=\'provider[]\' />"+ prov +"</th></tr></tbody></table>"+
+                                        "<table id=\'providers"+providers+"\' style=\'width:100%\'><tbody><tr><th colspan=\'4\' scope=\'row\'><input type=\'hidden\' value=\'"+$(this).val()+"\' name=\'provider[]\' />"+ prov +"</th></tr></tbody></table>"+
                                     "</td>"+
                                     "<td style=\'text-align: center;vertical-align: middle;\'><input type=\'button\'  id=\'" + providers + "\' value=\'remove\'></td>" +
                                "</tr>";
 
                         $("#bill_table").append(html);
-
                         html="";
+
+
+
 
                         $.ajax({
                             url: "'.CController::createUrl('/articles/getArticleDescription').'",
@@ -56,16 +61,11 @@
                         })
 
                         .done(function(data) {
-
                             if(data.ok==true){
-
                             $("#item_price").html(data.articles);
-
                                 if(index > 1) $("#PurchaseOrderItems_article_id"+index).html(data.articles);
                                 else $("#PurchaseOrderItems_article_id").html(data.articles);
-
                             }
-
                         })
 
                         .fail(function() { bootbox.alert("Error"); })
@@ -77,7 +77,6 @@
                 ?>
             </td>
             <td>
-                <input name="item_article" type="hidden" id="item_article" size="100"/>
                 <?php echo $form->dropDownList($items,'article_id',array(),array(
                     'class'=>'span12',
                     'prompt'=>Yii::t('mx','Select'),
@@ -97,8 +96,7 @@
                                 .done(function(data) {
 
                                     $("#item_price").val(data.price);
-                                    $("#item_article").val(data.presentation);
-
+                                    //$("#item_article").val(data.presentation);
                                     provider= $("#PurchaseOrder_provider_id").val();
 
                                     if(index==1){
@@ -127,22 +125,17 @@
             </td>
     </table>
 
-
-    <div id="billing_items_div">
-        <table id='bill_table'  width='50%' align='center'  class='items table table-hover table-condensed'></table>
-    </div>
-
-
+    <table id='bill_table'  width='50%' align='center'  class='items table table-hover table-condensed'></table>
 
 
     <div class="form-actions">
         <?php  $this->widget('bootstrap.widgets.TbButton', array(
-            'buttonType'=>'submit',
+            'id'=>'sendPurchaseOrder',
+            'buttonType'=>'button',
             'type'=>'primary',
             'icon'=>$model->isNewRecord ? 'icon-plus icon-white' : 'icon-ok icon-white',
             'label'=>$model->isNewRecord ? Yii::t('mx','Create') : Yii::t('mx','Save'),
         )); ?>
-
 
     </div>
 

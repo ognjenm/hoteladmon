@@ -26,24 +26,13 @@
     var itemCount = 0;
     var html = "";
     var providers=0;
-
+    var items=[];
+    var orders=[];
+    var purchaseOrders=[];
+    var aux=new Array();
     $(document).ready(function() {
 
-        $("#bill_table").tableDnD({
-            onDragClass: "myDragClass",
-
-            onDrop: function(table, row) {
-
-                var rows = table.tBodies[0].rows;
-
-                /*for (var i=0; i<rows.length; i++) {
-                    if(i==0) $("#PurchaseOrderItems_order").val(i);
-                    else $("#PurchaseOrderItems_order"+i).val(i);
-                }*/
-            }
-
-        });
-
+        $("#bill_table").tableDnD();
 
         $("#bill_table tr").hover(function() {
             $(this.cells[0]).addClass('showDragHandle');
@@ -52,38 +41,52 @@
             $(this.cells[0]).removeClass('showDragHandle');
         });
 
-        var objs=[];
+        $('#sendPurchaseOrder').click(function(){
+
+            $.ajax({
+                url: "<?php echo CController::createUrl('/purchaseOrder/create'); ?>",
+                data: { purchaseOrder: orders },
+                type: "POST",
+                dataType: "json",
+                beforeSend: function() {}
+            })
+
+                .done(function(data) {  })
+                .fail(function(data) { bootbox.alert("error"); })
+                .always(function(data) { });
+        });
 
         $("#add_note").click(function() {
 
-            html="<tr id='tr'>"+
+            html="<tr id='"+providers+"' style='cursor: move;'>"+
                 "<td colspan='4' scope='row'>"+
                 "<textarea rows='3' style='width: 100%;'></textarea>"
                 "</td></tr>";
             $("#providers"+providers).append(html);
             html="";
 
+            //var order={"NOTE" :  $(this).val()};
+            //orders.push(order);
+
         });
 
-        $( "#add_button" ).click(function() {
+        $("#add_button").click(function() {
 
-            var obj={
+            var item={
                 "ROW_ID" : itemCount,
-                "ITEM_NAME" :  $("#item_article").val(),
+                "ITEM_ARTICLE_ID" :  $("#PurchaseOrderItems_article_id").val(),
                 "ITEM_PRICE" : $("#item_price").val(),
                 "ITEM_QUANTITY" : $("#item_quantity").val()
             }
 
-            objs.push(obj);
-
-            //anade una fila
+            items.push(item);
 
             itemCount++;
 
             html= "<tr id='tr"+ itemCount + "'>" +
-                        "<td><input name='item_name[]' type='text' id='item_name"+itemCount+"' value='"+obj['ITEM_NAME']+"'/></td>" +
-                        "<td>" +  obj['ITEM_PRICE'] + " </td>" +
-                        "<td>" +  obj['ITEM_QUANTITY'] + " </td>" +
+                        "<td>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
+                        "<td>" +  item['ITEM_PRICE'] + " </td>" +
+                        "<td>" +  item['ITEM_QUANTITY'] + " </td>" +
                         "<td><input type='button'  id='" + itemCount + "' value='remove'></td>" +
                     "</tr>";
 
@@ -101,7 +104,6 @@
 
 
         });
-
 
     });
 
