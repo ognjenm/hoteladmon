@@ -28,11 +28,12 @@
                     'events' =>array(
                         'change'=>'js:function(e){
 
-                        aux.push({"PROVIDER" :  $(this).val()});
+                        aux["PROVIDER"][providers]= $(this).val();
+                        //booxbox.alert(aux["PROVIDER"][providers]);
 
-                        if(providers>0){
-                            orders.push(aux[providers-1],{"items": items});
-                        }
+                        /*if(providers>0){
+                            orders.push(aux["PROVIDER"][providers-1],{"items": items});
+                        }*/
 
                         providers++;
 
@@ -48,9 +49,6 @@
 
                         $("#bill_table").append(html);
                         html="";
-
-
-
 
                         $.ajax({
                             url: "'.CController::createUrl('/articles/getArticleDescription').'",

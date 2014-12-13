@@ -30,6 +30,7 @@
     var orders=[];
     var purchaseOrders=[];
     var aux=new Array();
+
     $(document).ready(function() {
 
         $("#bill_table").tableDnD();
