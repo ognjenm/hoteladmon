@@ -29,7 +29,9 @@
     var items=[];
     var orders=[];
     var purchaseOrders=[];
-    var aux={};
+    var aux=new Array();
+    var note=new Array();
+    var noteIndex=0;
 
     $(document).ready(function() {
 
@@ -44,9 +46,11 @@
 
         $('#sendPurchaseOrder').click(function(){
 
+            orders.push({"provider": aux[providers-1],"items": items});
+
             $.ajax({
                 url: "<?php echo CController::createUrl('/purchaseOrder/create'); ?>",
-                data: $("#purchase-order-form").serialize(), //{ purchaseOrder: orders },
+                data: { purchaseOrder: orders }, //$("#purchase-order-form").serialize(),
                 type: "POST",
                 dataType: "json",
                 beforeSend: function() {}
@@ -59,15 +63,18 @@
 
         $("#add_note").click(function() {
 
-            html="<tr id='"+providers+"' style='cursor: move;'>"+
+            itemCount++;
+
+            //orders.push({"note": note[providers-1],"items": items});
+
+            html="<tr>"+
                 "<td colspan='4' scope='row'>"+
-                "<textarea rows='3' style='width: 100%;'></textarea>"
+                "<textarea id='"+noteIndex+ "' rows='3' style='width: 100%;'></textarea>"
                 "</td></tr>";
             $("#providers"+providers).append(html);
             html="";
 
-            //var order={"NOTE" :  $(this).val()};
-            //orders.push(order);
+            noteIndex++;
 
         });
 
@@ -84,7 +91,7 @@
 
             itemCount++;
 
-            html= "<tr id='tr"+ itemCount + "'>" +
+            html= "<tr>" +
                         "<td><input type='hidden' value='"+item['ITEM_ARTICLE_ID']+"' name='article_id[]'/>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
                         "<td><input type='hidden' value='"+item['ITEM_PRICE']+"' name='price[]'/>" +  item['ITEM_PRICE'] + " </td>" +
                         "<td><input type='hidden' value='"+item['ITEM_QUANTITY']+"' name='quantity[]'/>" +  item['ITEM_QUANTITY'] + " </td>" +
@@ -92,6 +99,7 @@
                     "</tr>";
 
             $("#providers"+providers).append(html);
+
             html="";
 
             $("#"+itemCount).click(function() {
