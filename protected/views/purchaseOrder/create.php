@@ -48,27 +48,37 @@
 
             note[noteIndex]=$("#note"+noteIndex).val();
             orders.push({"provider": aux[providers-1],"items": items, "note": note[noteIndex]});
-            items=[];
 
             $.ajax({
                 url: "<?php echo CController::createUrl('/purchaseOrder/create'); ?>",
                 data: { purchaseOrder: orders }, //$("#purchase-order-form").serialize(),
                 type: "POST",
                 dataType: "json",
-                beforeSend: function() {}
+                beforeSend: function() { $("#content").addClass("loading"); }
             })
 
-                .done(function(data) {  })
-                .fail(function(data) { bootbox.alert("error"); })
-                .always(function(data) { });
+                .done(function(data) {
+                    if(data.ok==true){
+                        window.location.href=data.url;
+                    }
+                })
+                .fail(function(data) {
+                    if(data.ok==false){
+                        bootbox.alert(data.error);
+                    }
+
+                })
+                .always(function() { $("#content").removeClass("loading"); });
+
+            items=[];
+            orders=[];
+
         });
 
         $("#add_note").click(function() {
 
             itemCount++;
             noteIndex++;
-
-            //orders.push({"note": note[providers-1],"items": items});
 
             html="<tr>"+
                 "<td colspan='4' scope='row'>"+
@@ -96,7 +106,7 @@
                         "<td><input type='hidden' value='"+item['ITEM_ARTICLE_ID']+"' name='article_id[]'/>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
                         "<td><input type='hidden' value='"+item['ITEM_PRICE']+"' name='price[]'/>" +  item['ITEM_PRICE'] + " </td>" +
                         "<td><input type='hidden' value='"+item['ITEM_QUANTITY']+"' name='quantity[]'/>" +  item['ITEM_QUANTITY'] + " </td>" +
-                        "<td><input type='button'  id='" + itemCount + "' value='remove'></td>" +
+                        "<td><input type='button'  id='" + itemCount + "' value='Eliminar'></td>" +
                     "</tr>";
 
             $("#providers"+providers).append(html);
@@ -119,6 +129,6 @@
 
 </script>
 
-<div id="debugArea"></div>
-
-<?php echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
+<div id="content">
+    <?php echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
+</div>

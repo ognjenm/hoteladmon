@@ -32,13 +32,24 @@ class PurchaseOrderController extends Controller
         $counter=0;
         $grupo=null;
         $total=0;
-        $table=Yii::app()->quoteUtil->reportHeader().'
+
+        $purchaseOrder=PurchaseOrder::model()->with(array(
+            'purchaseOrderProvider'=>array(
+                'together'=>true,
+                'joinType'=>'INNER JOIN',
+            ),
+        ))->findByPk($id);
+
+        $date=date('Y-M-d');
+        $date=Yii::app()->quoteUtil->toSpanishDateDescription($date);
+
+        $table=Yii::app()->quoteUtil->reportHeader($date).'
             <p style="text-align:right">
                 <span style="font-size:14px">
                     <strong><span style="font-family:arial,helvetica,sans-serif">Orden de compra</span></strong>
                 </span>
             </p>
-            <table class="items table table-condensed table-striped">
+            <table class="items table table-condensed">
                 <thead>
                     <tr>
                         <th>'.Yii::t('mx','Quantity').'</th>
@@ -57,14 +68,7 @@ class PurchaseOrderController extends Controller
             <tbody>
         ';
 
-        $purchaseOrder=PurchaseOrder::model()->with(array(
-            'purchaseOrderItems'=>array(
-                'together'=>true,
-                'joinType'=>'INNER JOIN',
-            ),
-        ))->findByPk($id);
-
-        foreach($purchaseOrder->purchaseOrderItems as $item){
+        foreach($purchaseOrder->purchaseOrderProvider as $item){
 
                 $grupoant=$grupo;
                 $grupo=$item->provider_id;
@@ -84,38 +88,48 @@ class PurchaseOrderController extends Controller
                     }
                 }
 
+            $articles=PurchaseOrderItems::model()->findAll(array(
+                'condition'=>'purchase_order_provider_id=:providerId',
+                'params'=>array('providerId'=>$item->id)
+            ));
 
-            if($item->article_id!=0 || $item->provider_id==0){
+            $numArticles=PurchaseOrderItems::model()->count(array(
+                'condition'=>'purchase_order_provider_id=:providerId',
+                'params'=>array('providerId'=>$item->id)
+            ));
 
-                if($item->provider_id!=0){
+            $articlescont=0;
 
-                    $table.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+            if($articles){
+                foreach($articles as $articleItem){
                     $table.='
-                            <td>'.$item->quantity.'</td>
-                            <td>'.$item->article->unitmeasure->unit.'</td>
-                            <td>'.$item->article->name_store.'</td>
-                            <td>'.$item->article->name_invoice.'</td>
-                            <td>'.$item->article->name_article.'</td>
-                            <td>'.$item->article->code_store.'</td>
-                            <td>'.$item->article->code_invoice.'</td>
-                            <td>'.$item->article->color.'</td>
-                            <td>'.$item->article->presentation.'</td>
-                            <td>'.$item->price.'</td>
-                            <td>'.number_format($item->amount,2).'</td>
+                        <tr>
+                            <td>'.$articleItem->quantity.'</td>
+                            <td>'.$articleItem->article->unitmeasure->unit.'</td>
+                            <td>'.$articleItem->article->name_store.'</td>
+                            <td>'.$articleItem->article->name_invoice.'</td>
+                            <td>'.$articleItem->article->name_article.'</td>
+                            <td>'.$articleItem->article->code_store.'</td>
+                            <td>'.$articleItem->article->code_invoice.'</td>
+                            <td>'.$articleItem->article->color.'</td>
+                            <td>'.$articleItem->article->presentation.'</td>
+                            <td>$'.number_format($articleItem->price,2).'</td>
+                            <td>$'.number_format($articleItem->amount,2).'</td>
                         </tr>';
-                }else{
-
-                    $table.='
-                            <tr>
-                                <td colspan="11" align="center">
-                                    '.$item->note.'
-                                </td>
-                            </tr>';
+                    $articlescont++;
                 }
             }
 
+            if($numArticles == $articlescont){
+                    $table.='
+                         <tr>
+                            <td><h3  style="text-align: right;">Nota:</h3></td>
+                            <td colspan="10" rowspan="1">'.$item->note.'</td>
+                        </tr>';
+            }
+
             $counter++;
-            $total+=$item->amount;
+            $total+=$item->total;
 
         }
 
@@ -138,12 +152,54 @@ class PurchaseOrderController extends Controller
     public function actionCreate(){
         $model=new PurchaseOrder;
         $items=new PurchaseOrderItems;
+        $res=array('ok'=>false);
+        $totalAmount=0;
 
-        //print_r($_POST);
-        if(isset($_POST['purchaseOrder']))
-        {
-            print_r($_POST);
+        if(Yii::app()->request->isAjaxRequest){
+
+            if(isset($_POST['purchaseOrder'])){
+
+                $purchaseOrder=new PurchaseOrder;
+                $purchaseOrder->user_id=Yii::app()->user->id;
+                $purchaseOrder->datex=date('Y-m-d');
+                $purchaseOrder->save();
+
+                foreach($_POST['purchaseOrder'] as $order){
+
+                    $purchaseOrderProvider=new PurchaseOrderProvider;
+                    $purchaseOrderProvider->purchase_order_id=$purchaseOrder->id;
+                    $purchaseOrderProvider->provider_id=(int)$order['provider'];
+                    $purchaseOrderProvider->note=$order['note'];
+
+                    if($purchaseOrderProvider->save() && isset($order['items'])){
+                        foreach($order['items'] as $articles){
+
+                            $orderItems=new PurchaseOrderItems;
+                            $orderItems->purchase_order_provider_id=$purchaseOrderProvider->id;
+                            $orderItems->article_id=(int)$articles['ITEM_ARTICLE_ID'];
+                            $orderItems->quantity=$articles['ITEM_QUANTITY'];
+                            $orderItems->price=$articles['ITEM_PRICE'];
+
+                            $amount=$orderItems->quantity*$orderItems->price;
+                            $totalAmount+=$amount;
+                            $orderItems->amount=$amount;
+                            $orderItems->save();
+                        }
+
+                        $purchaseOrderProvider->total=$totalAmount;
+                        $purchaseOrderProvider->save();
+                        $totalAmount=0;
+
+                    }
+
+                    $res=array('ok'=>true,'url'=>$this->createUrl('/purchaseOrder/view',array('id'=>$purchaseOrder->id)));
+                }
+            }
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
         }
+
 
         $this->render('create',array(
             'model'=>$model,
@@ -151,63 +207,7 @@ class PurchaseOrderController extends Controller
         ));
 
     }
-/*
-	public function actionCreate()
-	{
-        Yii::import('ext.jqrelcopy.JQRelcopy');
-		$model=new PurchaseOrder;
-        $items=new PurchaseOrderItems;
-        $total=0;
 
-		if(isset($_POST['PurchaseOrder']))
-		{
-
-			$model->attributes=$_POST['PurchaseOrder'];
-            $model->user_id=Yii::app()->user->id;
-            $model->datex=date('Y-m-d');
-
-            $tope=count($_POST['PurchaseOrderItems']['provider_id']);
-
-            for($i=0;$i<$tope;$i++){
-                $data=array();
-
-                foreach ($_POST['PurchaseOrderItems'] as $id=>$values){
-
-                    if(!is_array($values)){
-                        $anexo=array($id=>$values);
-                        $data=array_merge($data,$anexo);
-                    }else{
-                        $anexo=array($id=>$values[$i]);
-                        $data=array_merge($data,$anexo);
-                    }
-                }
-
-               if($model->save()){
-                    $lista=New PurchaseOrderItems;
-                    $lista->attributes=$data;
-                    $lista->purchase_order_id=$model->id;
-                    $lista->amount=(int)$lista->quantity*$lista->price;
-                    $total=$total+$lista->amount;
-                    $lista->save();
-                }
-
-                $model->total=$total;
-                $model->save();
-
-            }
-
-           Yii::app()->user->setFlash('success','Success');
-           $this->redirect(array('view','id'=>$model->id));
-
-
-		}
-
-		$this->render('create',array(
-			'model'=>$model,
-            'items'=>$items
-		));
-	}
-*/
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);

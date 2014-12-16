@@ -30,12 +30,10 @@
             'dataProvider'=>$provider,
             'filter'=>$model,
             'columns'=>array(
+                'id',
                 'datex',
-                /*array(
-                    'name'=>'provider_id',
-                    'value'=>'$data->purchaseOrderItems->provider_id'
-                ),*/
-                'total',
+
+                //'total',
                 array(
                     'class'=>'bootstrap.widgets.TbButtonColumn',
                     'deleteConfirmation' =>Yii::t('mx','Do you really want to delete this item?'),

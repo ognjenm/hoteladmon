@@ -3,15 +3,18 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="help-block">Fields with <span class="required">*</span> are required.</p>
+    <p class="help-block"><?php echo Yii::t('mx','Fields with'); ?>
+        <span class="required">*</span>
+        <?php echo Yii::t('mx','are required');?>.
+    </p>
 
 	<?php echo $form->errorSummary($model); ?>
 
     <table border='0' width='100%' align='center' class="items table table-condensed table-bordered">
-        <th>Provider</th>
-        <th>Article</th>
-        <th>Price</th>
-        <th>Quantity</th>
+        <th><?php echo Yii::t('mx','Provider'); ?></th>
+        <th><?php echo Yii::t('mx','Article'); ?></th>
+        <th><?php echo Yii::t('mx','Price'); ?></th>
+        <th><?php echo Yii::t('mx','Quantity'); ?></th>
         <th></th>
         <tr>
             <td>
@@ -50,7 +53,7 @@
                                     "<td>"+
                                         "<table id=\'providers"+providers+"\' style=\'width:100%\'><tbody><tr><th colspan=\'4\' scope=\'row\'><input type=\'hidden\' value=\'"+$(this).val()+"\' name=\'provider[]\' />"+ prov +"</th></tr></tbody></table>"+
                                     "</td>"+
-                                    "<td style=\'text-align: center;vertical-align: middle;\'><input type=\'button\'  id=\'" + providers + "\' value=\'remove\'></td>" +
+                                    "<td style=\'text-align: center;vertical-align: middle;\'><input type=\'button\'  id=\'" + providers + "\' value=\'Eliminar\'></td>" +
                                "</tr>";
 
                         $("#bill_table").append(html);
@@ -124,7 +127,7 @@
             <td><input name="item_quantity" type="text" id="item_quantity" size="20"/></td>
             <td>
 
-                <input name="add_button" type="button" id="add_button" size="20" value="Add" />
+                <input name="add_button" type="button" id="add_button" size="20" value="Agregar" />
                 <input name="add_note" type="button" id="add_note" size="20" value="Nota" />
             </td>
     </table>
