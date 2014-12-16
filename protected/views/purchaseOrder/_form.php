@@ -28,13 +28,18 @@
                     'events' =>array(
                         'change'=>'js:function(e){
 
-                        //aux.push({"provider":$(this).val()});
+                        aux[providers]=$(this).val();
+                        note[noteIndex]=$("#note"+noteIndex).val();
 
-                        //bootbox.alert(aux);
+                        if(providers>0){
 
-                        /*if(providers>0){
-                            orders.push(aux[providers-1],{"items": items});
-                        }*/
+                            /*var t=note.length;
+                            $.each( note, function( key, value ) {
+                            });*/
+
+                            orders.push({"provider": aux[providers-1], "items": items, "note": note[noteIndex]});
+                            items=[];
+                        }
 
                         providers++;
 

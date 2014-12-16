@@ -46,7 +46,9 @@
 
         $('#sendPurchaseOrder').click(function(){
 
-            orders.push({"provider": aux[providers-1],"items": items});
+            note[noteIndex]=$("#note"+noteIndex).val();
+            orders.push({"provider": aux[providers-1],"items": items, "note": note[noteIndex]});
+            items=[];
 
             $.ajax({
                 url: "<?php echo CController::createUrl('/purchaseOrder/create'); ?>",
@@ -64,17 +66,16 @@
         $("#add_note").click(function() {
 
             itemCount++;
+            noteIndex++;
 
             //orders.push({"note": note[providers-1],"items": items});
 
             html="<tr>"+
                 "<td colspan='4' scope='row'>"+
-                "<textarea id='"+noteIndex+ "' rows='3' style='width: 100%;'></textarea>"
+                "<textarea id='note"+noteIndex+ "' rows='3' style='width: 100%;'></textarea>"
                 "</td></tr>";
             $("#providers"+providers).append(html);
             html="";
-
-            noteIndex++;
 
         });
 
