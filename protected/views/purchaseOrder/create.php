@@ -37,6 +37,7 @@
 
     $(document).ready(function() {
 
+        //http://isocra.com/2007/07/dragging-and-dropping-table-rows-in-javascript/
 
         $("#bill_table").tableDnD();
 
