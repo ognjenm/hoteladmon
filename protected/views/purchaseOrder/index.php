@@ -5,7 +5,7 @@ $this->breadcrumbs=array(
     );
 
     $this->menu=array(
-        array('label'=>Yii::t('mx', 'PurchaseOrder'),'icon'=>'icon-refresh','url'=>array('index')),
+        array('label'=>Yii::t('mx', 'Purchase Order'),'icon'=>'icon-refresh','url'=>array('index')),
         array('label'=>Yii::t('mx','Create'),'icon'=>'icon-plus','url'=>array('create')),
     );
 

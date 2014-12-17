@@ -1,7 +1,7 @@
 <?php
 
     $this->breadcrumbs=array(
-        'Purchase Order'=>array('index'),
+        Yii::t('mx','Purchase Order')=>array('index'),
         Yii::t('mx','Create'),
     );
 
@@ -16,6 +16,7 @@
     $assets =Yii::app()->assetManager->publish($order);
 
     $cs = Yii::app()->getClientScript();
+
     $cs->registerScriptFile($assets.'/js/jquery.tablednd.0.7.min.js');
     $cs->registerCssFile($assets.'/css/tablednd.css');
 
@@ -33,16 +34,19 @@
     var note=new Array();
     var noteIndex=0;
 
+
     $(document).ready(function() {
+
 
         $("#bill_table").tableDnD();
 
-        $("#bill_table tr").hover(function() {
+        /*$("#bill_table tr").hover(function() {
             $(this.cells[0]).addClass('showDragHandle');
 
         }, function() {
             $(this.cells[0]).removeClass('showDragHandle');
-        });
+        });*/
+
 
         $('#sendPurchaseOrder').click(function(){
 
@@ -102,28 +106,23 @@
 
             itemCount++;
 
-            html= "<tr>" +
+            html= "<tr id='tr"+itemCount+"'>" +
                         "<td><input type='hidden' value='"+item['ITEM_ARTICLE_ID']+"' name='article_id[]'/>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
                         "<td><input type='hidden' value='"+item['ITEM_PRICE']+"' name='price[]'/>" +  item['ITEM_PRICE'] + " </td>" +
                         "<td><input type='hidden' value='"+item['ITEM_QUANTITY']+"' name='quantity[]'/>" +  item['ITEM_QUANTITY'] + " </td>" +
-                        "<td><input type='button'  id='" + itemCount + "' value='Eliminar'></td>" +
+                        "<td><input type='button'  id='btn" + itemCount + "' value='Eliminar' onclick='$(this).parents().get(1).remove();'></td>" +
                     "</tr>";
 
             $("#providers"+providers).append(html);
 
             html="";
 
-            $("#"+itemCount).click(function() {
-                var buttonId = $(this).attr("id");
-                $("#tr"+ buttonId).remove();
-            });
-
             $("#PurchaseOrderItems_article_id").prop("selectedIndex",0);
             $("#item_price").val("");
             $("#item_quantity").val("");
 
-
         });
+
 
     });
 

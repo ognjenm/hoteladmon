@@ -49,11 +49,11 @@
                         var prov=$("#PurchaseOrder_provider_id option:selected").text();
 
                         html+="<tr id=\'"+providers+"\' style=\'cursor: move;\'>"+
-                                    "<td>index</td>"+
+                                    "<td></td>"+
                                     "<td>"+
                                         "<table id=\'providers"+providers+"\' style=\'width:100%\'><tbody><tr><th colspan=\'4\' scope=\'row\'><input type=\'hidden\' value=\'"+$(this).val()+"\' name=\'provider[]\' />"+ prov +"</th></tr></tbody></table>"+
                                     "</td>"+
-                                    "<td style=\'text-align: center;vertical-align: middle;\'><input type=\'button\'  id=\'" + providers + "\' value=\'Eliminar\'></td>" +
+                                    "<td style=\'text-align: center;vertical-align: middle;\'><input type=\'button\'  id=\'" + providers + "\' value=\'Eliminar\' onclick=\'$(this).parents().get(1).remove();\'></td>" +
                                "</tr>";
 
                         $("#bill_table").append(html);
