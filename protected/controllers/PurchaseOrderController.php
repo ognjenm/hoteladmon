@@ -159,7 +159,9 @@ class PurchaseOrderController extends Controller
 
             if(isset($_POST['purchaseOrder'])){
 
-                $purchaseOrder=new PurchaseOrder;
+                print_r($_POST['purchaseOrder']);
+
+                /*$purchaseOrder=new PurchaseOrder;
                 $purchaseOrder->user_id=Yii::app()->user->id;
                 $purchaseOrder->datex=date('Y-m-d');
                 $purchaseOrder->save();
@@ -193,7 +195,8 @@ class PurchaseOrderController extends Controller
                     }
 
                     $res=array('ok'=>true,'url'=>$this->createUrl('/purchaseOrder/view',array('id'=>$purchaseOrder->id)));
-                }
+                }*/
+
             }
 
             echo CJSON::encode($res);

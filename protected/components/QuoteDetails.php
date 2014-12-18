@@ -2438,6 +2438,7 @@ class QuoteDetails extends CApplicationComponent{
 
                 $view=Yii::app()->createUrl('reservation/view',array('id'=>$item['customerReservationID']));
                 $payment=Yii::app()->createUrl('/payments/index',array('id'=>$item['customerReservationID']));
+                $cancel=Yii::app()->createUrl('/reservation/cancel',array('customerId'=>$item['customerReservationID']));
 
                 $reservationTable.='<tr>
                 <td colspan="17" align="center" bgcolor="#EEEEEE"><strong>'.$item['first_name'].' '.$item['last_name'].' - '.$item['state'].'</strong>
@@ -2449,6 +2450,10 @@ class QuoteDetails extends CApplicationComponent{
 
                         <a style="margin-right:10px;" class="view" title="'.Yii::t('mx','Register Deposit').'" rel="tooltip" href="'.$payment.'">
                             <i class="icon-money icon-2x"></i>
+                        </a>
+
+                        <a style="margin-right:10px;" class="view" title="'.Yii::t('mx','Cancel').'" rel="tooltip" href="'.$cancel.'">
+                            <i class="icon-remove icon-2x"></i>
                         </a>
 
                     </div>

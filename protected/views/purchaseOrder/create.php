@@ -23,6 +23,26 @@
 ?>
 
 <script type="text/javascript">
+
+    /*var purchase=new Array();
+    var todo=new Array();
+    purchase['provider']=155;
+    purchase['note']="esta es una nota";
+    purchase['items']=['articulo','precio','cantidad'];
+    todo.push(new Array(purchase['provider'],purchase['note'],purchase['items']));
+    alert(todo[0][2][0]);*/
+
+    /*var demo=new Array();
+    demo.push(new Array('provider'));
+    demo.push(new Array('note'));
+    demo.push(['articulo','precio','cantidad']);
+
+    alert(demo[2][1]);
+     */
+    //alert(demo[1]);
+    //alert(demo[2][1]);
+
+
     var index=1;
     var itemCount = 0;
     var html = "";
@@ -92,6 +112,8 @@
             $("#providers"+providers).append(html);
             html="";
 
+            $("#bill_table").tableDnDUpdate();
+
         });
 
         $("#add_button").click(function() {
@@ -111,7 +133,7 @@
                         "<td><input type='hidden' value='"+item['ITEM_ARTICLE_ID']+"' name='article_id[]'/>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
                         "<td><input type='hidden' value='"+item['ITEM_PRICE']+"' name='price[]'/>" +  item['ITEM_PRICE'] + " </td>" +
                         "<td><input type='hidden' value='"+item['ITEM_QUANTITY']+"' name='quantity[]'/>" +  item['ITEM_QUANTITY'] + " </td>" +
-                        "<td><input type='button'  id='btn" + itemCount + "' value='Eliminar' onclick='$(this).parents().get(1).remove();'></td>" +
+                        "<td><input type='button'  id='btn" + itemCount + "' value='Eliminar' onclick='$(this).parents().get(1).remove(); orders["+(providers-1)+"].items.splice("+(itemCount-1)+ ",1);'></td>" +
                     "</tr>";
 
             $("#providers"+providers).append(html);
@@ -121,6 +143,8 @@
             $("#PurchaseOrderItems_article_id").prop("selectedIndex",0);
             $("#item_price").val("");
             $("#item_quantity").val("");
+
+            $("#bill_table").tableDnDUpdate();
 
         });
 

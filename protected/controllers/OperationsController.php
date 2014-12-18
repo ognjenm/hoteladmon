@@ -240,7 +240,6 @@ class OperationsController extends Controller
 
     }
 
-
     public function actionTransfer($accountId,$accountType){
 
         switch($accountType){
@@ -494,8 +493,6 @@ class OperationsController extends Controller
         ));
 
     }
-
-
 
     //action_salesAgents_create
 

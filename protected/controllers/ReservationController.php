@@ -31,7 +31,8 @@ class ReservationController extends Controller
                                  'emailFormats','getCustomerId','ChangeStatus','payment',
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
-                                 'schedulerOverview_update','campedReport','getCampedReport'
+                                 'schedulerOverview_update','campedReport','getCampedReport',
+                                 'cancel'
                 ),
                 'users'=>array('@'),
             ),
@@ -40,6 +41,28 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionCancel($customerId){
+
+        $reservation=Reservation::model()->findAll(
+            array(
+                'condition'=>'customer_reservation_id=:customerId',
+                'params'=>array('customerId'=>$customerId)
+            )
+        );
+
+        if($reservation){
+            foreach($reservation as $item){
+                $item->statux="CANCELLED";
+                $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
+                $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
+                $item->save();
+            }
+        }
+
+        $this->redirect(array('index'));
+
     }
 
     public function actionFilter(){
@@ -231,7 +254,6 @@ class ReservationController extends Controller
             'requestFormat'=>$requestFormat
         ));
     }
-
 
     public function actionBudget($id){
         $policies=array();
@@ -1078,8 +1100,6 @@ class ReservationController extends Controller
         }
     }
 
-
-
     public function actionView($id){
 
         Yii::import('bootstrap.widgets.TbForm');
@@ -1310,7 +1330,6 @@ class ReservationController extends Controller
 
     }
 
-
     public function actionCreate()
     {
         Yii::import('bootstrap.widgets.TbForm');
@@ -1429,8 +1448,6 @@ class ReservationController extends Controller
         ));
     }
 
-
-
     public function actionSaveReservation(){
 
         $res=array('ok'=>false);
@@ -1530,8 +1547,6 @@ class ReservationController extends Controller
 
     }
 
-
-
     public function actionUpdate()
     {
         $res=array('ok'=>false);
@@ -1616,7 +1631,6 @@ class ReservationController extends Controller
 
     }
 
-
     public function actionDelete($id)
     {
         if(Yii::app()->request->isPostRequest)
@@ -1631,7 +1645,6 @@ class ReservationController extends Controller
         else
             throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
     }
-
 
     public function actionIndex(){
         Yii::import('bootstrap.widgets.TbForm');
@@ -1678,7 +1691,6 @@ class ReservationController extends Controller
         }
     }
 
-
     protected function performAjaxValidation($model){
         if (Yii::app()->getRequest()->getIsAjaxRequest()) {
 
@@ -1689,7 +1701,6 @@ class ReservationController extends Controller
             Yii::app()->end();
         }
     }
-
 
     public function actionChangeStatus(){
 

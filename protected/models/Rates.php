@@ -125,6 +125,7 @@ class Rates extends CActiveRecord
             'TENT'=>Yii::t('mx','Tent'),
             'CAMPED'=>Yii::t('mx','Camped'),
             'DAYPASS'=>Yii::t('mx','Day Pass'),
+
         );
 
     }
