@@ -94,6 +94,58 @@ class PurchaseOrder extends CActiveRecord
 		));
 	}
 
+    public function getFormFilter(){
+
+        return array(
+            'id'=>'filterForm',
+            'title'=>Yii::t('mx','Search Criteria'),
+            'elements'=>array(
+                "provider_id"=>array(
+                    'label'=>'',
+                    'type' => 'select2',
+                    'data'=>Providers::model()->listAllOrganization(),
+                    'events' =>array(
+                        'change'=>'js:function(e){
+
+                             $.ajax({
+                                url: "'.CController::createUrl('/articles/getArticleDescription').'",
+                                data: { provider: $(this).val() },
+                                type: "POST",
+                                dataType: "json",
+                                beforeSend: function() {}
+                            })
+
+                            .done(function(data) {
+                                if(data.ok==true){
+                                    $("#PurchaseOrder_article_id").html(data.articles);
+                                }
+                            })
+
+                            .fail(function() { bootbox.alert("Error"); })
+                            .always(function() { });
+
+
+                        }',
+                    )
+                ),
+                "article_id"=>array(
+                    'label'=>'',
+                    'type' => 'select2',
+                    'data'=>array(0=>Yii::t('mx','Select')),
+                ),
+            ),
+            'buttons' => array(
+                'filter' => array(
+                    'type' => 'submit',
+                    'label' => Yii::t('mx','Ok'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-search',
+                    'url'=>Yii::app()->createUrl('/providers/index'),
+                ),
+            )
+        );
+    }
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);

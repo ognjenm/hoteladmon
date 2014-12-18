@@ -50,11 +50,11 @@
                         var prov=$("#PurchaseOrder_provider_id option:selected").text();
 
                         html+="<tr id=\'"+providers+"\' style=\'cursor: move;\'>"+
-                                    "<td></td>"+
+                                    "<td>&nbsp;</td>"+
                                     "<td>"+
                                         "<table id=\'providers"+providers+"\' style=\'width:100%\'><tbody><tr><th colspan=\'4\' scope=\'row\'>"+ prov +"</th></tr></tbody></table>"+
                                     "</td>"+
-                                    "<td style=\'text-align: center;vertical-align: middle;\'><input type=\'button\'  id=\'" + providers + "\' value=\'Eliminar\' onclick=\'$(this).parents().get(1).remove(); orders.splice("+providers+",1);\'></td>" +
+                                    "<td style=\'text-align: center;vertical-align: middle;\'><button class=\'btn btn-danger\' type=\'button\'  id=\'" + providers + "\' value=\'Eliminar\' onclick=\'$(this).parents().get(1).remove(); orders.splice("+(providers-1)+",1);\'><i class=\'icon-remove\'></i></button></td>" +
                                "</tr>";
 
                         $("#bill_table").append(html);
@@ -128,8 +128,8 @@
             <td><input name="item_quantity" type="text" id="item_quantity" size="20"/></td>
             <td>
 
-                <input name="add_button" type="button" id="add_button" size="20" value="Agregar" />
-                <input name="add_note" type="button" id="add_note" size="20" value="Nota" />
+                <button class="btn btn-primary" name="add_button" type="button" id="add_button" title="Agregar Articulo"><i class="icon-plus icon-3x"></i> </button>
+                <button class="btn btn-primary" name="add_note" type="button" id="add_note" title="Agregar Nota"><i class="icon-file-alt"></i> </button>
             </td>
     </table>
 

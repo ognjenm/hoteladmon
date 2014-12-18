@@ -57,16 +57,15 @@
 
     $(document).ready(function() {
 
-        //http://isocra.com/2007/07/dragging-and-dropping-table-rows-in-javascript/
 
         $("#bill_table").tableDnD();
 
-        /*$("#bill_table tr").hover(function() {
+        $("#bill_table tr").hover(function() {
             $(this.cells[0]).addClass('showDragHandle');
 
         }, function() {
             $(this.cells[0]).removeClass('showDragHandle');
-        });*/
+        });
 
 
         $('#sendPurchaseOrder').click(function(){
@@ -96,7 +95,9 @@
                 .always(function() { $("#content").removeClass("loading"); });
 
             items=[];
-            orders=[];
+            providers=[];
+            note=[];
+            //orders=[];
 
         });
 
@@ -130,10 +131,10 @@
             itemCount++;
 
             html= "<tr id='tr"+itemCount+"'>" +
-                        "<td><input type='hidden' value='"+item['ITEM_ARTICLE_ID']+"' name='article_id[]'/>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
-                        "<td><input type='hidden' value='"+item['ITEM_PRICE']+"' name='price[]'/>" +  item['ITEM_PRICE'] + " </td>" +
-                        "<td><input type='hidden' value='"+item['ITEM_QUANTITY']+"' name='quantity[]'/>" +  item['ITEM_QUANTITY'] + " </td>" +
-                        "<td><input type='button'  id='btn" + itemCount + "' value='Eliminar' onclick='$(this).parents().get(1).remove(); orders["+(providers-1)+"].items.splice("+(itemCount-1)+ ",1);'></td>" +
+                        "<td>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
+                        "<td>" +  item['ITEM_PRICE'] + " </td>" +
+                        "<td>" +  item['ITEM_QUANTITY'] + " </td>" +
+                        "<td><button class='btn btn-danger' type='button' id='btn" + itemCount + "' onclick='$(this).parents().get(1).remove(); orders["+(providers-1)+"].items.splice("+(itemCount-1)+ ",1);' ><i class='icon-remove'></i></button></td>" +
                     "</tr>";
 
             $("#providers"+providers).append(html);
@@ -148,11 +149,59 @@
 
         });
 
-
     });
+
+
+
+    function estatus()
+    {
+        var sList = "";
+
+        $('input[type=checkbox]').each(function () {
+
+            if(this.checked){
+                var sThisVal=this.id;
+                sList += (sList=="" ? sThisVal : "," + sThisVal);
+            }
+
+        });
+
+
+    }
 
 </script>
 
 <div id="content">
-    <?php echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
+    <fieldset>
+        <legend>Busqueda:</legend>
+        <div class="checkbox">
+            <label>
+                <?php echo CHtml::radioButtonList('choice','',array('provider'=>Yii::t('mx','Provider'),'article'=>Yii::t('mx','Article')), array(
+                        'labelOptions'=>array('style'=>'display:inline'),
+                        'separator' => "",
+                        'onClick'=>"
+
+                            var search=$(\"input:radio[name='choice']:checked\").val();
+
+                            if(search=='provider'){
+                               $('#providersDiv').show();
+                               $('#articlesDiv').hide();
+                            }else{
+                                $('#articlesDiv').show();
+                                $('#providersDiv').hide();
+                            }
+
+                        "
+                    )
+                ); ?>
+            </label>
+        </div>
+
+            <div id="providersDiv" style="display: none">
+                <?php echo $form->render(); ?>
+            </div>
+            <div id="articlesDiv" style="display: none">articles</div>
+
+    </fieldset>
+    <?php //echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
 </div>

@@ -150,10 +150,17 @@ class PurchaseOrderController extends Controller
 	}
 
     public function actionCreate(){
+        Yii::import('bootstrap.widgets.TbForm');
         $model=new PurchaseOrder;
         $items=new PurchaseOrderItems;
         $res=array('ok'=>false);
         $totalAmount=0;
+
+        $form = TbForm::createForm($model->getFormFilter(),$model,
+            array('htmlOptions'=>array('class'=>'well'),
+                'type'=>'inline',
+            )
+        );
 
         if(Yii::app()->request->isAjaxRequest){
 
@@ -206,7 +213,8 @@ class PurchaseOrderController extends Controller
 
         $this->render('create',array(
             'model'=>$model,
-            'items'=>$items
+            'items'=>$items,
+            'form'=>$form
         ));
 
     }
