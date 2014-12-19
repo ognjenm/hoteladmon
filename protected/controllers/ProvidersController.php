@@ -17,7 +17,7 @@ class ProvidersController extends Controller
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view','delete','export','exportAll','import','getProvider','getFullName','getSuffix','lista'),
+				'actions'=>array('create','update','index','view','delete','export','exportAll','import','getProvider','getFullName','getSuffix','getProviderDescription'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -26,8 +26,37 @@ class ProvidersController extends Controller
 		);
 	}
 
-    public function actionLista(){
+    public function actionGetProviderDescription(){
 
+        $options=CHtml::tag('option', array('value'=>''),Yii::t('mx','Select'),true);
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            if (isset($_POST['article_id'])) {
+
+                $articleId=(int)$_POST['article_id'];
+                $provider_id=Articles::model()->findByPk($articleId);
+
+                $provider=Providers::model()->findByPk($provider_id->provider_id);
+
+                if($provider){
+                    $empresa="";
+                    $empresa.=$provider->company != "" ? $provider->company." - " : "";
+                    $empresa.=$provider->first_name != "" ? $provider->first_name." " : "";
+                    $empresa.=$provider->middle_name != "" ? $provider->middle_name." " : "";
+                    $empresa.=$provider->last_name != "" ? $provider->last_name." - " : "";
+                    $empresa.=$provider->suffix != "" ? $provider->suffix : "";
+
+                    $options=CHtml::tag('option', array('value'=>$provider->id),CHtml::encode($empresa),true);
+
+                }
+
+
+            }
+
+            echo $options;
+            Yii::app()->end();
+        }
     }
 
     public function actionGetSuffix() {

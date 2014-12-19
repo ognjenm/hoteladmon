@@ -162,6 +162,12 @@ class PurchaseOrderController extends Controller
             )
         );
 
+        $formArticle = TbForm::createForm($model->getFormFilterArticle(),$model,
+            array('htmlOptions'=>array('class'=>'well'),
+                'type'=>'inline',
+            )
+        );
+
         if(Yii::app()->request->isAjaxRequest){
 
             if(isset($_POST['purchaseOrder'])){
@@ -214,7 +220,8 @@ class PurchaseOrderController extends Controller
         $this->render('create',array(
             'model'=>$model,
             'items'=>$items,
-            'form'=>$form
+            'form'=>$form,
+            'formArticle'=>$formArticle
         ));
 
     }

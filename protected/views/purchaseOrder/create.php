@@ -24,25 +24,6 @@
 
 <script type="text/javascript">
 
-    /*var purchase=new Array();
-    var todo=new Array();
-    purchase['provider']=155;
-    purchase['note']="esta es una nota";
-    purchase['items']=['articulo','precio','cantidad'];
-    todo.push(new Array(purchase['provider'],purchase['note'],purchase['items']));
-    alert(todo[0][2][0]);*/
-
-    /*var demo=new Array();
-    demo.push(new Array('provider'));
-    demo.push(new Array('note'));
-    demo.push(['articulo','precio','cantidad']);
-
-    alert(demo[2][1]);
-     */
-    //alert(demo[1]);
-    //alert(demo[2][1]);
-
-
     var index=1;
     var itemCount = 0;
     var html = "";
@@ -86,12 +67,14 @@
                         window.location.href=data.url;
                     }
                 })
+
                 .fail(function(data) {
                     if(data.ok==false){
                         bootbox.alert(data.error);
                     }
 
                 })
+
                 .always(function() { $("#content").removeClass("loading"); });
 
             items=[];
@@ -200,8 +183,10 @@
             <div id="providersDiv" style="display: none">
                 <?php echo $form->render(); ?>
             </div>
-            <div id="articlesDiv" style="display: none">articles</div>
+            <div id="articlesDiv" style="display: none">
+                <?php echo $formArticle->render(); ?>
+            </div>
 
     </fieldset>
-    <?php //echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
+    <?php echo $this->renderPartial('_form', array('model'=>$model,'items'=>$items)); ?>
 </div>

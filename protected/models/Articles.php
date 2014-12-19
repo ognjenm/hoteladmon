@@ -122,7 +122,6 @@ class Articles extends CActiveRecord
                     'type' => 'text',
                     'class'=>'span5 '
                 ),
-
             ),
             'buttons' => array(
                 'filter' => array(
@@ -155,6 +154,8 @@ class Articles extends CActiveRecord
 
         $lista=array();
         $result=$this->model()->findAll(array('order'=>'name_article'));
+
+        $lista=array(0=>Yii::t('mx','Select'));
 
         foreach($result as $item){
             $lista[$item->id]=$item->name_article.' - '.$item->unitmeasure->unit.' - '.$item->measure.' - '.$item->presentation;
