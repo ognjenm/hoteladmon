@@ -138,7 +138,6 @@ class PurchaseOrder extends CActiveRecord
                             .fail(function() { bootbox.alert("Error"); })
                             .always(function() { });
 
-
                         }',
                     )
                 ),
@@ -146,6 +145,27 @@ class PurchaseOrder extends CActiveRecord
                     'label'=>'',
                     'type' => 'select2',
                     'data'=>array(0=>Yii::t('mx','Select')),
+                    'events' =>array(
+                        'change'=>'js:function(e){
+
+
+                            $.ajax({
+                                    url: "'.CController::createUrl('/articles/GetAttributesArticle').'",
+                                    data: { articleId: $(this).val() },
+                                    type: "POST",
+                                    dataType: "json",
+                                    beforeSend: function() {}
+                                })
+
+                                .done(function(data) {
+                                   $("#PurchaseOrder_price").val(data.price);
+                                })
+
+                                .fail(function() { bootbox.alert("Error"); })
+                                .always(function() {});
+
+                        }',
+                    )
                 ),
                 "price"=>array(
                     'label'=>Yii::t('mx','Price'),
@@ -164,18 +184,96 @@ class PurchaseOrder extends CActiveRecord
                     'label' => Yii::t('mx','Add')." ".Yii::t('mx','Provider'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-user',
+                    'htmlOptions'=> array(
+                        'onclick' => '
+
+                            aux[providers]=$(this).val();
+
+                            //note[noteIndex]=$("#note"+noteIndex).val();
+                            //orders.push({"provider": aux[providers-1], "items": items, "note": note[noteIndex]});
+                            //items=[];
+
+                           providers++;
+                           var prov=$("#PurchaseOrder_provider_id option:selected").text();
+
+                        html+="<tr id=\'"+providers+"\' style=\'cursor: move;\'>"+
+                                    "<td>&nbsp;</td>"+
+                                    "<td>"+
+                                        "<table id=\'providers"+providers+"\' style=\'width:100%\'><tbody><tr><th colspan=\'4\' scope=\'row\'>"+ prov +"</th></tr></tbody></table>"+
+                                    "</td>"+
+                                    "<td style=\'text-align: center;vertical-align: middle;\'><button class=\'btn btn-danger\' type=\'button\'  id=\'" + providers + "\' value=\'Eliminar\' onclick=\'$(this).parents().get(1).remove(); orders.splice("+(providers-1)+",1);\'><i class=\'icon-remove\'></i></button></td>" +
+                               "</tr>";
+
+                        $("#bill_table").append(html);
+                        html="";
+
+                        '
+                    ),
                 ),
                 'addarticle' => array(
                     'type' => 'button',
                     'label' => Yii::t('mx','Add')." ".Yii::t('mx','Article'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-shopping-cart',
+                    'htmlOptions'=> array(
+                        'onclick' =>'
+
+                         var item={
+                            "ROW_ID" : itemCount,
+                            "ITEM_ARTICLE_ID" :  $("#PurchaseOrder_article_id").val(),
+                            "ITEM_PRICE" : $("#PurchaseOrder_price").val(),
+                            "ITEM_QUANTITY" : $("#PurchaseOrder_quantity").val()
+                        }
+
+                        items.push(item);
+
+                         itemCount++;
+
+                        html= "<tr id=\'tr"+itemCount+"\'>" +
+                                    "<td>"+$("#PurchaseOrder_article_id option:selected").text()+"</td>" +
+                                    "<td>" +  item["ITEM_PRICE"] + " </td>" +
+                                    "<td>" +  item["ITEM_QUANTITY"] + " </td>" +
+                                    "<td><button class=\'btn btn-danger\' type=\'button\' id=\'btn" + itemCount + "\' onclick=\'$(this).parents().get(1).remove(); orders["+(providers-1)+"].items.splice("+(itemCount-1)+ ",1);\' ><i class=\'icon-remove\'></i></button></td>" +
+                                "</tr>";
+
+                        $("#providers"+providers).append(html);
+
+                        html="";
+
+                        $("#PurchaseOrder_article_id").prop("selectedIndex",0);
+                        $("#PurchaseOrder_price").val("");
+                        $("#PurchaseOrder_quantity").val("");
+
+                        $("#bill_table").tableDnDUpdate();
+
+                        '
+                    ),
                 ),
                 'addnote' => array(
                     'type' => 'button',
                     'label' => Yii::t('mx','Add')." ".Yii::t('mx','Note'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-file-alt',
+                    'htmlOptions'=> array(
+                        'onclick' =>'
+
+                            note[noteIndex]=$("#note"+noteIndex).val();
+
+                            itemCount++;
+                            noteIndex++;
+
+                            html="<tr>"+
+                                "<td colspan=\'4\' scope=\'row\'>"+
+                                "<textarea id=\'note"+noteIndex+ "\' rows=\'3\' style=\'width: 100%;\'></textarea>"
+                                "</td></tr>";
+
+                            $("#providers"+providers).append(html);
+
+                            html="";
+
+                            $("#bill_table").tableDnDUpdate();
+                        '
+                    ),
                 ),
             )
         );
@@ -217,11 +315,7 @@ class PurchaseOrder extends CActiveRecord
                     'label'=>'',
                     'type' => 'select2',
                     'data'=>array(0=>Yii::t('mx','Select')),
-                    'htmlOptions'=>array(
-                        'change'=>'
-                           bootbox.alert("hola");
-                        '
-                    )
+
                 ),
                 "price"=>array(
                     'label'=>Yii::t('mx','Price'),
