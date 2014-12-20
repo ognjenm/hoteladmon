@@ -185,6 +185,7 @@ class PurchaseOrder extends CActiveRecord
                     'layoutType' => 'primary',
                     'icon'=>'icon-user',
                     'htmlOptions'=> array(
+
                         'onclick' => '
 
                             aux[providers]=$(this).val();
@@ -219,7 +220,6 @@ class PurchaseOrder extends CActiveRecord
                         'onclick' =>'
 
                          var item={
-                            "ROW_ID" : itemCount,
                             "ITEM_ARTICLE_ID" :  $("#PurchaseOrder_article_id").val(),
                             "ITEM_PRICE" : $("#PurchaseOrder_price").val(),
                             "ITEM_QUANTITY" : $("#PurchaseOrder_quantity").val()
@@ -243,7 +243,6 @@ class PurchaseOrder extends CActiveRecord
                         $("#PurchaseOrder_article_id").prop("selectedIndex",0);
                         $("#PurchaseOrder_price").val("");
                         $("#PurchaseOrder_quantity").val("");
-
                         $("#bill_table").tableDnDUpdate();
 
                         '

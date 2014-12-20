@@ -49,108 +49,8 @@
         });
 
 
-        $('#sendPurchaseOrder').click(function(){
-
-            note[noteIndex]=$("#note"+noteIndex).val();
-            orders.push({"provider": aux[providers-1],"items": items, "note": note[noteIndex]});
-
-            $.ajax({
-                url: "<?php echo CController::createUrl('/purchaseOrder/create'); ?>",
-                data: { purchaseOrder: orders }, //$("#purchase-order-form").serialize(),
-                type: "POST",
-                dataType: "json",
-                beforeSend: function() { $("#content").addClass("loading"); }
-            })
-
-                .done(function(data) {
-                    if(data.ok==true){
-                        window.location.href=data.url;
-                    }
-                })
-
-                .fail(function(data) {
-                    if(data.ok==false){
-                        bootbox.alert(data.error);
-                    }
-
-                })
-
-                .always(function() { $("#content").removeClass("loading"); });
-
-            items=[];
-            providers=[];
-            note=[];
-            //orders=[];
-
-        });
-
-        $("#add_note").click(function() {
-
-            itemCount++;
-            noteIndex++;
-
-            html="<tr>"+
-                "<td colspan='4' scope='row'>"+
-                "<textarea id='note"+noteIndex+ "' rows='3' style='width: 100%;'></textarea>"
-                "</td></tr>";
-            $("#providers"+providers).append(html);
-            html="";
-
-            $("#bill_table").tableDnDUpdate();
-
-        });
-
-        $("#add_button").click(function() {
-
-            var item={
-                "ROW_ID" : itemCount,
-                "ITEM_ARTICLE_ID" :  $("#PurchaseOrderItems_article_id").val(),
-                "ITEM_PRICE" : $("#item_price").val(),
-                "ITEM_QUANTITY" : $("#item_quantity").val()
-            }
-
-            items.push(item);
-
-            itemCount++;
-
-            html= "<tr id='tr"+itemCount+"'>" +
-                        "<td>"+$("#PurchaseOrderItems_article_id option:selected").text()+"</td>" +
-                        "<td>" +  item['ITEM_PRICE'] + " </td>" +
-                        "<td>" +  item['ITEM_QUANTITY'] + " </td>" +
-                        "<td><button class='btn btn-danger' type='button' id='btn" + itemCount + "' onclick='$(this).parents().get(1).remove(); orders["+(providers-1)+"].items.splice("+(itemCount-1)+ ",1);' ><i class='icon-remove'></i></button></td>" +
-                    "</tr>";
-
-            $("#providers"+providers).append(html);
-
-            html="";
-
-            $("#PurchaseOrderItems_article_id").prop("selectedIndex",0);
-            $("#item_price").val("");
-            $("#item_quantity").val("");
-
-            $("#bill_table").tableDnDUpdate();
-
-        });
-
     });
 
-
-
-    function estatus()
-    {
-        var sList = "";
-
-        $('input[type=checkbox]').each(function () {
-
-            if(this.checked){
-                var sThisVal=this.id;
-                sList += (sList=="" ? sThisVal : "," + sThisVal);
-            }
-
-        });
-
-
-    }
 
 </script>
 
@@ -173,7 +73,6 @@
                                 $('#articlesDiv').show();
                                 $('#providersDiv').hide();
                             }
-
                         "
                     )
                 ); ?>
