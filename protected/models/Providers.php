@@ -406,12 +406,27 @@ class Providers extends CActiveRecord
         $provider=$this->model()->findByPk($id);
 
         if($provider){
-            $address=$provider->work_street." ";
-            $address.=$provider->work_neighborhood." ";
-            $address.=$provider->work_city.", ";
-            $address.=$provider->work_region.", ";
-            $address.=$provider->work_country.", ";
-            $address.=$provider->work_zip;
+            $address=$provider->home_street." ";
+            $address.=$provider->home_city.", ";
+            $address.=$provider->home_region.", ";
+            $address.=$provider->home_country.", ";
+            $address.=$provider->home_zip.", ";
+
+            $address.=$provider->telephone_work1.", ";
+            $address.=$provider->telephone_work2.", ";
+            $address.=$provider->telephone_home1.", ";
+            $address.=$provider->telephone_home2.", ";
+
+            $address.="ubicación: (Latitud:";
+            $address.=$provider->n_degrees.",";
+            $address.=$provider->n_minuts.",";
+            $address.=$provider->n_seconds."";
+            $address.=" Longitud: ";
+            $address.=$provider->w_degrees.",";
+            $address.=$provider->w_minuts.",";
+            $address.=$provider->w_seconds.")";
+
+
         }
 
         return $address;

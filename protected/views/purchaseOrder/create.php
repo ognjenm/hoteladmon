@@ -30,10 +30,12 @@
     var providers=0;
     var items=[];
     var orders=[];
+    var notes=[];
     var purchaseOrders=[];
     var aux=new Array();
     var note=new Array();
     var noteIndex=0;
+    var noteIndexArray=0;
 
 
     $(document).ready(function() {

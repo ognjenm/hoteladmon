@@ -121,11 +121,13 @@ class PurchaseOrderController extends Controller
             }
 
             if($numArticles == $articlescont){
-                    $table.='
+                    if($item->note !=""){
+                        $table.='
                          <tr>
                             <td><h3  style="text-align: right;">Nota:</h3></td>
                             <td colspan="10" rowspan="1">'.$item->note.'</td>
                         </tr>';
+                    }
             }
 
             $counter++;
@@ -172,9 +174,8 @@ class PurchaseOrderController extends Controller
 
             if(isset($_POST['purchaseOrder'])){
 
-                print_r($_POST['purchaseOrder']);
 
-                /*$purchaseOrder=new PurchaseOrder;
+                $purchaseOrder=new PurchaseOrder;
                 $purchaseOrder->user_id=Yii::app()->user->id;
                 $purchaseOrder->datex=date('Y-m-d');
                 $purchaseOrder->save();
@@ -184,7 +185,7 @@ class PurchaseOrderController extends Controller
                     $purchaseOrderProvider=new PurchaseOrderProvider;
                     $purchaseOrderProvider->purchase_order_id=$purchaseOrder->id;
                     $purchaseOrderProvider->provider_id=(int)$order['provider'];
-                    $purchaseOrderProvider->note=$order['note'];
+
 
                     if($purchaseOrderProvider->save() && isset($order['items'])){
                         foreach($order['items'] as $articles){
@@ -207,8 +208,21 @@ class PurchaseOrderController extends Controller
 
                     }
 
+                    if(isset($order['notas'])){
+                        foreach($order['notas'] as $nota){
+
+                            $purchaseOrderProvider=new PurchaseOrderProvider;
+                            $purchaseOrderProvider->purchase_order_id=$purchaseOrder->id;
+                            $purchaseOrderProvider->provider_id=(int)$order['provider'];
+                            $purchaseOrderProvider->note=$nota["nota"];
+                            $purchaseOrderProvider->total=0;
+                            $purchaseOrderProvider->save();
+                        }
+                    }
+
                     $res=array('ok'=>true,'url'=>$this->createUrl('/purchaseOrder/view',array('id'=>$purchaseOrder->id)));
-                }*/
+                }
+
 
             }
 

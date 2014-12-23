@@ -239,7 +239,9 @@ class PurchaseOrder extends CActiveRecord
                     'htmlOptions'=> array(
                         'onclick' =>'
 
-                            note[noteIndex]=$("#note"+noteIndex).val();
+                            if(noteIndex>0){
+                                note[noteIndexArray-1]=$("#note"+(noteIndex-1)).val();
+                            }
 
                             html="<tr>"+
                                 "<td colspan=\'4\' scope=\'row\'>"+
@@ -251,20 +253,33 @@ class PurchaseOrder extends CActiveRecord
                             html="";
                             itemCount++;
                             noteIndex++;
+                            noteIndexArray++;
 
                             $("#bill_table").tableDnDUpdate();
                         '
                     ),
                 ),
                 'ok' => array(
-                    'type' => 'button',
+                    'type' =>'button',
                     'label' => Yii::t('mx','Ok'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-ok',
                     'htmlOptions'=> array(
                         'onclick' =>'
 
+                            note[noteIndexArray-1]=$("#note"+(noteIndex-1)).val();
 
+                            for(var i=0;i<noteIndexArray;i++){
+                                notes.push({"nota": note[i] });
+                            }
+
+                            orders.push({"provider": aux[providers-1],"items": items,"notas": notes});
+
+                            $("#bill_table").tableDnDUpdate();
+                            notes=[];
+                            items=[];
+                            note=new Array();
+                            noteIndexArray=0;
                         '
                     ),
                 ),
