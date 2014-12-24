@@ -32,7 +32,7 @@
             'columns'=>array(
                 array(
                     'name'=>'bank_id',
-                    'value'=>'$data->bank->model()->showByPk($data->bank_id)'
+                    'value'=>'BankAccounts::model()->accountByPk($data->bank_id);'
                 ),
                 'name',
                 'initials',

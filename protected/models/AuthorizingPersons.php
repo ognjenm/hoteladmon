@@ -45,7 +45,7 @@ class AuthorizingPersons extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-            'bank' => array(self::BELONGS_TO, 'Banks', 'bank_id'),
+            'bankAccount' => array(self::BELONGS_TO, 'BankAccount', 'bank_id'),
 		);
 	}
 

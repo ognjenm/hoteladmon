@@ -217,11 +217,14 @@ class OperationsController extends Controller
 
         if(Yii::app()->request->isPostRequest){
             $model=$this->loadModel($id);
-            $account=Banks::model()->findByPk($model->account_id);
+            $account=BankAccounts::model()->findByPk($model->account_id);
+
+            $saldoCuenta=$account->initial_balance+$model->retirement;
+            $saldoBalance=$model->balance+$model->retirement;
 
             if($model->payment_type==6 && $model->iscancelled==0){
-                $account->initial_balance=$account->initial_balance+$model->retirement;
-                $model->balance=$model->balance+$model->retirement;
+                $account->initial_balance=$saldoCuenta;
+                $model->balance=$saldoBalance;
                 $model->released=Yii::t('mx','CANCELLED');
                 $model->concept=Yii::t('mx','CANCELLED');
                 $model->bank_concept=Yii::t('mx','CANCELLED');
@@ -494,8 +497,6 @@ class OperationsController extends Controller
 
     }
 
-    //action_salesAgents_create
-
     public function actionPayment($accountId,$accountType){
 
         switch($accountType){
@@ -699,7 +700,6 @@ class OperationsController extends Controller
         ));
     }
 
-
     public function actionDeposit($accountId,$accountType){
 
         switch($accountType){
@@ -877,10 +877,6 @@ class OperationsController extends Controller
 
 	}
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
 	public function actionCreate()
 	{
 		$model=new Operations;
@@ -900,7 +896,6 @@ class OperationsController extends Controller
 			'model'=>$model,
 		));
 	}
-
 
 	public function actionUpdate($id)
 	{
@@ -931,15 +926,32 @@ class OperationsController extends Controller
 		));
 	}
 
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
 		{
+
+            $operation=$this->loadModel($id);
+
+            switch($operation->payment_type){
+                case 2:
+                    $account=BankAccounts::model()->findByPk($operation->account_id);
+                    $saldoCuenta=$account->initial_balance-$operation->retirement;
+                    $account->initial_balance=$saldoCuenta;
+                    $account->save();
+                break;
+
+                case 6:
+                    $account=BankAccounts::model()->findByPk($operation->account_id);
+                    $saldoCuenta=$account->initial_balance+$operation->retirement;
+                    $account->initial_balance=$saldoCuenta;
+                    $account->save();
+                break;
+
+
+            }
+
+
 			// we only allow deletion via POST request
 			$this->loadModel($id)->delete();
 
@@ -950,7 +962,6 @@ class OperationsController extends Controller
 		else
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
-
 
 	public function actionIndex()
 	{
@@ -998,10 +1009,6 @@ class OperationsController extends Controller
 		return $model;
 	}
 
-	/**
-	 * Performs the AJAX validation.
-	 * @param CModel the model to be validated
-	 */
 	protected function performAjaxValidation($model)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='operations-form')

@@ -784,7 +784,8 @@ return array(
     'Report Supplier'=>'Reporte para proveedor',
     'Description Of Supliers'=>'Descripción para proveedores',
     'Commission'=>'Comisión',
-    'Channel Reservation'=>'Canal de reserva'
+    'Channel Reservation'=>'Canal de reserva',
+    'Canceled Check'=>'Cancelar Cheque'
 
 
 

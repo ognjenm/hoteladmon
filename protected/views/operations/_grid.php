@@ -141,7 +141,7 @@
                             'visible'=>'Yii::app()->user->isSuperAdmin',
                         ),
                         'cancel' => array(
-                            'label' => 'Cancel',
+                            'label' => Yii::t('mx','Canceled Check'),
                             'icon' => 'icon-remove',
                             'visible'=>'Yii::app()->user->isSuperAdmin',
                             'url'=>'Yii::app()->createUrl("operations/cancel", array("id"=>$data->id))',
