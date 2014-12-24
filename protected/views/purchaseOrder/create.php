@@ -36,10 +36,10 @@
     var note=new Array();
     var noteIndex=0;
     var noteIndexArray=0;
+    var ordenCompra=[];
 
 
     $(document).ready(function() {
-
 
         $("#bill_table").tableDnD();
 
@@ -58,22 +58,19 @@
 
                  var reindex=[];
                  var rows = table.tBodies[0].rows;
+                 ordenCompra=[];
 
                  for (var i=0; i<rows.length; i++) {
                     reindex.push(orders[rows[i].id]);
                  }
 
-                 orders=[];
-
                  for (var j=0; j<reindex.length; j++) {
-                     orders.push(reindex[j]);
+                     ordenCompra.push(reindex[j]);
                  }
 
             },
 
          });
-
-
 
     });
 

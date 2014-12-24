@@ -12,7 +12,7 @@
 
                 $.ajax({
                 url: "'.CController::createUrl('/purchaseOrder/create').'",
-                data: { purchaseOrder: orders },
+                data: { purchaseOrder: ordenCompra },
                 type: "POST",
                 dataType: "json",
                 beforeSend: function() { $("#content").addClass("loading"); }
