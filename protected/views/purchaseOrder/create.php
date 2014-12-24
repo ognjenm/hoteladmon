@@ -51,6 +51,30 @@
         });
 
 
+         $("#bill_table").tableDnD({
+
+             onDragClass: "myDragClass",
+             onDrop: function(table, row) {
+
+                 var reindex=[];
+                 var rows = table.tBodies[0].rows;
+
+                 for (var i=0; i<rows.length; i++) {
+                    reindex.push(orders[rows[i].id]);
+                 }
+
+                 orders=[];
+
+                 for (var j=0; j<reindex.length; j++) {
+                     orders.push(reindex[j]);
+                 }
+
+            },
+
+         });
+
+
+
     });
 
 
