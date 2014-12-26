@@ -122,6 +122,15 @@ class BankAccounts extends CActiveRecord
 
     }
 
+    public function numerosCheque($accountId){
+
+        $account=$this::model()->findByPk($accountId);
+        $cheques=$account->cheq_num_end-$account->consecutive;
+
+        return $cheques;
+
+    }
+
     public function consultConsecutiveCheque($accountId){
 
         $consecutive=0;

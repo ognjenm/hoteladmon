@@ -54,6 +54,7 @@ class PaymentsController extends Controller
 	{
 		$model=new Payments;
         $res=array('ok'=>false);
+        $numcheques=true;
 
         if(Yii::app()->request->isAjaxRequest){
 
@@ -88,20 +89,20 @@ class PaymentsController extends Controller
 
                 switch($model->payment_type){ //evalua el tipo de pago
                     case 3: //debito
-                        $payment->commission_fee=($payment->deposit*2)/100;
-                        $payment->vat_commission=($payment->commission_fee*16)/100;
-                        $payment->charge_bank=$payment->deposit-($payment->commission_fee+$payment->vat_commission);
+                        //$payment->commission_fee=($payment->deposit*2)/100;
+                        //$payment->vat_commission=($payment->commission_fee*16)/100;
+                        $payment->charge_bank=$payment->deposit; //-($payment->commission_fee+$payment->vat_commission);
                     break;
 
                     case 4: //credito
-                        $payment->commission_fee=($payment->deposit*2.5)/100;
-                        $payment->vat_commission=($payment->commission_fee*16)/100;
-                        $payment->charge_bank=$payment->deposit-($payment->commission_fee+$payment->vat_commission);
+                        //$payment->commission_fee=($payment->deposit*2.5)/100;
+                        //$payment->vat_commission=($payment->commission_fee*16)/100;
+                        $payment->charge_bank=$payment->deposit; //-($payment->commission_fee+$payment->vat_commission);
                     break;
 
                     case 6: //cheque
                         $payment->cheq=BankAccounts::model()->consultConsecutiveCheque($payment->account_id);
-                        $saveCheque=Yii::app()->quoteUtil->consecutiveCheque($payment->account_id);
+                        Yii::app()->quoteUtil->consecutiveCheque($payment->account_id);
                         $saveDeposit=Yii::app()->quoteUtil->depositAccount($payment->account_id,$payment->deposit);
 
                     break;

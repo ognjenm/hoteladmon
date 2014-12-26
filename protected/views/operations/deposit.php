@@ -68,6 +68,10 @@ $this->pageIcon='icon-ok';
 
     <?php echo $form->textFieldRow($model,'deposit',array('prepend'=>'$')); ?>
 
+    <?php echo $form->textFieldRow($model,'vat_commission',array('prepend'=>'$')); ?>
+
+    <?php echo $form->textFieldRow($model,'commission_fee',array('prepend'=>'$')); ?>
+
 
 <div class="form-actions">
     <?php  $this->widget('bootstrap.widgets.TbButton', array(

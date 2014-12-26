@@ -22,31 +22,29 @@ class CreditOperations extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('payment_type, account_id, iscancelled', 'numerical', 'integerOnly'=>true),
+			array('payment_type, account_id, iscancelled, baucher, n_operation, n_tarjeta', 'numerical', 'integerOnly'=>true),
 			array('cheq', 'length', 'max'=>30),
 			array('released, concept, person, bank_concept', 'length', 'max'=>100),
-			array('retirement, deposit, balance', 'length', 'max'=>10),
+			array('retirement, deposit, balance, vat_commission, commission_fee, charge_bank', 'length', 'max'=>10),
 			array('datex', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, payment_type, account_id, cheq, datex, released, concept, person, bank_concept, retirement, deposit, balance, iscancelled', 'safe', 'on'=>'search'),
+			array('id, payment_type, account_id, cheq, datex, released, concept, person, bank_concept, retirement, deposit, balance, iscancelled, vat_commission, commission_fee, charge_bank, baucher, n_operation, n_tarjeta', 'safe', 'on'=>'search'),
 		);
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
+    public function relations()
+    {
+        // NOTE: you may need to adjust the relation name and the related
+        // class name for the relations automatically generated below.
+        return array(
             'payment' => array(self::BELONGS_TO, 'PaymentsTypes', 'payment_type'),
             'accountBank' => array(self::BELONGS_TO, 'BankAccounts', 'account_id'),
-		);
-	}
+        );
+    }
 
-	/**
+
+    /**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -69,11 +67,15 @@ class CreditOperations extends CActiveRecord
             'fin'=>'',
             'authorized'=>Yii::t('mx','Authorized by'),
             'typeCheq'=>Yii::t('mx','Payment Type'),
-            'abonoencuenta'=>Yii::t('mx','For credit to the beneficiary account')
-
-        );
+            'abonoencuenta'=>Yii::t('mx','For credit to the beneficiary account'),
+			'vat_commission' => Yii::t('mx','Vat Commision'),
+			'commission_fee' => Yii::t('mx','Commission Fee'),
+			'charge_bank' => Yii::t('mx','Charge Bank'),
+			'baucher' => Yii::t('mx','Baucher'),
+			'n_operation' => Yii::t('mx','Number of operation'),
+			'n_tarjeta' => Yii::t('mx','Card Number'),
+		);
 	}
-
 
     public function search($accountId)
     {
@@ -183,7 +185,6 @@ class CreditOperations extends CActiveRecord
     public function afterFind() {
         //        $this->datex=Yii::app()->quoteUtil->toSpanishDate($this->datex);
 
-
         $date= date("d-M-Y",strtotime($this->datex));
         $this->datex=$date;
 
@@ -200,7 +201,7 @@ class CreditOperations extends CActiveRecord
 
     }
 
-	public static function model($className=__CLASS__)
+    public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}

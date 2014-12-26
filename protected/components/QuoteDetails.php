@@ -2615,6 +2615,7 @@ class QuoteDetails extends CApplicationComponent{
                     <tr>
 
                         <th>'.Yii::t('mx','Cheq').'</th>
+                         <th>'.Yii::t('mx','Date').'</th>
                         <th>'.Yii::t('mx','Rid To').'</th>
                         <th>'.Yii::t('mx','Concept').'</th>
                         <th>'.Yii::t('mx','Retirement').'</th>
@@ -2630,6 +2631,7 @@ class QuoteDetails extends CApplicationComponent{
             $tableBalance.= ($counter % 2 == 0) ? '<tr  class="odd">' :  '<tr class="even">';
             $tableBalance.='
                         <td>'.$item->cheq.'</td>
+                        <td>'.$item->datex.'</td>
                         <td>'.$item->released.'</td>
                         <td>'.$item->concept.'</td>
                         <td>$'.number_format($item->retirement,2).'</td>

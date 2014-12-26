@@ -499,6 +499,8 @@ class OperationsController extends Controller
 
     public function actionPayment($accountId,$accountType){
 
+        $numcheques=0;
+
         switch($accountType){
             case 1:
                 $model=new Operations;
@@ -517,9 +519,14 @@ class OperationsController extends Controller
                     $model->balance=$balance;
 
                     if($model->payment_type==6){
+
+                        $numcheques=BankAccounts::model()->numerosCheque($accountId);
+
                         $model->cheq=$account->consecutive;
                         $account->consecutive=$account->consecutive+1;
+
                     }
+
 
                     if(!empty($_POST['name'])) {
                         $model->released=$_POST['name'];
@@ -528,9 +535,13 @@ class OperationsController extends Controller
                     if($model->person=="") $model->person=Yii::t('mx','PENDING');
                     if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
 
-                    if($model->save()){
+                    if($numcheques > 0){
+                        $model->save();
                         $account->save();
-                        Yii::app()->user->setFlash('success','Success');
+                        Yii::app()->user->setFlash('success','Success! numero de cheques disponibles: '.$numcheques);
+                        $this->redirect(array('index'));
+                    }else{
+                        Yii::app()->user->setFlash('error','error! No hay cheques disponibles');
                         $this->redirect(array('index'));
                     }
                 }
@@ -712,6 +723,7 @@ class OperationsController extends Controller
                     $model->attributes=$_POST['Operations'];
 
                     $account=BankAccounts::model()->findByPk($accountId);
+
                     $balance=$account->initial_balance+$model->deposit;
                     $account->initial_balance=$balance;
 
@@ -772,13 +784,22 @@ class OperationsController extends Controller
                     $model->attributes=$_POST['DebitOperations'];
 
                     $account=BankAccounts::model()->findByPk($accountId);
-                    $balance=$account->initial_balance+$model->deposit;
+
+
+                    $vatCommission=$_POST['DebitOperations']['vat_commission'];
+                    $commissionFee=$_POST['DebitOperations']['commission_fee'];
+                    $comision=$vatCommission+$commissionFee;
+
+                    $balance=$account->initial_balance+$model->deposit-$comision;
                     $account->initial_balance=$balance;
 
                     $model->account_id=$accountId;
                     $model->balance=$balance;
                     $model->cheq='DEP';
                     $model->released=BankAccounts::model()->accountByPk($accountId);
+
+                    $model->vat_commission=$vatCommission;
+                    $model->commission_fee=$commissionFee;
 
                     if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
                     if($model->person=="")          $model->person=Yii::t('mx','PENDING');
@@ -802,13 +823,21 @@ class OperationsController extends Controller
                     $model->attributes=$_POST['CreditOperations'];
 
                     $account=BankAccounts::model()->findByPk($accountId);
-                    $balance=$account->initial_balance+$model->deposit;
+
+                    $vatCommission=$_POST['DebitOperations']['vat_commission'];
+                    $commissionFee=$_POST['DebitOperations']['commission_fee'];
+                    $comision=$vatCommission+$commissionFee;
+
+                    $balance=$account->initial_balance+$model->deposit-$comision;
                     $account->initial_balance=$balance;
 
                     $model->account_id=$accountId;
                     $model->balance=$balance;
                     $model->cheq='DEP';
                     $model->released=BankAccounts::model()->accountByPk($accountId);
+
+                    $model->vat_commission=$vatCommission;
+                    $model->commission_fee=$commissionFee;
 
                     if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
                     if($model->person=="")          $model->person=Yii::t('mx','PENDING');
