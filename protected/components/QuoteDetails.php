@@ -2553,7 +2553,6 @@ class QuoteDetails extends CApplicationComponent{
                         <th>'.Yii::t('mx','Cheq').'</th>
                         <th>'.Yii::t('mx','Date').'</th>
                         <th>'.Yii::t('mx','Rid To').'</th>
-                        <th>'.Yii::t('mx','Rid To').'</th>
                         <th>'.Yii::t('mx','Concept').'</th>
                         <th>'.Yii::t('mx','Person').'</th>
                         <th>'.Yii::t('mx','Bank Concept').'</th>

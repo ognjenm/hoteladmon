@@ -80,9 +80,9 @@
 
         <?php echo $form->textFieldRow($model,'bank_concept',array('class'=>'span5','maxlength'=>100)); ?>
 
-        <?php //if(Yii::app()->user->isSuperAdmin): ?>
+        <?php if(Yii::app()->user->isSuperAdmin): ?>
             <?php echo $form->textFieldRow($model,'deposit',array('prepend'=>'<i class="$"></i>')); ?>
-        <?php //endif;?>
+        <?php endif;?>
 
     <?php else: ?>
 
@@ -129,7 +129,7 @@
             <?php $this->widget('bootstrap.widgets.TbSelect2', array(
                 'model'=>$model,
                 'attribute'=>'released',
-                'data' =>Providers::model()->listAllOrganization(),
+                'data' =>Providers::model()->listAllCompanyByIndexText(),
                 'options' => array(
                     'allowClear' => true,
                 ),
@@ -155,8 +155,6 @@
         <?php if(Yii::app()->user->isSuperAdmin): ?>
             <?php echo $form->textFieldRow($model,'retirement',array('prepend'=>'<i class="$"></i>')); ?>
         <?php endif;?>
-
-
 
     <?php endif; ?>
 
