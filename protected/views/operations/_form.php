@@ -50,10 +50,20 @@
 
 
         <div id="divperson" style="display: none">
-            <?php echo $form->dropDownListRow($model,'person',Customers::model()->listAllName(),array(
+
+            <?php $this->widget('bootstrap.widgets.TbSelect2', array(
+                'model'=>$model,
+                'attribute'=>'person',
+                'data' =>Customers::model()->listAllName(),
+                'options' => array(
+                    'allowClear' => true,
+                ),
+            ));
+            ?>
+            <?php /*echo $form->dropDownListRow($model,'person',Customers::model()->listAllName(),array(
                 'class'=>'span5',
                 'prompt'=>Yii::t('mx','Select')
-            )); ?>
+            ));*/ ?>
 
             <?php echo CHtml::label(Yii::t('mx','Reservation Id'),'reference'); ?>
             <?php echo CHtml::textField('reference','',array('class'=>'span3')); ?>
@@ -70,9 +80,9 @@
 
         <?php echo $form->textFieldRow($model,'bank_concept',array('class'=>'span5','maxlength'=>100)); ?>
 
-        <?php if(Yii::app()->user->isSuperAdmin): ?>
+        <?php //if(Yii::app()->user->isSuperAdmin): ?>
             <?php echo $form->textFieldRow($model,'deposit',array('prepend'=>'<i class="$"></i>')); ?>
-        <?php endif;?>
+        <?php //endif;?>
 
     <?php else: ?>
 
@@ -115,10 +125,20 @@
             )); ?>
 
         <div id="divperson" style="display: none">
-            <?php echo $form->dropDownListRow($model,'released',Providers::model()->listAllOrganization(),array(
+
+            <?php $this->widget('bootstrap.widgets.TbSelect2', array(
+                'model'=>$model,
+                'attribute'=>'released',
+                'data' =>Providers::model()->listAllOrganization(),
+                'options' => array(
+                    'allowClear' => true,
+                ),
+            ));
+            ?>
+            <?php /*echo $form->dropDownListRow($model,'released',Providers::model()->listAllOrganization(),array(
                 'class'=>'span5',
                 'prompt'=>Yii::t('mx','Select')
-            )); ?>
+            ));*/ ?>
 
         </div>
 
@@ -140,14 +160,17 @@
 
     <?php endif; ?>
 
-<div class="form-actions">
-    <?php  $this->widget('bootstrap.widgets.TbButton', array(
-        'buttonType'=>'submit',
-        'type'=>'primary',
-        'encodeLabel'=>false,
-        'label'=>$model->isNewRecord ? '<i class="icon-plus icon-white"></i> '.Yii::t('mx','Create') : '<i class="icon-ok icon-white"></i> '.Yii::t('mx','Save'),
-    )); ?>
-</div>
+
+    <?php echo $form->textFieldRow($model,'cheq',array('class'=>'span5','maxlength'=>100)); ?>
+
+    <div class="form-actions">
+        <?php  $this->widget('bootstrap.widgets.TbButton', array(
+            'buttonType'=>'submit',
+            'type'=>'primary',
+            'encodeLabel'=>false,
+            'label'=>$model->isNewRecord ? '<i class="icon-plus icon-white"></i> '.Yii::t('mx','Create') : '<i class="icon-ok icon-white"></i> '.Yii::t('mx','Save'),
+        )); ?>
+    </div>
 
 
 <?php $this->endWidget(); ?>

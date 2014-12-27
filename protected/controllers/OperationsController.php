@@ -939,15 +939,10 @@ class OperationsController extends Controller
 
             if(!empty($_POST['name'])) $model->person=$_POST['name'];
 
-            /*if($model->released==null && $model->cheq=="DEP"){
-                $account=Banks::model()->findByPk($model->account_id);
-                $model->released=$account->bank.' '.substr($account->account_number,-4);
-            }*/
-
-
-            if($model->save())
+            if($model->save()){
                 Yii::app()->user->setFlash('success','Success');
-				$this->redirect(array('index'));
+                $this->redirect(array('index'));
+            }
 		}
 
 		$this->render('update',array(
