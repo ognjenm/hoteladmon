@@ -37,6 +37,7 @@
     var noteIndex=0;
     var noteIndexArray=0;
     var ordenCompra=[];
+    var seordeno=false;
 
 
     $(document).ready(function() {
@@ -60,15 +61,16 @@
                  var rows = table.tBodies[0].rows;
                  ordenCompra=[];
 
-                 for (var i=0; i<rows.length; i++) {
+                 seordeno=true;
+
+                 for(var i=0; i<rows.length; i++) {
                     reindex.push(orders[rows[i].id]);
                  }
 
                  for (var j=0; j<reindex.length; j++) {
                      ordenCompra.push(reindex[j]);
                  }
-
-            },
+            }
 
          });
 

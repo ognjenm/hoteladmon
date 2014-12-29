@@ -10,6 +10,13 @@
         'htmlOptions'=> array(
             'onclick' =>'
 
+                if(seordeno==false){
+                    for(var i=0; i<=orders.length; i++) {
+                        ordenCompra.push(orders[i]);
+                    }
+                }
+
+
                 $.ajax({
                 url: "'.CController::createUrl('/purchaseOrder/create').'",
                 data: { purchaseOrder: ordenCompra },

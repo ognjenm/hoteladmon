@@ -181,6 +181,7 @@ class PurchaseOrderController extends Controller
 
                 foreach($_POST['purchaseOrder'] as $order){
 
+
                     $purchaseOrderProvider=new PurchaseOrderProvider;
                     $purchaseOrderProvider->purchase_order_id=$purchaseOrder->id;
                     $purchaseOrderProvider->provider_id=(int)$order['provider'];
@@ -220,6 +221,8 @@ class PurchaseOrderController extends Controller
                     }
 
                     $res=array('ok'=>true,'url'=>$this->createUrl('/purchaseOrder/view',array('id'=>$purchaseOrder->id)));
+
+
                 }
 
 

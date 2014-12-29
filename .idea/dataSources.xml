@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="1992009669">
+  <component name="DataSourceManagerImpl" format="xml" hash="2155623378">
     <data-source source="LOCAL" name="hoteladmon" uuid="83e56d2f-c9ae-450b-97ce-6317a17ee421">
+      <driver-ref>mysql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/rsrtcpns_coco</jdbc-url>
-      <user-name>root</user-name>
-      <schema-pattern>rsrtcpns_coco.*</schema-pattern>
-      <default-schemas>rsrtcpns_coco.*</default-schemas>
+      <jdbc-url>jdbc:mysql://localhost:3306/chinoixeofadmon</jdbc-url>
       <driver-properties>
         <property name="zeroDateTimeBehavior" value="convertToNull" />
         <property name="tinyInt1isBit" value="false" />
@@ -20,4 +18,3 @@
     </data-source>
   </component>
 </project>
-

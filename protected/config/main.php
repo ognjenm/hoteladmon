@@ -175,8 +175,8 @@ return array(
         'db'=>array(
             'connectionString' => 'mysql:host=localhost;dbname=chinoixeofadmon',
             'emulatePrepare' => true,
-            'username' => 'rsrtcpns_cocos',
-            'password' => 'wCtcz)c!7X,s',
+            'username' => 'chinoixeofadmon',
+            'password' => 'b44AdmiN150@',
             'charset' => 'utf8',
         ),
 
