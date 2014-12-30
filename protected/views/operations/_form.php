@@ -154,12 +154,12 @@
 
         <?php if(Yii::app()->user->isSuperAdmin): ?>
             <?php echo $form->textFieldRow($model,'retirement',array('prepend'=>'<i class="$"></i>')); ?>
+            <?php echo $form->textFieldRow($model,'cheq',array('class'=>'span5','maxlength'=>100)); ?>
         <?php endif;?>
 
     <?php endif; ?>
 
 
-    <?php echo $form->textFieldRow($model,'cheq',array('class'=>'span5','maxlength'=>100)); ?>
 
     <div class="form-actions">
         <?php  $this->widget('bootstrap.widgets.TbButton', array(

@@ -63,7 +63,7 @@ class DebitOperations extends CActiveRecord
             'authorized'=>Yii::t('mx','Authorized by'),
             'typeCheq'=>Yii::t('mx','Payment Type'),
             'abonoencuenta'=>Yii::t('mx','For credit to the beneficiary account'),
-			'vat_commission' => Yii::t('mx','Vat Comission'),
+			'vat_commission' => Yii::t('mx','Vat Commission'),
 			'commission_fee' => Yii::t('mx','Commission Fee'),
 			'charge_bank' => Yii::t('mx','Charge Bank'),
 			'baucher' => Yii::t('mx','Baucher'),
@@ -180,10 +180,10 @@ class DebitOperations extends CActiveRecord
     }
 
     public function afterFind() {
-        //        $this->datex=Yii::app()->quoteUtil->toSpanishDate($this->datex);
 
-
-        $date= date("d-M-Y",strtotime($this->datex));
+        //$this->datex=Yii::app()->quoteUtil->toSpanishDate($this->datex);
+        $date= Yii::app()->quoteUtil->toSpanishDateFromDb(date("Y-M-d",strtotime($this->datex)));
+        //$date= date("d-M-Y",strtotime($this->datex));
         $this->datex=$date;
 
         return  parent::afterFind();

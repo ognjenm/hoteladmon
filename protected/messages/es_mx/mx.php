@@ -748,7 +748,7 @@ return array(
     'Surety'=>'Fiador',
     'Charge Bank'=>'Cargo Real Banco',
     'Vat Commission'=>'IVA Por Comisión',
-    'Commission Fee'=>'Comisión por cargo',
+    'Commission Fee'=>'Cargo por comisión',
     'Behalf of us'=>'Nombre De Nosotros',
     'Number Of Operation'=>'Número de operacion',
     'Card Number'=>'Número de tarjeta',
@@ -785,7 +785,7 @@ return array(
     'Description Of Supliers'=>'Descripción para proveedores',
     'Commission'=>'Comisión',
     'Channel Reservation'=>'Canal de reserva',
-    'Canceled Check'=>'Cancelar Cheque'
+    'Canceled Check'=>'Cancelar Cheque',
 
 
 

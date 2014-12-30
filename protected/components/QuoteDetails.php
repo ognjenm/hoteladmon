@@ -2571,7 +2571,7 @@ class QuoteDetails extends CApplicationComponent{
             $tableBalance.='
                         <td>'.$item->payment->payment.'</td>
                         <td>'.$item->cheq.'</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->datex))).'</td>
+                        <td>'.$item->datex.'</td>
                         <td>'.$item->released.'</td>
                         <td>'.$item->concept.'</td>
                         <td>'.$item->person.'</td>
