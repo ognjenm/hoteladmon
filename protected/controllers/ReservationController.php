@@ -32,7 +32,7 @@ class ReservationController extends Controller
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
                                  'schedulerOverview_update','campedReport','getCampedReport',
-                                 'cancel'
+                                 'cancel','disponibilidad'
                 ),
                 'users'=>array('@'),
             ),
@@ -41,6 +41,16 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionDisponibilidad(){
+
+        $tabla="";
+
+        $this->render('disponibilidad',array(
+            'tabla'=>$tabla,
+        ));
+
     }
 
     public function actionCancel($customerId){

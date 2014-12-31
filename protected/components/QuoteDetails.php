@@ -1942,7 +1942,7 @@ class QuoteDetails extends CApplicationComponent{
                 foreach($dataReader3 as $item){
 
                     $totalReservation=Reservation::model()->count(
-                        'customer_reservation_id=:customerReservationId',
+                        '(service_type="CAMPED" or service_type="TENT" or service_type="DAYPASS") and customer_reservation_id=:customerReservationId',
                         array('customerReservationId'=>$item['customerReservationId'])
                     );
 

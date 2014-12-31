@@ -119,6 +119,13 @@ $url=$this->createUrl('/tasks/accept');
                 </a>
             </li>
 
+            <li class="lightgrey">
+                <a href="<?php echo $this->createUrl('/reservation/disponibilidad'); ?>">
+                    <span><i class="icon-calendar"></i></i></span>
+                    <span class='name'><?php echo Yii::t('mx','Availability'); ?></span>
+                </a>
+            </li>
+
             <li class="magenta">
                 <a href="#">
                     <span><i class="icon-signout"></i></span>

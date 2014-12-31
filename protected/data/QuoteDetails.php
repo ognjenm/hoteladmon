@@ -2159,53 +2159,53 @@ class QuoteDetails extends CApplicationComponent{
             <tbody>
         ';
 
-            if($dataReader3){
+        if($dataReader3){
 
-                foreach($dataReader3 as $item){
+            foreach($dataReader3 as $item){
 
-                    $totalReservation=Reservation::model()->count(
-                        'customer_reservation_id=:customerReservationId',
-                        array('customerReservationId'=>$item['customerReservationId'])
-                    );
+                $totalReservation=Reservation::model()->count(
+                    '(service_type="CAMPED" or service_type="TENT" or service_type="DAYPASS") and customer_reservation_id=:customerReservationId',
+                    array('customerReservationId'=>$item['customerReservationId'])
+                );
 
-                    $grupoant=$grupo;
-                    $grupo=$item['customerReservationId'];
-                    $pagosCliente=0;
-                    $saldo=0;
+                $grupoant=$grupo;
+                $grupo=$item['customerReservationId'];
+                $pagosCliente=0;
+                $saldo=0;
 
-                    $pricepets=$this->pricePets((int)$item['pets']);
-                    $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
-                    $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
+                $pricepets=$this->pricePets((int)$item['pets']);
+                $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
+                $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
 
-                    $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
-                    $command=Yii::app()->db->createCommand($sqlPayments);
-                    $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
-                    $payments=$command->queryAll();
+                $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
+                $command=Yii::app()->db->createCommand($sqlPayments);
+                $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
+                $payments=$command->queryAll();
 
-                    if($payments){
-                        foreach($payments as $pago){
-                            $pagosCliente=$pagosCliente+$pago['amount'];
-                        }
+                if($payments){
+                    foreach($payments as $pago){
+                        $pagosCliente=$pagosCliente+$pago['amount'];
                     }
+                }
 
-                    if($grupoant != $grupo){
-                        $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
-                    }
+                if($grupoant != $grupo){
+                    $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
+                }
 
-                    $startDate=explode(" ",$item['checkin']);
-                    $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
-                    $horaEntrada=$startDate[1];
+                $startDate=explode(" ",$item['checkin']);
+                $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
+                $horaEntrada=$startDate[1];
 
-                    $endDate=explode(" ",$item['checkout']);
-                    $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
-                    $horaSalida=$endDate[1];
+                $endDate=explode(" ",$item['checkout']);
+                $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
+                $horaSalida=$endDate[1];
 
-                    $acampado="";
-                    if($item['service_type']=='TENT') $acampado=" rentada";
-                    if($item['service_type']=='CAMPED') $acampado=" con sus propias casas";
+                $acampado="";
+                if($item['service_type']=='TENT') $acampado=" rentada";
+                if($item['service_type']=='CAMPED') $acampado=" con sus propias casas";
 
 
-                    $tabledailyreport.='
+                $tabledailyreport.='
                             <tr>
                                 <td>
                                     <p>Servicio: '.Yii::t('mx',$item['service_type']). " ".$acampado.'</p>
@@ -2245,22 +2245,22 @@ class QuoteDetails extends CApplicationComponent{
                             </tr>
                             ';
 
-                    $counter++;
+                $counter++;
 
 
-                    if($counter<=$totalReservation){
+                if($counter<=$totalReservation){
 
-                        $subtotal=$subtotal+$item['price'];
-                        if($item['see_discount']==1) $discount=$discount+$this->getTotalDiscount($item['service_type'],$item['price'],$item['totalpax']);
+                    $subtotal=$subtotal+$item['price'];
+                    if($item['see_discount']==1) $discount=$discount+$this->getTotalDiscount($item['service_type'],$item['price'],$item['totalpax']);
 
-                    }
+                }
 
-                    if($counter == $totalReservation){
+                if($counter == $totalReservation){
 
-                        $saldo=$subtotal-$discount-$pagosCliente;
-                        $total=$total+$saldo;
+                    $saldo=$subtotal-$discount-$pagosCliente;
+                    $total=$total+$saldo;
 
-                        $tabledailyreport.='
+                    $tabledailyreport.='
                              <tr>
                                 <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
                                     <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
@@ -2271,18 +2271,18 @@ class QuoteDetails extends CApplicationComponent{
                             </tr>
                         ';
 
-                        $counter=0;
-                        $subtotal=0;
-                        $discount=0;
-                    }
-
-                    $adultos=$adultos+$item['adults'];
-                    $niños=$niños+$item['children'];
-                    $mascotas=$mascotas+$item['pets'];
-
+                    $counter=0;
+                    $subtotal=0;
+                    $discount=0;
                 }
 
-                $tabledailyreport.='
+                $adultos=$adultos+$item['adults'];
+                $niños=$niños+$item['children'];
+                $mascotas=$mascotas+$item['pets'];
+
+            }
+
+            $tabledailyreport.='
                         <tr style="background:#EEEEEE;">
                             <td valign="middle" colspan="5" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
                             <td>
@@ -2293,9 +2293,9 @@ class QuoteDetails extends CApplicationComponent{
                             <td style="text-align: center;vertical-align:middle;">$'.number_format($total,2).'</td>
                         </tr>
                         ';
-            }else{
+        }else{
 
-                $tabledailyreport.='
+            $tabledailyreport.='
                     <p style="text-align: center;">
                         <span style="font-family:calibri;">
                             <span style="color:#99CC00;">
@@ -2303,11 +2303,11 @@ class QuoteDetails extends CApplicationComponent{
                             </span>
                         </span>
                     </p>';
-            }
+        }
 
-            $tabledailyreport.='</tbody></table>';
+        $tabledailyreport.='</tbody></table>';
 
-            return $tabledailyreport;
+        return $tabledailyreport;
 
     }
 

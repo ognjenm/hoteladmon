@@ -147,6 +147,45 @@ class Rooms extends CActiveRecord
 
     }
 
+    public function getOnlyRoomsJson(){
+
+        $json="[\n";
+
+        $criteriaRoomType=array(
+            'select'=>'id,tipe',
+            'condition'=>'service_type="CABANA" ',
+        );
+
+        $roomsType=RoomsType::model()->findAll($criteriaRoomType);
+
+        foreach($roomsType as $item):
+
+            $json.="\t{MasterKey:".$item->id.", label:'".$item->tipe."', open: true, children: [\n";
+
+            $criteriaRooms=array(
+                'select'=>'id,room',
+                'condition'=>'room_type_id=:roomTypeId',
+                'params'=>array('roomTypeId'=>$item->id),
+            );
+
+            $value=Rooms::model()->findAll($criteriaRooms);
+
+            if($value):
+                foreach($value as $rooms):
+                    $json.="\t\t{key:".$rooms->id.", label:'".$rooms->room."'},\n";
+                endforeach;
+            endif;
+
+            $json.="\t]},\n";
+
+        endforeach;
+
+        $json.="]";
+
+        echo $json;
+
+    }
+
     public function getRoomType($roomid){
 
         $value=Rooms::model()->with(array(
