@@ -63,7 +63,7 @@ class PollController extends Controller
         );
 
         $CustomerReservationId=(int)Yii::app()->getSession()->get('CustomerReservation');
-
+		$commission=0;
 
         if(Yii::app()->request->isAjaxRequest){
 

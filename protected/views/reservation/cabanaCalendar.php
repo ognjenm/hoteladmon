@@ -139,8 +139,11 @@
      scheduler.config.first_hour = 9;
      scheduler.config.time_step = 30;
      scheduler.config.dblclick_create = false;
-     //scheduler.config.limit_time_select = true;
+
+
+    //scheduler.config.limit_time_select = true;
      scheduler.attachEvent("onDblClick", function (id, e){});
+
 
     scheduler.attachEvent("onClick", function (id, e){
 

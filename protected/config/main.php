@@ -115,7 +115,6 @@ return array(
                        'mgf'               => 10, // margin_footer
                        'orientation'       => 'P', // landscape or portrait orientation
                    )
-
                 ),
                 'HTML2PDF' => array(
                     'librarySourcePath' => 'application.vendors.html2pdf.*',
