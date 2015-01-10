@@ -32,7 +32,7 @@ class ReservationController extends Controller
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
                                  'schedulerOverview_update','campedReport','getCampedReport',
-                                 'cancel','disponibilidad'
+                                 'cancel','disponibilidad','monthlyReport'
                 ),
                 'users'=>array('@'),
             ),
@@ -41,6 +41,91 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionMonthlyReport(){
+
+        Yii::import('bootstrap.widgets.TbForm');
+        $Report=new Reservation;
+
+        $FormReport = TbForm::createForm($Report->FormReport(),$Report,
+            array('htmlOptions'=>array('class'=>'well'),
+                'type'=>'inline',
+            )
+        );
+
+        $table='<table class="table" style="width:100%">';
+
+        $cvPre='<tr><td>CV Pre-Reservada</td>';
+        $cvRe='<tr><td>CV Reservada</td>';
+        $cvDis='<tr><td>CV Disponible</td>';
+
+        $caPre='<tr><td>CA Pre-Reservada</td>';
+        $caRe='<tr><td>CA Reservada</td>';
+        $caDis='<tr><td>CA Disponible</td>';
+
+        $header='<thead><tr><th>Cabañas</th>';
+
+        $res=array('ok'=>false);
+
+
+        if(Yii::app()->request->isAjaxRequest){
+            if(isset($_POST['Reservation']['checkin']) && isset($_POST['Reservation']['checkout'])){
+
+                $checkin= Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($_POST['Reservation']['checkin']);
+                $checkout= Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($_POST['Reservation']['checkout']);
+                $fechas=Yii::app()->quoteUtil->returnDateRange($checkin,$checkout);
+
+                foreach($fechas as $index => $value){
+
+                    $header.='<th>'.date('d-M',strtotime($value)).'</th>';
+
+                    $countCvPre=Reservation::model()->count(array(
+                        'condition'=>'service_type="CABANA" and statux=1 and (checkin>=:date1 and checkout<=:date1)',
+                        'params'=>array('date1'=>$value)
+                    ));
+
+                    $cvPre.='<td>'.$countCvPre.'</td>';
+                    $cvRe.='<td></td>';
+                    $cvDis.='<td></td>';
+
+
+                    $caPre.='<td></td>';
+                    $caRe.='<td></td>';
+                    $caDis.='<td></td>';
+
+                }
+
+                $header.='<thead>';
+                $cvPre.='</tr>';
+                $cvRe.='</tr>';
+                $cvDis.='</tr>';
+                $caPre.='</tr>';
+                $caRe.='</tr>';
+                $caDis.='</tr>';
+
+                $table.=$header.'<tbody>';
+                $table.= $cvPre;
+                $table.=$cvRe;
+                $table.=$cvDis;
+                $table.=$caPre;
+                $table.=$caRe;
+                $table.=$caDis;
+                $table.='</tbody>';
+                $table.='</table>';
+
+                $res=array('ok'=>true,'table'=>$table);
+
+                echo CJSON::encode($res);
+                Yii::app()->end();
+
+            }
+        }
+
+        $this->render('_monthlyReport',array(
+            'FormReport'=>$FormReport
+        ));
+
     }
 
     public function actionDisponibilidad(){

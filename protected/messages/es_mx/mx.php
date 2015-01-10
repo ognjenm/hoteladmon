@@ -786,6 +786,7 @@ return array(
     'Commission'=>'Comisión',
     'Channel Reservation'=>'Canal de reserva',
     'Canceled Check'=>'Cancelar Cheque',
+    'Monthly report'=>'Reporte mensual'
 
 
 

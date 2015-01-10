@@ -327,6 +327,19 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+    public function returnDateRange($dStart, $dEnd){
+
+        $arrayFechas=array();
+        $fechaMostrar = $dStart;
+
+        while(strtotime($fechaMostrar) <= strtotime( $dEnd)) {
+            $arrayFechas[]= date("Y-m-d", strtotime($fechaMostrar));
+            $fechaMostrar = date("Y-m-d", strtotime($fechaMostrar . " + 1 day"));
+        }
+
+        return $arrayFechas;
+    }
+
 
     public function getCotizacionNoDiscount($models,$status=false){
 
@@ -1621,7 +1634,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-
     public function getLateCheckOut($checkoutHour,$totalPax){
 
         $priceLateCheckout=0;
@@ -1636,7 +1648,6 @@ class QuoteDetails extends CApplicationComponent{
         return $priceLateCheckout;
 
     }
-
 
     public function getPriceCabana($adults,$children,$service_type,$room_type_id,$nights,$season){
 
@@ -1723,7 +1734,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-
     public function getPriceDaypass($adults,$children,$service_type,$room_type_id,$season){
 
         $criteria=array(
@@ -1742,7 +1752,6 @@ class QuoteDetails extends CApplicationComponent{
         return $price;
     }
 
-
     public function nights($d_start,$d_end){
 
         $nights= (strtotime($d_start)-strtotime($d_end))/86400;
@@ -1751,7 +1760,6 @@ class QuoteDetails extends CApplicationComponent{
 
         return $nights;
     }
-
 
     public function checkAvailability($serviceType,$checkin,$checkout){
 
@@ -1944,7 +1952,6 @@ class QuoteDetails extends CApplicationComponent{
         return array('attributes'=>$arrayAttributes,'errors'=>$arrayErrors);
 
     }
-
 
     public function reservationAdd($attributes,$status=1){
 
@@ -3714,7 +3721,6 @@ class QuoteDetails extends CApplicationComponent{
         return (round($number*$factor)/$factor);
     }
 
-
     function numtoletras($xcifra)
     {
         $xarray = array(0 => "Cero",
@@ -3859,7 +3865,6 @@ class QuoteDetails extends CApplicationComponent{
         } // ENDFOR ($xz)
         return trim($xcadena);
     }
-
 
     function numtoletras2($xcifra)
     {

@@ -61,7 +61,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
         <div class="dhx_cal_next_button">&nbsp;</div>
         <div class="dhx_cal_today_button"></div>
         <div class="dhx_cal_date"></div>
-        <div class='dhx_cal_export pdf' id='export_pdf' title='Export to PDF' onclick='scheduler.toPDF("<?php echo Yii::app()->baseUrl.'/scheduler-pdf/generate.php'; ?>", "fullcolor",false)'>&nbsp;</div>
+        <div class='dhx_cal_export pdf' id='export_pdf' title='Export to PDF' onclick='scheduler.toPDF("<?php echo Yii::app()->baseUrl.'/scheduler-pdf/generate.php'; ?>", "gray",false)'>&nbsp;</div>
         <div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
         <div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
         <div class="dhx_cal_tab" name="timeline_tab" style="right:280px; width: 200px;"></div>
@@ -95,6 +95,9 @@ $this->widget('bootstrap.widgets.TbAlert', array(
     scheduler.config.active_link_view = "day";
     scheduler.skin="flat";
 
+    scheduler.config.drag_resize= false;
+    scheduler.config.drag_move = false;
+
     scheduler.createTimelineView({
         section_autoheight: false,
         name:	"timeline",
@@ -106,7 +109,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
         y_property:	"section_id",
         render: "tree",
         folder_dy:20,
-        dy:60
+        dy:50
     });
 
     scheduler.attachEvent("onDblClick", function (id, e){});

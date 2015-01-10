@@ -1,7 +1,7 @@
 
 MEMORIA USB 8GB DTSE7 COLOR NEGRO
 SKU: 018-0256
-Número de parte de la marca.: KE-U768G-3BK
+NÃºmero de parte de la marca.: KE-U768G-3BK
 Marca: KINGSTON
 $99.00
 
@@ -28,8 +28,7 @@ SELECT * FROM `reservation` WHERE (service_type='CABANA' AND checkin BETWEEN '20
 						  
 						  
 						  
-						  function devuelveArrayFechasEntreOtrasDos($fechaInicio, $fechaFin)
-							{
+						  function devuelveArrayFechasEntreOtrasDos($fechaInicio, $fechaFin){
 							$arrayFechas=array();
 							$fechaMostrar = $fechaInicio;
 
@@ -39,7 +38,7 @@ SELECT * FROM `reservation` WHERE (service_type='CABANA' AND checkin BETWEEN '20
 							}
 
 							return $arrayFechas;
-							} 
+						 }
 
 							$arrayFechas=devuelveArrayFechasEntreOtrasDos('18-01-2010', '10-02-2010');
 							
@@ -75,7 +74,7 @@ SELECT * FROM `reservation` WHERE (service_type='CABANA' AND checkin BETWEEN '20
 			<td>17</td>
 			<td>18</td>
 			<td>19</td>
-			<td>20</td>
+			<td>20</td>z
 			<td>21</td>
 			<td>22</td>
 			<td>23</td>

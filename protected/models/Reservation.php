@@ -290,6 +290,65 @@ class Reservation extends CActiveRecord
         );
     }
 
+    public function FormReport(){
+
+        return array(
+            'id'=>'formMonthlyReport',
+            //'title'=>Yii::t('mx','Report'),
+
+            'elements'=>array(
+               "checkin" => array(
+
+                     'type'=>'date',
+                     'prepend'=>'<i class="icon-calendar"></i>',
+                     'value'=>Yii::t('mx','Select'),
+                     'options'=>array(
+                         'format'=>'dd-M-yyyy',
+                         'autoclose' => true,
+                         'showAnim'=>'fold',
+                     ),
+                 ),
+                 "checkout" => array(
+                     'type'=>'date',
+                     'prepend'=>'<i class="icon-calendar"></i>',
+                     'options'=>array(
+                         'format'=>'dd-M-yyyy',
+                         'autoclose' => true,
+                         'showAnim'=>'fold',
+                     ),
+                 )
+            ),
+            'buttons' => array(
+                'filter' => array(
+                    'type' => 'ajaxSubmit',
+                    'label' => Yii::t('mx','Ok'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-filter',
+                    'url'=>Yii::app()->createUrl('/reservation/MonthlyReport'),
+                    'ajaxOptions' => array(
+                        'type'=>'POST',
+                        'dataType'=>'json',
+                        'beforeSend' => 'function() {
+                            $("#mainDiv").addClass("loading");
+                         }',
+                        'complete' => 'function() {
+                             $("#mainDiv").removeClass("loading");
+                        }',
+                        'success' =>'function(data){
+
+                                if(data.ok=true){
+                                    $("#contentTable").html(data.table);
+                                }
+
+
+                        }',
+                    ),
+
+                ),
+            )
+        );
+    }
+
     public function getFormFilter(){
 
         return array(
