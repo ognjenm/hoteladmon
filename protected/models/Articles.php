@@ -17,7 +17,7 @@ class Articles extends CActiveRecord
 		return array(
 			array('provider_id, unit_measure_id', 'required'),
 			array('provider_id, unit_measure_id, quantity, rating', 'numerical', 'integerOnly'=>true),
-			array('name_article, name_store, name_invoice', 'length', 'max'=>100),
+			array('name_article, name_store, name_invoice', 'length', 'max'=>250),
 			array('code, code_store, code_invoice', 'length', 'max'=>20),
 			array('measure, color, conversion_unit, barcode', 'length', 'max'=>50),
 			array('price, price_kg, unit_price', 'length', 'max'=>10),

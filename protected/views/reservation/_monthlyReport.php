@@ -30,5 +30,15 @@ $this->widget('bootstrap.widgets.TbAlert', array(
 
 <div id="mainDiv">
     <?php echo $FormReport->render(); ?>
-    <div id="contentTable"></div>
+
+        <?php $this->widget('bootstrap.widgets.TbCKEditor',array(
+            'name'=>'ckeditor1',
+            'value'=>'',
+            'editorOptions'=>array(
+                'height'=>'400',
+                'contentsCss'=> Yii::app()->theme->baseUrl.'/css/reportsTable.css',
+            ),
+
+        ) );
+        ?>
 </div>

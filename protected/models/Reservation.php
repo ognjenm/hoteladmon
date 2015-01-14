@@ -337,9 +337,9 @@ class Reservation extends CActiveRecord
                         'success' =>'function(data){
 
                                 if(data.ok=true){
-                                    $("#contentTable").html(data.table);
+                                    CKEDITOR.instances.ckeditor1.updateElement();
+                                    CKEDITOR.instances.ckeditor1.setData(data.table);
                                 }
-
 
                         }',
                     ),

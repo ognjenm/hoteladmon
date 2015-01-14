@@ -54,7 +54,14 @@ class ReservationController extends Controller
             )
         );
 
-        $table='<table class="table" style="width:100%">';
+        $table=Yii::app()->quoteUtil->reportHeader(Yii::app()->quoteUtil->toSpanishDateDescription(date('Y-M-d'))).'
+            <p style="text-align:right">
+                <span style="font-size:14px">
+                    <strong><span style="font-family:arial,helvetica,sans-serif">REPORTE DE DISPONIBILIDAD</span></strong>
+                </span>
+            </p>';
+
+        $table.='<table class="table" style="width:100%">';
 
         $cvPre='<tr><td>CV Pre-Reservada</td>';
         $cvRe='<tr><td>CV Reservada</td>';
@@ -80,19 +87,51 @@ class ReservationController extends Controller
 
                     $header.='<th>'.date('d-M',strtotime($value)).'</th>';
 
+                    $countCvDis=Rooms::model()->count(array(
+                        'condition'=>'room_type_id=1 and id not in(select room_id from reservation where
+                                (service_type="CABANA" AND room_type_id=1 AND checkin BETWEEN :inicio AND :fin AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+                                (service_type="CABANA" AND room_type_id=1 AND checkout BETWEEN :inicio AND :fin AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+                                (service_type="CABANA" AND room_type_id=1 AND checkin <= :inicio and checkout >= :fin AND (statux=5 or statux=8 or statux=9 or statux=10))
+                        )',
+                        'params'=>array("inicio"=>$value." 15:00","fin"=>$value." 13:00")
+                    ));
+
+                    $countCaDis=Rooms::model()->count(array(
+                        'condition'=>'room_type_id=2 and id not in(select room_id from reservation where
+                                (service_type="CABANA" AND room_type_id=2 AND checkin BETWEEN :inicio AND :fin AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+                                (service_type="CABANA" AND room_type_id=2 AND checkout BETWEEN :inicio AND :fin AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+                                (service_type="CABANA" AND room_type_id=2 AND checkin <= :inicio and checkout >= :fin AND (statux=5 or statux=8 or statux=9 or statux=10))
+                            )',
+                        'params'=>array("inicio"=>$value." 15:00","fin"=>$value." 13:00")
+                    ));
+
                     $countCvPre=Reservation::model()->count(array(
-                        'condition'=>'service_type="CABANA" and statux=1 and (checkin>=:date1 and checkout<=:date1)',
-                        'params'=>array('date1'=>$value)
+                        'condition'=>'(service_type="CABANA" AND room_type_id=1 AND checkin BETWEEN :inicio AND :fin AND statux=3) OR (service_type="CABANA" AND room_type_id=1 AND checkout BETWEEN :inicio AND :fin AND statux=3) OR (service_type="CABANA" AND room_type_id=1 AND checkin <= :inicio and checkout >= :fin AND statux=3)',
+                        'params'=>array("inicio"=>$value." 15:00","fin"=>$value." 13:00")
+                    ));
+
+                    $countCaPre=Reservation::model()->count(array(
+                        'condition'=>'(service_type="CABANA" AND room_type_id=2 AND checkin BETWEEN :inicio AND :fin AND statux=3) OR (service_type="CABANA" AND room_type_id=2 AND checkout BETWEEN :inicio AND :fin AND statux=3) OR (service_type="CABANA" AND room_type_id=2 AND checkin <= :inicio and checkout >= :fin AND statux=3)',
+                        'params'=>array("inicio"=>$value." 15:00","fin"=>$value." 13:00")
+                    ));
+
+                    $countCvRe=Reservation::model()->count(array(
+                        'condition'=>'(service_type="CABANA" AND room_type_id=1 AND checkin BETWEEN :inicio AND :fin AND statux=5) OR (service_type="CABANA" AND room_type_id=1 AND checkout BETWEEN :inicio AND :fin AND statux=5) OR (service_type="CABANA" AND room_type_id=1 AND checkin <= :inicio and checkout >= :fin AND statux=5)',
+                        'params'=>array("inicio"=>$value." 15:00","fin"=>$value." 13:00")
+                    ));
+
+                    $countCaRe=Reservation::model()->count(array(
+                        'condition'=>'(service_type="CABANA" AND room_type_id=2 AND checkin BETWEEN :inicio AND :fin AND statux=5) OR (service_type="CABANA" AND room_type_id=2 AND checkout BETWEEN :inicio AND :fin AND statux=5) OR (service_type="CABANA" AND room_type_id=2 AND checkin <= :inicio and checkout >= :fin AND statux=5)',
+                        'params'=>array("inicio"=>$value." 15:00","fin"=>$value." 13:00")
                     ));
 
                     $cvPre.='<td>'.$countCvPre.'</td>';
-                    $cvRe.='<td></td>';
-                    $cvDis.='<td></td>';
+                    $cvRe.='<td>'.$countCvRe.'</td>';
+                    $cvDis.='<td>'.$countCvDis.'</td>';
 
-
-                    $caPre.='<td></td>';
-                    $caRe.='<td></td>';
-                    $caDis.='<td></td>';
+                    $caPre.='<td>'.$countCaPre.'</td>';
+                    $caRe.='<td>'.$countCaRe.'</td>';
+                    $caDis.='<td>'.$countCaDis.'</td>';
 
                 }
 

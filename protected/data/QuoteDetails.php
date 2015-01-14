@@ -327,6 +327,20 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
+    public function returnDateRange($dStart, $dEnd){
+
+        $arrayFechas=array();
+        $fechaMostrar = $dStart;
+
+        while(strtotime($fechaMostrar) <= strtotime( $dEnd)) {
+            $arrayFechas[]= date("Y-m-d", strtotime($fechaMostrar));
+            $fechaMostrar = date("Y-m-d", strtotime($fechaMostrar . " + 1 day"));
+        }
+
+        return $arrayFechas;
+    }
+
     public function pricePets($mascotas=0){
 
         $pricepets=0;
