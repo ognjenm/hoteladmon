@@ -82,26 +82,32 @@ $this->pageIcon='icon-ok';
                 'type'=>'primary',
                 'icon'=>'icon-cogs',
                 'htmlOptions' => array(
-                    'title'=>Yii::t('mx','Calcula comision'),
+                    'title'=>Yii::t('mx','Calculate commission'),
                     'onclick' => '
 
                         if($("#Operations_payment_type").val()==3){ //debito
 
                             var cantidad=$("#Operations_deposit").val();
                             var commission=(cantidad*2)/100;
-                            $("#Operations_commission_fee").val(commission);
+                            commission=commission.toFixed(2);
 
+                            $("#Operations_commission_fee").val(commission);
                             var vat_commission=(commission*16)/100;
+                            vat_commission=vat_commission.toFixed(2);
+
                             $("#Operations_vat_commission").val(vat_commission);
                         }
 
-                         if($("#Operations_payment_type").val()==4){ //debito
+                         if($("#Operations_payment_type").val()==4){ //credito
 
                             var cantidad=$("#Operations_deposit").val();
                             var commission=(cantidad*2.5)/100;
-                            $("#Operations_commission_fee").val(commission);
+                            commission=commission.toFixed(2);
 
+                            $("#Operations_commission_fee").val(commission);
                             var vat_commission=(commission*16)/100;
+                            vat_commission=vat_commission.toFixed(2);
+
                             $("#Operations_vat_commission").val(vat_commission);
 
                         }
@@ -117,14 +123,14 @@ $this->pageIcon='icon-ok';
         <?php echo $form->textFieldRow($model,'vat_commission',array('prepend'=>'$')); ?>
     </div>
 
-<div class="form-actions">
-    <?php  $this->widget('bootstrap.widgets.TbButton', array(
-        'buttonType'=>'submit',
-        'type'=>'primary',
-        'icon'=>$model->isNewRecord ? 'icon-plus icon-white' : 'icon-ok icon-white',
-        'label'=>$model->isNewRecord ? Yii::t('mx','Create') : Yii::t('mx','Save'),
-    )); ?>
-</div>
+    <div class="form-actions">
+        <?php  $this->widget('bootstrap.widgets.TbButton', array(
+            'buttonType'=>'submit',
+            'type'=>'primary',
+            'icon'=>$model->isNewRecord ? 'icon-plus icon-white' : 'icon-ok icon-white',
+            'label'=>$model->isNewRecord ? Yii::t('mx','Create') : Yii::t('mx','Save'),
+        )); ?>
+    </div>
 
 
 <?php $this->endWidget(); ?>

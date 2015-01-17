@@ -29,11 +29,13 @@ class TbGroupGridView extends TbGridView
 	/**
 	 * @var array $mergeColumns the columns to merge on the grid
 	 */
+
 	public $mergeColumns = array();
 
 	/**
 	 * @var string $mergeType the merge type. Defaults to MERGE_SIMPLE
 	 */
+
 	public $mergeType = self::MERGE_SIMPLE;
 
 	/**

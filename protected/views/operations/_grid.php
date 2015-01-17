@@ -17,7 +17,7 @@
 
     ));?>
 
-        <?php $this->widget('bootstrap.widgets.TbGridView',array(
+        <?php $this->widget('bootstrap.widgets.TbGroupGridView',array(
             'id'=>'operations-grid',
             'type' => 'striped bordered hover condensed',
             'emptyText' => Yii::t('mx','There are no data to display'),
@@ -30,7 +30,7 @@
                 'class' => 'bootstrap.widgets.TbPager',
                 'displayFirstAndLast' => true,
             ),
-            'selectableRows'=>1,
+            'selectableRows'=>2,
             'dataProvider'=>$dataProvider->search($accountId),
             'filter'=>$dataProvider,
             'rowCssClassExpression'=>function($row, $data){
@@ -44,16 +44,17 @@
                 return $class;
             },
 
+            //'mergeColumns' => array('charge_bank'),
 
             'columns'=>array(
                 array(
                     'class'=>'CCheckBoxColumn',
                 ),
-
                 array(
                     'name'=>'datex',
                     'value'=>'$data->datex',
                     'htmlOptions'=>array('style'=>'width:80px;'),
+                    //'visible'=>false
                 ),
                 array(
                     'name'=>'payment_type',
