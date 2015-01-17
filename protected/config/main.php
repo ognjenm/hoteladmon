@@ -7,7 +7,7 @@
 // CWebApplication properties can be configured here.
 return array(
     'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-    'name'=>'HotelAdmon',
+    'name'=>'CocoAventura',
 
     'theme'=>'cocotheme',
     'language'=>'es_mx',
@@ -63,7 +63,7 @@ return array(
             'userDescriptionFieldsArray'=>array('email'),
 
         ),
-
+       /*
         'gii'=>array(
             'class'=>'system.gii.GiiModule',
             'password'=>'cocoaventuras',
@@ -73,13 +73,16 @@ return array(
                 'bootstrap.gii',
             ),
         ),
+        */
 
     ),
 
     // application components
     'components'=>array(
 
-        'format' => array('class' => 'CLocalizedFormatter'),
+        'commandMap' => array(
+            'cron' => 'ext.PHPDocCrontab.PHPDocCrontab'
+        ),
 
         'quoteUtil' => array(
             'class' => 'application.components.QuoteDetails',
@@ -103,18 +106,19 @@ return array(
                     ),
                     'class'=>'mpdf',
                     'defaultParams'     => array( // More info: http://mpdf1.com/manual/index.php?tid=184
-                       'mode'              => 'c', //  This parameter specifies the mode of the new document.
-                       'format'            => 'LETTER', // format A4, A5, ...
-                       'default_font_size' => 8, // Sets the default document font size in points (pt)
-                       'default_font'      => 'arial', // Sets the default font-family for the new document.
-                       'mgl'               => 10, // margin_left. Sets the page margins for the new document.
-                       'mgr'               => 10, // margin_right
-                       'mgt'               => 30, // margin_top
-                       'mgb'               => 20, // margin_bottom
-                       'mgh'               => 10, // margin_header
-                       'mgf'               => 10, // margin_footer
-                       'orientation'       => 'P', // landscape or portrait orientation
-                   )
+                        'mode'              => 'c', //  This parameter specifies the mode of the new document.
+                        'format'            => 'LETTER', // format A4, A5, ...
+                        'default_font_size' => 8, // Sets the default document font size in points (pt)
+                        'default_font'      => 'arial', // Sets the default font-family for the new document.
+                        'mgl'               => 10, // margin_left. Sets the page margins for the new document.
+                        'mgr'               => 10, // margin_right
+                        'mgt'               => 30, // margin_top
+                        'mgb'               => 20, // margin_bottom
+                        'mgh'               => 10, // margin_header
+                        'mgf'               => 10, // margin_footer
+                        'orientation'       => 'P', // landscape or portrait orientation
+                    )
+
                 ),
                 'HTML2PDF' => array(
                     'librarySourcePath' => 'application.vendors.html2pdf.*',
@@ -148,7 +152,6 @@ return array(
             'class' => 'application.modules.cruge.components.CrugeAuthManager',
         ),
         'crugemailer'=>array(
-            //'class'=>'application.modules.cruge.components.CrugeMailer',
             'class' => 'application.components.Sendmail',
             'mailfrom' => 'cocoaventura@gmail.com',
             'subjectprefix' => 'CocoAventura - ',
@@ -160,19 +163,20 @@ return array(
             //'timeFormat'=>'H:i',
         ),
 
-
+/*
         'urlManager'=>array(
             'urlFormat'=>'path',
-            /*'rules'=>array(
+            'rules'=>array(
                 '<controller:\w+>/<id:\d+>'=>'<controller>/view',
                 '<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
                 '<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
-            ),*/
+            ),
         ),
-
+*/
 
         'db'=>array(
-            'connectionString' => 'mysql:host=localhost;dbname=chinoixeofadmon',
+			'connectionString' => 'mysql:host=localhost;dbname=chinoixeofadmon',
+            //'connectionString' => 'mysql:host=chinoixeofadmon.db.5307369.hostedresource.com;dbname=chinoixeofadmon',
             'emulatePrepare' => true,
             'username' => 'chinoixeofadmon',
             'password' => 'b44AdmiN150@',
@@ -192,10 +196,10 @@ return array(
                 ),
                 // uncomment the following to show log messages on web pages
 
-                		/*array(
+                /*    	array(
                             'class'=>'CWebLogRoute',
-                        ),*/
-
+                        ),
+                */
             ),
         ),
     ),
@@ -204,7 +208,7 @@ return array(
     // using Yii::app()->params['paramName']
     'params'=>array(
         // this is used in contact page
-        'adminEmail'=>'cocoaventura@gmail.com',
+        'adminEmail'=>'eventos.cocoaventura@gmail.com',
         'pagination'=>20,
     ),
 );

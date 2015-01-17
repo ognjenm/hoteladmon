@@ -137,6 +137,7 @@ class AuditReservationsBehavior extends CActiveRecordBehavior{
             return $log->save();
 
         }
+
     }
 
     public function getUserId(){

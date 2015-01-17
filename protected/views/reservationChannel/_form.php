@@ -3,15 +3,11 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-    <p class="help-block"><?php echo Yii::t('mx','Fields with'); ?>
-        <span class="required">*</span>
-        <?php echo Yii::t('mx','are required');?>.
-    </p>
+	<p class="help-block">Fields with <span class="required">*</span> are required.</p>
 
 	<?php echo $form->errorSummary($model); ?>
 
-    <?php echo $form->textFieldRow($model,'name',array('class'=>'span12','maxlength'=>500,'prepend'=>'<i class="icon-user"></i>')); ?>
-    <?php echo $form->textFieldRow($model,'commission',array('class'=>'span12','prepend'=>'%')); ?>
+	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>500)); ?>
 
 
 <div class="form-actions">

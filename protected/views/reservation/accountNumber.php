@@ -33,7 +33,7 @@ $this->widget('bootstrap.widgets.TbAlert', array(
     'fade'=>true,
     'closeText'=>'×',
     'alerts'=>array(
-        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+		'warning'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
     ),
 ));
 

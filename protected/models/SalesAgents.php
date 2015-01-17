@@ -38,8 +38,8 @@ class SalesAgents extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'name' => Yii::t('mx','Agent'),
-			'commission' => Yii::t('mx','Commission'),
+			'name' => 'Name',
+			'commission' => 'Commission',
 		);
 	}
 

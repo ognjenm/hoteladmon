@@ -21,7 +21,7 @@
         'value'=>$format,
         'editorOptions'=>array(
             'height'=>'400',
-            'contentsCss'=> Yii::app()->theme->baseUrl.'/css/table.css',
+            //'contentsCss'=> Yii::app()->theme->baseUrl.'/css/ckeditor.css',
         ),
 
     ) );

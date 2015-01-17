@@ -327,6 +327,7 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
     public function returnDateRange($dStart, $dEnd){
 
         $arrayFechas=array();
@@ -340,6 +341,625 @@ class QuoteDetails extends CApplicationComponent{
         return $arrayFechas;
     }
 
+    public function pricePets($mascotas=0){
+
+        $pricepets=0;
+        if($mascotas > 2) $pricepets=100*($mascotas-2);
+
+        return $pricepets;
+
+    }
+
+    public function getTotalDiscountCabanas($total=0){
+
+        $discountCabana=CabanaDiscount::model()->getDiscount($total);
+        if($discountCabana) $discountCabana=($total*$discountCabana->discount)/100;
+
+        return $discountCabana;
+
+    }
+
+    public function getTotalDiscount($serviceType,$total,$pax=0) {
+
+        $discountCabana=0;
+        $discountCamped=0;
+        $grandTotal=0;
+
+        if($serviceType=="CABANA"){
+            $percentCabana=CabanaDiscount::model()->getDiscount($total);
+            if($percentCabana) $discountCabana=($total*$percentCabana->discount)/100;
+        }
+
+        if($serviceType=="TENT" or $serviceType=="CAMPED" or $serviceType=="DAYPASS"){
+            $percentCamped=CampedDiscount::model()->getDiscount($pax);
+            if($percentCamped) $discountCamped=($total*$percentCamped->discount)/100;
+        }
+
+        $grandTotal=$discountCamped+$discountCabana;
+
+        return $grandTotal;
+
+    }
+
+    public function getTotalPrice($models,$discount=false) {
+
+        $totalPrice=0;
+        $totalCabana=0;
+        $totalCamping=0;
+        $totalDaypass=0;
+        $totalDiscount=0;
+        $paxCamping=0;
+        $paxDaypass=0;
+
+        foreach($models as $i):
+
+            $item=(object)$i;
+
+            if($item->service_type=="CABANA"){
+                $totalCabana+=$item->price;
+            }
+
+            if($item->service_type=="TENT"){
+                $paxCamping+=$item->totalpax;
+                $totalCamping+=$item->price;
+            }
+
+            if($item->service_type=="CAMPED"){
+                $paxCamping+=$item->totalpax;
+                $totalCamping+=$item->price;
+            }
+
+            if($item->service_type=="DAYPASS"){
+                $paxDaypass+=$item->totalpax;
+                $totalDaypass+=$item->price;
+            }
+
+            $totalPrice+=$item->price;
+
+        endforeach;
+
+        $grandTotal=$totalPrice;
+
+        if($discount==true){
+
+            $discountCamping=CampedDiscount::model()->getDiscount($paxCamping);
+            if($discountCamping)$discountCamping=($totalCamping*$discountCamping->discount)/100;
+
+            $discountCabana=CabanaDiscount::model()->getDiscount($totalCabana);
+            if($discountCabana) $discountCabana=($totalCabana*$discountCabana->discount)/100;
+
+            $discountDaypass=CampedDiscount::model()->getDiscount($paxDaypass);
+            if($discountDaypass) $discountDaypass=($totalDaypass*$discountDaypass->discount)/100;
+
+            if($discountCamping != 0 or $discountCabana!=0 or $discountDaypass!=0){
+                $totalDiscount=$discountCamping+$discountCabana+$discountDaypass;
+            }
+
+            $grandTotal=$totalPrice-$totalDiscount;
+        }
+
+        return $grandTotal;
+
+    }
+
+    public function getTableDiscount($models) {
+
+        $totalPrice=0;
+        $totalCabana=0;
+        $totalCamping=0;
+        $totalDaypass=0;
+        $discountCabana=0;
+        $discountCamping=0;
+        $discountDaypass=0;
+        $totalDiscount=0;
+        $paxCamping=0;
+        $paxDaypass=0;
+        $footer='';
+        $table='';
+
+
+            foreach($models as $i):
+
+                $item=(object)$i;
+
+                if($item->service_type=="CABANA"){
+                    $totalCabana+=$item->price;
+                }
+
+                if($item->service_type=="TENT"){
+                    $paxCamping+=$item->totalpax;
+                    $totalCamping+=$item->price;
+                }
+
+                if($item->service_type=="CAMPED"){
+                    $paxCamping+=$item->totalpax;
+                    $totalCamping+=$item->price;
+                }
+
+                if($item->service_type=="DAYPASS"){
+                    $paxDaypass+=$item->totalpax;
+                    $totalDaypass+=$item->price;
+                }
+
+                $totalPrice+=$item->price;
+
+            endforeach;
+
+
+                $discountCamping=CampedDiscount::model()->getDiscount($paxCamping);
+
+                if($discountCamping){
+                    $discountCamping=($totalCamping*$discountCamping->discount)/100;
+                    $footer.='
+                        <tr>
+                            <td>'.Yii::t('mx','Camped Discount').'</td>
+                            <td  style="text-align: right;">$ '.number_format($discountCamping,2).' MX</td>
+                        </tr>
+                    ';
+                }
+
+                $discountCabana=CabanaDiscount::model()->getDiscount($totalCabana);
+
+                if($discountCabana){
+                    $discountCabana=($totalCabana*$discountCabana->discount)/100;
+                    $footer.='
+                        <tr>
+                            <td>'.Yii::t('mx','Cabana Discount').'</td>
+                            <td style="text-align: right;">$ '.number_format($discountCabana,2).' MX</td>
+                        </tr>
+                    ';
+
+                }
+
+            $discountDaypass=CampedDiscount::model()->getDiscount($paxDaypass);
+
+
+            if($discountDaypass){
+                $discountDaypass=($totalDaypass*$discountDaypass->discount)/100;
+
+                $footer.='
+                <tr>
+                    <td>'.Yii::t('mx','Day Pass Discount').'</td>
+                        <td  style="text-align: right;">$ '.number_format($discountDaypass,2).' MX</td>
+                    </tr>
+                ';
+            }
+
+            if($discountCamping != 0 or $discountCabana!=0 or $discountDaypass!=0){
+                $totalDiscount=$discountCamping+$discountCabana+$discountDaypass;
+                $footer.='
+                <tr>
+                    <td>'.Yii::t('mx','Total Discount').'</td>
+                    <td  style="text-align: right;">$ '.number_format($totalDiscount,2).' MX</td>
+                </tr>
+                ';
+            }
+
+            $table.='
+                <table class="items table table-condensed" align="right" style="width: 40%">
+                    <tbody>
+                        <tr>
+                            <td>'.Yii::t('mx','Subtotal').'</td>
+                            <td  style="text-align: right;">$ '.number_format($totalPrice,2).' MX</td>
+                        </tr>
+                        '.$footer.'
+                        <tr>
+                            <td><h5>'.Yii::t('mx','Grand Total').':</h5></td>
+                            <td><h5  style="text-align: right;">'.'$'.number_format(($totalPrice-$totalDiscount),2).' MX</h5></td>
+                        </tr>
+                    </tbody>
+                </table>
+            ';
+
+        return $table;
+
+    }
+
+
+    public function getTableCotizacion($models,$status=false){
+
+       $counter=0;
+       $totalPrice=0;
+       $totalCabana=0;
+       $totalCamping=0;
+       $totalDaypass=0;
+       $discountCabana=0;
+       $discountCamping=0;
+       $discountDaypass=0;
+       $totalDiscount=0;
+       $paxCamping=0;
+       $paxDaypass=0;
+       $pricepets=0;
+       $footer='';
+       $tablaCananaAndTent=false;
+       $tablaCamped=false;
+       $tablaDayPasss=false;
+       $allTables='';
+       $tempAlta=false;
+       $tempBaja=false;
+       $ratesAdultsAlta=0;
+       $ratesChildrenAlta=0;
+       $ratesAdultsBaja=0;
+       $ratesChildrenBaja=0;
+       $tableStatus="";
+       $valueStatus="";
+
+       if($status==true) $tableStatus="<th>".Yii::t('mx','Status')."</th>";
+
+
+        $tableCananaAndTent='
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+                <thead>
+                    <tr>
+                        '.$tableStatus.'
+                        <th>'.Yii::t('mx','Room Type').'</th>
+                        <th>'.Yii::t('mx','Check In').'</th>
+                        <th>'.Yii::t('mx','Check In Time').'</th>
+                        <th>'.Yii::t('mx','Check Out').'</th>
+                        <th>'.Yii::t('mx','Check Out Time').'</th>
+
+                        <th>'.Yii::t('mx','Adults').'</th>
+                        <th>'.Yii::t('mx','Children').'</th>
+                        <th>'.Yii::t('mx','Pets').'</th>
+
+                        <th># '.Yii::t('mx','Nights').'</th>
+                        <th># '.Yii::t('mx','Nights').' Ta</th>
+                        <th># '.Yii::t('mx','Nights').' Tb</th>
+
+                        <th>'.Yii::t('mx','Price x Night').' Ta</th>
+                        <th>'.Yii::t('mx','Price x Night').' Tb</th>
+                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+
+                        <th>'.Yii::t('mx','Price Early Check In').'</th>
+                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                        <th>'.Yii::t('mx','Price').'</th>
+                    </tr>
+                </thead>
+            <tbody>
+
+        ';
+
+        $tableCamped='
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+            <thead>
+                <tr>
+                    '.$tableStatus.'
+                    <th>'.Yii::t('mx','Room Type').'</th>
+                    <th>'.Yii::t('mx','Check In').'</th>
+                    <th>'.Yii::t('mx','Check In Time').'</th>
+                    <th>'.Yii::t('mx','Check Out').'</th>
+                    <th>'.Yii::t('mx','Check Out Time').'</th>
+
+                    <th>'.Yii::t('mx','Adults').'</th>
+                    <th>'.Yii::t('mx','Children').'</th>
+                    <th>'.Yii::t('mx','Pets').'</th>
+
+                    <th># '.Yii::t('mx','Nights').'</th>
+                    <th># '.Yii::t('mx','Nights').' Ta</th>
+                    <th># '.Yii::t('mx','Nights').' Tb</th>
+
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Ta</th>
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Ta</th>
+
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Tb</th>
+                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Tb</th>
+                    <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+
+                    <th>'.Yii::t('mx','Price Early Check In').'</th>
+                    <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                    <th>'.Yii::t('mx','Price').'</th>
+                </tr>
+            </thead>
+            <tbody>
+        ';
+
+        $tableDayPasss='
+            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
+                <thead>
+                    <tr>
+                        '.$tableStatus.'
+                        <th>'.Yii::t('mx','Room Type').'</th>
+                        <th>'.Yii::t('mx','Check In').'</th>
+                        <th>'.Yii::t('mx','Check In Time').'</th>
+                        <th>'.Yii::t('mx','Check Out').'</th>
+                        <th>'.Yii::t('mx','Check Out Time').'</th>
+
+                        <th>'.Yii::t('mx','Adults').'</th>
+                        <th>'.Yii::t('mx','Children').'</th>
+                        <th>'.Yii::t('mx','Pets').'</th>
+
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Ta</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Ta</th>
+
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Tb</th>
+                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Tb</th>
+                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
+
+                        <th>'.Yii::t('mx','Price Early Check In').'</th>
+                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
+                        <th>'.Yii::t('mx','Price').'</th>
+                    </tr>
+                </thead>
+            <tbody>
+        ';
+
+        foreach($models as $i):
+
+            $item=(object)$i;
+            $inicio=strtotime($item->checkin);
+            $fin=strtotime($item->checkout);
+
+            //if($item->pets > 2) $pricepets=100*($item->pets-2);
+            $mascotas=(int)$item->pets;
+            $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
+
+            for($x=$inicio;$x<$fin;$x+=86400):
+                $day=date("d", $x);
+                $month=date("m", $x);
+                $temporada=CalendarSeason::model()->season($day,$month);
+                if($temporada->tipe=='BAJA') $tempBaja=true;
+                if($temporada->tipe=='ALTA') $tempAlta=true;
+            endfor;
+
+            $criteria=array(
+                'condition'=>'service_type=:serviceType and room_type_id=:roomTypeId',
+                'params'=>array('serviceType'=>$item->service_type,'roomTypeId'=>$item->room_type_id)
+            );
+
+            $reservationType=Rates::model()->find($criteria);
+            $reservationTypeId=$reservationType->typeReservation->id;
+
+
+            if($tempAlta==true){
+                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'ALTA');
+                $ratesAdultsAlta=$resultRates->adults;
+                if($item->children != 0) $ratesChildrenAlta=$resultRates->children;
+            }
+            if($tempBaja==true){
+                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
+                $ratesAdultsBaja=$resultRates->adults;
+                if($item->children != 0) $ratesChildrenBaja=$resultRates->children;
+            }
+
+            if($item->service_type=="CABANA"){
+                $totalCabana+=$item->price;
+                $RoonType=Rooms::model()->getRoomType($item->room_id);
+            }
+
+            if($item->service_type=="TENT"){
+                $RoonType=Rooms::model()->getRoomType($item->room_id);
+                $paxCamping+=$item->totalpax;
+                $totalCamping+=$item->price;
+            }
+
+            if($item->service_type=="CAMPED"){
+                $RoonType=Yii::t('mx','Camped');
+                $paxCamping+=$item->totalpax;
+                $totalCamping+=$item->price;
+            }
+
+            if($item->service_type=="DAYPASS"){
+
+                $day=date("d", $inicio);
+                $month=date("m", $inicio);
+                $temporada=CalendarSeason::model()->season($day,$month);
+
+                if($temporada->tipe=='BAJA') $tempBaja=true;
+                if($temporada->tipe=='ALTA') $tempAlta=true;
+
+                if($tempAlta==true){
+                    $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'ALTA');
+                    $ratesAdultsAlta=$resultRates->adults;
+                    $ratesChildrenAlta=$resultRates->children;
+                }
+                if($tempBaja==true){
+                    $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
+                    $ratesAdultsBaja=$resultRates->adults;
+                    $ratesChildrenBaja=$resultRates->children;
+                }
+
+                $RoonType=Yii::t('mx','Daypass');
+                $paxDaypass+=$item->totalpax;
+                $totalDaypass+=$item->price;
+
+            }
+
+            if($status==true) $valueStatus='<td>'.Yii::t('mx',$item->statux).'</td>';
+
+            if($item->service_type=="CABANA"){
+
+                $tablaCananaAndTent=true;
+
+
+                $tableCananaAndTent.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+                $tableCananaAndTent.='
+                        '.$valueStatus.'
+                        <td>'.$RoonType.'</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkin))).'</td>
+                        <td>'.$item->checkin_hour.' hrs.</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkout))).'</td>
+                        <td>'.$item->checkout_hour.' hrs.</td>
+
+                        <td>'.$item->adults.'</td>
+                        <td>'.$item->children.'</td>
+                        <td>'.$item->pets.'</td>
+
+                        <td>'.$item->nights.'</td>
+                        <td>'.$item->nigth_ta.'</td>
+                        <td>'.$item->nigth_tb.'</td>
+
+                        <td>$'.$item->price_ta.'</td>
+                        <td>$'.$item->price_tb.'</td>
+                        <td>$'.number_format($pricepets,2).'</td>
+
+                        <td>$'.$item->price_early_checkin.'</td>
+                        <td>$'.$item->price_late_checkout.'</td>
+                        <td>$'.number_format($item->price,2).'</td>
+                    </tr>';
+            }
+
+            if($item->service_type=="DAYPASS"){
+
+                $tablaDayPasss=true;
+
+                $tableDayPasss.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+                $tableDayPasss.='
+                        '.$valueStatus.'
+                        <td>'.$RoonType.'</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkin))).'</td>
+                        <td>'.$item->checkin_hour.' hrs.</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkout))).'</td>
+                        <td>'.$item->checkout_hour.' hrs.</td>
+
+                        <td>'.$item->adults.'</td>
+                        <td>'.$item->children.'</td>
+                        <td>'.$item->pets.'</td>
+
+                        <td>$'.number_format($ratesAdultsAlta,2).'</td>
+                        <td>$'.number_format($ratesChildrenAlta,2).'</td>
+
+                        <td>$'.number_format($ratesAdultsBaja,2).'</td>
+                        <td>$'.number_format($ratesChildrenBaja,2).'</td>
+
+                        <td>$'.number_format($pricepets,2).'</td>
+
+                        <td>$'.$item->price_early_checkin.'</td>
+                        <td>$'.$item->price_late_checkout.'</td>
+                        <td>$'.number_format($item->price,2).'</td>
+                    </tr>';
+            }
+
+
+            if($item->service_type=="TENT"){
+
+                if($item->service_type=="TENT" and $reservationTypeId==1){
+                    $tablaCananaAndTent=true;
+                    $tableCananaAndTent.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+                    $tableCananaAndTent.='
+                        '.$valueStatus.'
+                        <td>'.$RoonType.'</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkin))).'</td>
+                        <td>'.$item->checkin_hour.' hrs.</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkout))).'</td>
+                        <td>'.$item->checkout_hour.' hrs.</td>
+
+                        <td>'.$item->adults.'</td>
+                        <td>'.$item->children.'</td>
+                        <td>'.$item->pets.'</td>
+
+                        <td>'.$item->nights.'</td>
+                        <td>'.$item->nigth_ta.'</td>
+                        <td>'.$item->nigth_tb.'</td>
+
+                        <td>$'.$item->price_ta.'</td>
+                        <td>$'.$item->price_tb.'</td>
+                        <td>$'.number_format($pricepets,2).'</td>
+
+                        <td>$'.$item->price_early_checkin.'</td>
+                        <td>$'.$item->price_late_checkout.'</td>
+                        <td>$'.number_format($item->price,2).'</td>
+                    </tr>';
+
+                }elseif($item->service_type=="TENT" and $reservationTypeId==3){
+
+                    $tablaCamped=true;
+
+                    $tableCamped.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+                    $tableCamped.='
+                        '.$valueStatus.'
+                        <td>'.$RoonType.'</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkin))).'</td>
+                        <td>'.$item->checkin_hour.' hrs.</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkout))).'</td>
+                        <td>'.$item->checkout_hour.' hrs.</td>
+
+                        <td>'.$item->adults.'</td>
+                        <td>'.$item->children.'</td>
+                        <td>'.$item->pets.'</td>
+
+                        <td>'.$item->nights.'</td>
+                        <td>'.$item->nigth_ta.'</td>
+                        <td>'.$item->nigth_tb.'</td>
+
+                        <td>$'.number_format($ratesAdultsAlta,2).'</td>
+                        <td>$'.number_format($ratesChildrenAlta,2).'</td>
+
+                        <td>$'.number_format($ratesAdultsBaja,2).'</td>
+                        <td>$'.number_format($ratesChildrenBaja,2).'</td>
+                        <td>$'.number_format($pricepets,2).'</td>
+
+                        <td>'.$item->price_early_checkin.'</td>
+                        <td>'.$item->price_late_checkout.'</td>
+                        <td>'.number_format($item->price,2).'</td>
+                    </tr>';
+                }
+
+            }
+
+            if($item->service_type=="CAMPED"){
+                $tablaCamped=true;
+
+                $tableCamped.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
+                $tableCamped.='
+                        '.$valueStatus.'
+                        <td>'.$RoonType.'</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkin))).'</td>
+                        <td>'.$item->checkin_hour.' hrs.</td>
+                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->checkout))).'</td>
+                        <td>'.$item->checkout_hour.' hrs.</td>
+
+                        <td>'.$item->adults.'</td>
+                        <td>'.$item->children.'</td>
+                        <td>'.$item->pets.'</td>
+
+                        <td>'.$item->nights.'</td>
+                        <td>'.$item->nigth_ta.'</td>
+                        <td>'.$item->nigth_tb.'</td>
+
+                        <td>$'.number_format($ratesAdultsAlta,2).'</td>
+                        <td>$'.number_format($ratesChildrenAlta,2).'</td>
+
+                        <td>$'.number_format($ratesAdultsBaja,2).'</td>
+                        <td>$'.number_format($ratesChildrenBaja,2).'</td>
+                        <td>$'.number_format($pricepets,2).'</td>
+
+                        <td>'.$item->price_early_checkin.'</td>
+                        <td>'.$item->price_late_checkout.'</td>
+                        <td>'.number_format($item->price,2).'</td>
+                    </tr>';
+            }
+
+
+
+
+            $totalPrice+=$item->price;
+
+            $counter++;
+
+        endforeach;
+
+        if($tablaCananaAndTent==true){
+            $tableCananaAndTent.='</table>';
+            $allTables.=$tableCananaAndTent;
+        }
+
+        if($tablaCamped==true){
+            $tableCamped.='</table>';
+            $allTables.=$tableCamped;
+        }
+
+        if($tablaDayPasss==true){
+            $tableDayPasss.='</table>';
+            $allTables.=$tableDayPasss;
+        }
+
+        $discountx=$this->getTableDiscount($models);
+
+        return '<div class="row-fluid">
+                        '.$allTables.$discountx.'
+                    </fieldset>
+               </div>';
+    }
 
     public function getCotizacionNoDiscount($models,$status=false){
 
@@ -753,812 +1373,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-    public function pricePets($mascotas=0){
-
-        $pricepets=0;
-        if($mascotas > 2) $pricepets=100*($mascotas-2);
-
-        return $pricepets;
-
-    }
-
-    public function getTotalDiscount($serviceType,$total,$pax=0) {
-
-        $discountCabana=0;
-        $discountCamped=0;
-
-        if($serviceType=="CABANA"){
-            $percentCabana=CabanaDiscount::model()->getDiscount($total);
-            if($percentCabana) $discountCabana=($total*$percentCabana->discount)/100;
-        }
-
-        if($serviceType=="TENT" or $serviceType=="CAMPED" or $serviceType=="DAYPASS"){
-            $percentCamped=CampedDiscount::model()->getDiscount($pax);
-            if($percentCamped) $discountCamped=($total*$percentCamped->discount)/100;
-        }
-
-        $grandTotal=$discountCamped+$discountCabana;
-
-        return $grandTotal;
-
-    }
-
-    public function getDiscountCabanas($reservations){
-
-        $amount=0;
-
-        foreach($reservations as $i):
-            $item=(object)$i;
-            if($item->service_type=="CABANA") $amount+=$item->price;
-        endforeach;
-
-        $discount=CabanaDiscount::amount($amount);
-
-        return $discount;
-
-    }
-
-    public function getDiscountCamped($reservations){
-
-        $pax=0;
-        $amount=0;
-
-        foreach($reservations as $i):
-
-            $item=(object)$i;
-
-            if($item->service_type=="TENT" || $item->service_type=="CAMPED"):
-                $pax+=$item->totalpax;
-                $amount+=$item->price;
-            endif;
-
-        endforeach;
-
-        $discount=CampedDiscount::amount($amount,$pax);
-
-        return $discount;
-
-    }
-
-    public function getDiscountDaypass($reservations){
-
-        $pax=0;
-        $amount=0;
-
-        foreach($reservations as $i):
-
-            $item=(object)$i;
-
-            if($item->service_type=="TENT" || $item->service_type=="CAMPED"):
-                $pax+=$item->totalpax;
-                $amount+=$item->price;
-            endif;
-
-        endforeach;
-
-        $discount=CampedDiscount::amount($amount,$pax);
-
-        return $discount;
-
-    }
-
-    public function getTotalPrice($models,$discount=false) {
-
-        $totalPrice=0;
-        $totalCabana=0;
-        $totalCamping=0;
-        $totalDaypass=0;
-        $totalDiscount=0;
-        $paxCamping=0;
-        $paxDaypass=0;
-
-        foreach($models as $i):
-
-            $item=(object)$i;
-
-            if($item->service_type=="CABANA"){
-                $totalCabana+=$item->price;
-            }
-
-            if($item->service_type=="TENT"){
-                $paxCamping+=$item->totalpax;
-                $totalCamping+=$item->price;
-            }
-
-            if($item->service_type=="CAMPED"){
-                $paxCamping+=$item->totalpax;
-                $totalCamping+=$item->price;
-            }
-
-            if($item->service_type=="DAYPASS"){
-                $paxDaypass+=$item->totalpax;
-                $totalDaypass+=$item->price;
-            }
-
-            $totalPrice+=$item->price;
-
-        endforeach;
-
-        $grandTotal=$totalPrice;
-
-        if($discount==true){
-
-            $discountCamping=CampedDiscount::amount($totalCamping,$paxCamping);
-            $discountCabana=CabanaDiscount::amount($totalCabana);
-            $discountDaypass=CampedDiscount::amount($totalDaypass,$paxDaypass);
-
-            if($discountCamping != 0 or $discountCabana!=0 or $discountDaypass!=0){
-                $totalDiscount=$discountCamping+$discountCabana+$discountDaypass;
-            }
-
-            $grandTotal=$totalPrice-$totalDiscount;
-        }
-
-        return $grandTotal;
-
-    }
-
-    public function tableFooterDiscount(){
-
-    }
-
-    public function getTableDiscount($models) {
-
-        $totalPrice=0;
-        $totalCabana=0;
-        $totalCamping=0;
-        $totalDaypass=0;
-        $totalDiscount=0;
-        $paxCamping=0;
-        $paxDaypass=0;
-        $footer='';
-        $table='';
-
-
-            foreach($models as $i):
-
-                $item=(object)$i;
-
-                if($item->service_type=="CABANA"){
-                    $totalCabana+=$item->price;
-                }
-
-                if($item->service_type=="TENT"){
-                    $paxCamping+=$item->totalpax;
-                    $totalCamping+=$item->price;
-                }
-
-                if($item->service_type=="CAMPED"){
-                    $paxCamping+=$item->totalpax;
-                    $totalCamping+=$item->price;
-                }
-
-                if($item->service_type=="DAYPASS"){
-                    $paxDaypass+=$item->totalpax;
-                    $totalDaypass+=$item->price;
-                }
-
-                $totalPrice+=$item->price;
-
-            endforeach;
-
-
-                $discountCamping=CampedDiscount::amount($totalCamping,$paxCamping);
-
-                if($discountCamping){
-                    $footer.='
-                        <tr>
-                            <td>'.Yii::t('mx','Camped Discount').'</td>
-                            <td  style="text-align: right;">$ '.number_format($discountCamping,2).' MX</td>
-                        </tr>
-                    ';
-                }
-
-                $discountCabana=CabanaDiscount::amount($totalCabana);
-
-                if($discountCabana){
-                    $footer.='
-                        <tr>
-                            <td>'.Yii::t('mx','Cabana Discount').'</td>
-                            <td style="text-align: right;">$ '.number_format($discountCabana,2).' MX</td>
-                        </tr>
-                    ';
-                }
-
-
-            $discountDaypass=CampedDiscount::amount($totalDaypass,$paxDaypass);
-
-            if($discountDaypass){
-                $footer.='
-                <tr>
-                    <td>'.Yii::t('mx','Day Pass Discount').'</td>
-                        <td  style="text-align: right;">$ '.number_format($discountDaypass,2).' MX</td>
-                    </tr>
-                ';
-            }
-
-            if($discountCamping != 0 or $discountCabana!=0 or $discountDaypass!=0){
-                $totalDiscount=$discountCamping+$discountCabana+$discountDaypass;
-                $footer.='
-                <tr>
-                    <td>'.Yii::t('mx','Total Discount').'</td>
-                    <td  style="text-align: right;">$ '.number_format($totalDiscount,2).' MX</td>
-                </tr>
-                ';
-            }
-
-            $table.='
-                <table class="items table table-condensed" align="right" style="width: 40%">
-                    <tbody>
-                        <tr>
-                            <td>'.Yii::t('mx','Subtotal').'</td>
-                            <td  style="text-align: right;">$ '.number_format($totalPrice,2).' MX</td>
-                        </tr>
-                        '.$footer.'
-                        <tr>
-                            <td><h5>'.Yii::t('mx','Grand Total').':</h5></td>
-                            <td><h5  style="text-align: right;">'.'$'.number_format(($totalPrice-$totalDiscount),2).' MX</h5></td>
-                        </tr>
-                    </tbody>
-                </table>
-            ';
-
-        return $table;
-
-    }
-
-    public function getTableCotization($model){
-
-        $ratesAdultsAlta=0;
-        $ratesAdultsAlta=0;
-        $tableStatus='';
-        $pricepets=0;
-        $ratesAdultsBaja=0;
-
-
-        $tableCananaAndTent='
-            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
-                <thead>
-                    <tr>
-                        '.$tableStatus.'
-                        <th>'.Yii::t('mx','Room Type').'</th>
-                        <th>'.Yii::t('mx','Check In').'</th>
-                        <th>'.Yii::t('mx','Check In Time').'</th>
-                        <th>'.Yii::t('mx','Check Out').'</th>
-                        <th>'.Yii::t('mx','Check Out Time').'</th>
-
-                        <th>'.Yii::t('mx','Adults').'</th>
-                        <th>'.Yii::t('mx','Children').'</th>
-                        <th>'.Yii::t('mx','Pets').'</th>
-
-                        <th># '.Yii::t('mx','Nights').'</th>
-                        <th># '.Yii::t('mx','Nights').' Ta</th>
-                        <th># '.Yii::t('mx','Nights').' Tb</th>
-
-                        <th>'.Yii::t('mx','Price x Night').' Ta</th>
-                        <th>'.Yii::t('mx','Price x Night').' Tb</th>
-                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
-
-                        <th>'.Yii::t('mx','Price Early Check In').'</th>
-                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                        <th>'.Yii::t('mx','Price').'</th>
-                    </tr>
-                </thead>
-            <tbody>
-        ';
-
-        $tableCamped='
-            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
-            <thead>
-                <tr>
-                    '.$tableStatus.'
-                    <th>'.Yii::t('mx','Room Type').'</th>
-                    <th>'.Yii::t('mx','Check In').'</th>
-                    <th>'.Yii::t('mx','Check In Time').'</th>
-                    <th>'.Yii::t('mx','Check Out').'</th>
-                    <th>'.Yii::t('mx','Check Out Time').'</th>
-
-                    <th>'.Yii::t('mx','Adults').'</th>
-                    <th>'.Yii::t('mx','Children').'</th>
-                    <th>'.Yii::t('mx','Pets').'</th>
-
-                    <th># '.Yii::t('mx','Nights').'</th>
-                    <th># '.Yii::t('mx','Nights').' Ta</th>
-                    <th># '.Yii::t('mx','Nights').' Tb</th>
-
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Ta</th>
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Ta</th>
-
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Tb</th>
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Tb</th>
-                    <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
-
-                    <th>'.Yii::t('mx','Price Early Check In').'</th>
-                    <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                    <th>'.Yii::t('mx','Price').'</th>
-                </tr>
-            </thead>
-            <tbody>
-        ';
-
-        $tableDayPasss='
-            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
-                <thead>
-                    <tr>
-                        '.$tableStatus.'
-                        <th>'.Yii::t('mx','Room Type').'</th>
-                        <th>'.Yii::t('mx','Check In').'</th>
-                        <th>'.Yii::t('mx','Check In Time').'</th>
-                        <th>'.Yii::t('mx','Check Out').'</th>
-                        <th>'.Yii::t('mx','Check Out Time').'</th>
-
-                        <th>'.Yii::t('mx','Adults').'</th>
-                        <th>'.Yii::t('mx','Children').'</th>
-                        <th>'.Yii::t('mx','Pets').'</th>
-
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Ta</th>
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Ta</th>
-
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Tb</th>
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Tb</th>
-                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
-
-                        <th>'.Yii::t('mx','Price Early Check In').'</th>
-                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                        <th>'.Yii::t('mx','Price').'</th>
-                    </tr>
-                </thead>
-            <tbody>
-        ';
-
-        foreach($model as $i){
-
-
-            $item=(object)$i;
-            $inicio=strtotime($item->fechaEntrada);
-            $fin=strtotime($item->fechaSalida);
-
-            $mascotas=(int)$item->pets;
-            $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
-
-            for($x=$inicio;$x<$fin;$x+=86400):
-                $day=date("d", $x);
-                $month=date("m", $x);
-                $temporada=CalendarSeason::model()->season($day,$month);
-                if($temporada->tipe=='BAJA') $tempBaja=true;
-                if($temporada->tipe=='ALTA') $tempAlta=true;
-            endfor;
-
-            $reservationType=Rates::model()->find(array(
-                'condition'=>'service_type=:serviceType and room_type_id=:roomTypeId',
-                'params'=>array('serviceType'=>$item->service_type,'roomTypeId'=>$item->room_type_id)
-            ));
-
-            $reservationTypeId=$reservationType->typeReservation->id;
-
-            if($tempAlta==true){
-                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'ALTA');
-                $ratesAdultsAlta=$resultRates->adults;
-                if($item->children != 0) $ratesChildrenAlta=$resultRates->children;
-            }
-
-            if($tempBaja==true){
-                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
-                $ratesAdultsBaja=$resultRates->adults;
-                if($item->children != 0) $ratesChildrenBaja=$resultRates->children;
-            }
-
-            if($status==true) $valueStatus='<td>'.Yii::t('mx',$item->statux).'</td>';
-
-
-        }
-    }
-
-    public function tableCotization($customerReservationId,$discount=false){
-
-        $tempAlta=false;
-        $tempBaja=false;
-        $status=true;
-        $counter=0;
-        $valueStatus="";
-        $tableStatus="";
-        $tablaCananaAndTent=false;
-        $tablaCamped=false;
-        $tablaDayPasss=false;
-        $allTables='';
-        $ratesAdultsAlta=0;
-        $ratesChildrenAlta=0;
-        $ratesAdultsBaja=0;
-        $ratesChildrenBaja=0;
-        $footer='';
-        $commission='';
-
-        $sql="SELECT customer_reservations.id,reservation.room_type_id,reservation.room_id,reservation.statux,reservation.service_type,
-              SUBSTRING(reservation.checkin,1,10) as fechaEntrada,
-              SUBSTRING(reservation.checkin,12,16) as horaEntrada,
-              SUBSTRING(reservation.checkout,1,10) as fechaSalida,
-              SUBSTRING(reservation.checkout,12,16) as horaSalida,reservation.adults,reservation.children,reservation.totalpax,
-              reservation.pets,reservation.nights,reservation.nigth_ta,reservation.nigth_tb,reservation.price_ta,reservation.price_tb,
-              reservation.price_early_checkin,reservation.price_late_checkout,reservation.price,customer_reservations.subtotal,
-              customer_reservations.discount_cabana,customer_reservations.discount_camped,customer_reservations.discount_daypass,
-              customer_reservations.commission,customer_reservations.total,customer_reservations.have_commission
-              FROM customer_reservations
-              INNER JOIN reservation ON customer_reservations.id=reservation.customer_reservation_id
-              WHERE customer_reservations.id=:CustomerReservationId";
-
-        $connection=Yii::app()->db;
-        $command=$connection->createCommand($sql);
-        $command->bindValue(":CustomerReservationId", $customerReservationId , PDO::PARAM_INT);
-        $data=$command->queryAll();
-
-        if($status==true) $tableStatus="<th>".Yii::t('mx','Status')."</th>";
-
-        $tableCananaAndTent='
-            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
-                <thead>
-                    <tr>
-                        '.$tableStatus.'
-                        <th>'.Yii::t('mx','Room Type').'</th>
-                        <th>'.Yii::t('mx','Check In').'</th>
-                        <th>'.Yii::t('mx','Check In Time').'</th>
-                        <th>'.Yii::t('mx','Check Out').'</th>
-                        <th>'.Yii::t('mx','Check Out Time').'</th>
-
-                        <th>'.Yii::t('mx','Adults').'</th>
-                        <th>'.Yii::t('mx','Children').'</th>
-                        <th>'.Yii::t('mx','Pets').'</th>
-
-                        <th># '.Yii::t('mx','Nights').'</th>
-                        <th># '.Yii::t('mx','Nights').' Ta</th>
-                        <th># '.Yii::t('mx','Nights').' Tb</th>
-
-                        <th>'.Yii::t('mx','Price x Night').' Ta</th>
-                        <th>'.Yii::t('mx','Price x Night').' Tb</th>
-                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
-
-                        <th>'.Yii::t('mx','Price Early Check In').'</th>
-                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                        <th>'.Yii::t('mx','Price').'</th>
-                    </tr>
-                </thead>
-            <tbody>
-        ';
-
-        $tableCamped='
-            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
-            <thead>
-                <tr>
-                    '.$tableStatus.'
-                    <th>'.Yii::t('mx','Room Type').'</th>
-                    <th>'.Yii::t('mx','Check In').'</th>
-                    <th>'.Yii::t('mx','Check In Time').'</th>
-                    <th>'.Yii::t('mx','Check Out').'</th>
-                    <th>'.Yii::t('mx','Check Out Time').'</th>
-
-                    <th>'.Yii::t('mx','Adults').'</th>
-                    <th>'.Yii::t('mx','Children').'</th>
-                    <th>'.Yii::t('mx','Pets').'</th>
-
-                    <th># '.Yii::t('mx','Nights').'</th>
-                    <th># '.Yii::t('mx','Nights').' Ta</th>
-                    <th># '.Yii::t('mx','Nights').' Tb</th>
-
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Ta</th>
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Ta</th>
-
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Night').' Tb</th>
-                    <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Night').' Tb</th>
-                    <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
-
-                    <th>'.Yii::t('mx','Price Early Check In').'</th>
-                    <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                    <th>'.Yii::t('mx','Price').'</th>
-                </tr>
-            </thead>
-            <tbody>
-        ';
-
-        $tableDayPasss='
-            <table class="items table table-hover table-condensed table-bordered" style="width: 100%";>
-                <thead>
-                    <tr>
-                        '.$tableStatus.'
-                        <th>'.Yii::t('mx','Room Type').'</th>
-                        <th>'.Yii::t('mx','Check In').'</th>
-                        <th>'.Yii::t('mx','Check In Time').'</th>
-                        <th>'.Yii::t('mx','Check Out').'</th>
-                        <th>'.Yii::t('mx','Check Out Time').'</th>
-
-                        <th>'.Yii::t('mx','Adults').'</th>
-                        <th>'.Yii::t('mx','Children').'</th>
-                        <th>'.Yii::t('mx','Pets').'</th>
-
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Ta</th>
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Ta</th>
-
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Adult').' x '.Yii::t('mx','Day').' Tb</th>
-                        <th>'.Yii::t('mx','Price').' x '.Yii::t('mx','Child').' x '.Yii::t('mx','Day').' Tb</th>
-                        <th>'.Yii::t('mx','Price x Night').' x '.Yii::t('mx','Pet').' Extra</th>
-
-                        <th>'.Yii::t('mx','Price Early Check In').'</th>
-                        <th>'.Yii::t('mx','Price Late Check Out').'</th>
-                        <th>'.Yii::t('mx','Price').'</th>
-                    </tr>
-                </thead>
-            <tbody>
-        ';
-
-
-        foreach($data as $i){
-
-            $item=(object)$i;
-            $inicio=strtotime($item->fechaEntrada);
-            $fin=strtotime($item->fechaSalida);
-
-            $mascotas=(int)$item->pets;
-            $pricepets=Yii::app()->quoteUtil->pricePets($mascotas);
-
-            for($x=$inicio;$x<$fin;$x+=86400):
-                $day=date("d", $x);
-                $month=date("m", $x);
-                $temporada=CalendarSeason::model()->season($day,$month);
-                if($temporada->tipe=='BAJA') $tempBaja=true;
-                if($temporada->tipe=='ALTA') $tempAlta=true;
-            endfor;
-
-            $reservationType=Rates::model()->find(array(
-                'condition'=>'service_type=:serviceType and room_type_id=:roomTypeId',
-                'params'=>array('serviceType'=>$item->service_type,'roomTypeId'=>$item->room_type_id)
-            ));
-
-            $reservationTypeId=$reservationType->typeReservation->id;
-
-            if($tempAlta==true){
-                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'ALTA');
-                $ratesAdultsAlta=$resultRates->adults;
-                if($item->children != 0) $ratesChildrenAlta=$resultRates->children;
-            }
-
-            if($tempBaja==true){
-                $resultRates= Rates::model()->getPricePerHeight($item->service_type,$item->room_type_id,$reservationTypeId,'BAJA');
-                $ratesAdultsBaja=$resultRates->adults;
-                if($item->children != 0) $ratesChildrenBaja=$resultRates->children;
-            }
-
-            if($status==true) $valueStatus='<td>'.Yii::t('mx',$item->statux).'</td>';
-
-            switch($item->service_type){
-
-                case 'CABANA':
-                    $RoonType=Rooms::model()->getRoomType($item->room_id);
-                    $tablaCananaAndTent=true;
-                    $tableCananaAndTent.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
-                    $tableCananaAndTent.='
-                        '.$valueStatus.'
-                        <td>'.$RoonType.'</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaEntrada))).'</td>
-                        <td>'.$item->horaEntrada.' hrs.</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaSalida))).'</td>
-                        <td>'.$item->horaSalida.' hrs.</td>
-
-                        <td>'.$item->adults.'</td>
-                        <td>'.$item->children.'</td>
-                        <td>'.$item->pets.'</td>
-
-                        <td>'.$item->nights.'</td>
-                        <td>'.$item->nigth_ta.'</td>
-                        <td>'.$item->nigth_tb.'</td>
-
-                        <td>$'.$item->price_ta.'</td>
-                        <td>$'.$item->price_tb.'</td>
-                        <td>$'.number_format($pricepets,2).'</td>
-
-                        <td>$'.$item->price_early_checkin.'</td>
-                        <td>$'.$item->price_late_checkout.'</td>
-                        <td>$'.number_format($item->price,2).'</td>
-                    </tr>';
-
-                    break;
-
-                case 'DAYPASS':
-                    $tablaDayPasss=true;
-                    $RoonType=Yii::t('mx','Daypass');
-                    $tableDayPasss.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
-                    $tableDayPasss.='
-                        '.$valueStatus.'
-                        <td>'.$RoonType.'</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaEntrada))).'</td>
-                        <td>'.$item->horaEntrada.' hrs.</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaSalida))).'</td>
-                        <td>'.$item->horaSalida.' hrs.</td>
-
-                        <td>'.$item->adults.'</td>
-                        <td>'.$item->children.'</td>
-                        <td>'.$item->pets.'</td>
-
-                        <td>$'.number_format($ratesAdultsAlta,2).'</td>
-                        <td>$'.number_format($ratesChildrenAlta,2).'</td>
-
-                        <td>$'.number_format($ratesAdultsBaja,2).'</td>
-                        <td>$'.number_format($ratesChildrenBaja,2).'</td>
-
-                        <td>$'.number_format($pricepets,2).'</td>
-
-                        <td>$'.$item->price_early_checkin.'</td>
-                        <td>$'.$item->price_late_checkout.'</td>
-                        <td>$'.number_format($item->price,2).'</td>
-                    </tr>';
-
-                    break;
-
-                case 'TENT':
-                    $RoonType=Rooms::model()->getRoomType($item->room_id);
-                    if($item->service_type=="TENT" and $reservationTypeId==1){
-                        $tablaCananaAndTent=true;
-                        $tableCananaAndTent.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
-                        $tableCananaAndTent.='
-                        '.$valueStatus.'
-                        <td>'.$RoonType.'</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaEntrada))).'</td>
-                        <td>'.$item->horaEntrada.' hrs.</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaSalida))).'</td>
-                        <td>'.$item->horaSalida.' hrs.</td>
-
-                        <td>'.$item->adults.'</td>
-                        <td>'.$item->children.'</td>
-                        <td>'.$item->pets.'</td>
-
-                        <td>'.$item->nights.'</td>
-                        <td>'.$item->nigth_ta.'</td>
-                        <td>'.$item->nigth_tb.'</td>
-
-                        <td>$'.$item->price_ta.'</td>
-                        <td>$'.$item->price_tb.'</td>
-                        <td>$'.number_format($pricepets,2).'</td>
-
-                        <td>$'.$item->price_early_checkin.'</td>
-                        <td>$'.$item->price_late_checkout.'</td>
-                        <td>$'.number_format($item->price,2).'</td>
-                    </tr>';
-
-                    }elseif($item->service_type=="TENT" and $reservationTypeId==3){
-
-                        $tablaCamped=true;
-
-                        $tableCamped.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
-                        $tableCamped.='
-                        '.$valueStatus.'
-                        <td>'.$RoonType.'</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaEntrada))).'</td>
-                        <td>'.$item->horaEntrada.' hrs.</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaSalida))).'</td>
-                        <td>'.$item->horaSalida.' hrs.</td>
-
-                        <td>'.$item->adults.'</td>
-                        <td>'.$item->children.'</td>
-                        <td>'.$item->pets.'</td>
-
-                        <td>'.$item->nights.'</td>
-                        <td>'.$item->nigth_ta.'</td>
-                        <td>'.$item->nigth_tb.'</td>
-
-                        <td>$'.number_format($ratesAdultsAlta,2).'</td>
-                        <td>$'.number_format($ratesChildrenAlta,2).'</td>
-
-                        <td>$'.number_format($ratesAdultsBaja,2).'</td>
-                        <td>$'.number_format($ratesChildrenBaja,2).'</td>
-                        <td>$'.number_format($pricepets,2).'</td>
-
-                        <td>'.$item->price_early_checkin.'</td>
-                        <td>'.$item->price_late_checkout.'</td>
-                        <td>'.number_format($item->price,2).'</td>
-                        </tr>';
-                    }
-                    break;
-
-                case 'CAMPED':
-                    $tablaCamped=true;
-                    $RoonType=Yii::t('mx','Camped');
-                    $tableCamped.= ($counter % 2 == 0) ? '<tr  class="alt">' :  '<tr>';
-                    $tableCamped.='
-                        '.$valueStatus.'
-                        <td>'.$RoonType.'</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaEntrada))).'</td>
-                        <td>'.$item->horaEntrada.' hrs.</td>
-                        <td>'.$this->toSpanishDate(date('Y-M-d',strtotime($item->fechaSalida))).'</td>
-                        <td>'.$item->horaSalida.' hrs.</td>
-
-                        <td>'.$item->adults.'</td>
-                        <td>'.$item->children.'</td>
-                        <td>'.$item->pets.'</td>
-
-                        <td>'.$item->nights.'</td>
-                        <td>'.$item->nigth_ta.'</td>
-                        <td>'.$item->nigth_tb.'</td>
-
-                        <td>$'.number_format($ratesAdultsAlta,2).'</td>
-                        <td>$'.number_format($ratesChildrenAlta,2).'</td>
-
-                        <td>$'.number_format($ratesAdultsBaja,2).'</td>
-                        <td>$'.number_format($ratesChildrenBaja,2).'</td>
-                        <td>$'.number_format($pricepets,2).'</td>
-
-                        <td>'.$item->price_early_checkin.'</td>
-                        <td>'.$item->price_late_checkout.'</td>
-                        <td>'.number_format($item->price,2).'</td>
-                    </tr>';
-
-                    break;
-            }
-
-            $counter++;
-
-        }
-
-        if($tablaCananaAndTent==true){
-            $tableCananaAndTent.='</table>';
-            $allTables.=$tableCananaAndTent;
-            $footer.='
-                        <tr>
-                            <td>'.Yii::t('mx','Cabana Discount').'</td>
-                            <td style="text-align: right;">$ '.number_format($item->discount_cabana,2).' MX</td>
-                        </tr>
-                    ';
-        }
-
-        if($tablaCamped==true){
-            $tableCamped.='</table>';
-            $allTables.=$tableCamped;
-            $footer.='
-                        <tr>
-                            <td>'.Yii::t('mx','Camped Discount').'</td>
-                            <td  style="text-align: right;">$ '.number_format($item->discount_camped,2).' MX</td>
-                        </tr>
-                    ';
-        }
-
-        if($tablaDayPasss==true){
-            $tableDayPasss.='</table>';
-            $allTables.=$tableDayPasss;
-            $footer.='
-                    <tr>
-                        <td>'.Yii::t('mx','Day Pass Discount').'</td>
-                            <td  style="text-align: right;">$ '.number_format($item->discount_daypass,2).' MX</td>
-                        </tr>
-                    ';
-        }
-
-        //$totalDiscount=$item->discount_cabana+$item->discount_camped+$item->discount_daypass;
-        if($item->have_commission==1){
-            $commission='<tr>
-                    <td>'.Yii::t('mx','Commission').'</td>
-                    <td  style="text-align: right;">$ '.number_format($item->commission,2).' MX</td>
-                </tr>';
-        }
-
-        $pie='<table align="right" class="items table table-condensed" style="width: 40%;">
-            <tbody>
-                <tr>
-                    <td>'.Yii::t('mx','Subtotal').'</td>
-                    <td  style="text-align: right;">$ '.number_format($item->subtotal,2).' MX</td>
-                </tr>
-                '.$footer.'
-                '.$commission.'
-                <tr>
-                    <td><h3>'.Yii::t('mx','Grand Total').':</h3></td>
-                    <td><h3 style="text-align: right;">'.'$'.number_format(($item->total),2).' MX</h3></td>
-                </tr>
-            </tbody>
-        </table>
-        ';
-
-        return '<div class="row-fluid">
-                        '.$allTables.$pie.'
-                    </fieldset>
-               </div>';
-
-    }
-
     public function getPeakSeason($checkin,$checkout){
         $inicio=strtotime($checkin);
         $fin=strtotime($checkout);
@@ -1634,6 +1448,7 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
     public function getLateCheckOut($checkoutHour,$totalPax){
 
         $priceLateCheckout=0;
@@ -1648,6 +1463,7 @@ class QuoteDetails extends CApplicationComponent{
         return $priceLateCheckout;
 
     }
+
 
     public function getPriceCabana($adults,$children,$service_type,$room_type_id,$nights,$season){
 
@@ -1734,6 +1550,7 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
     public function getPriceDaypass($adults,$children,$service_type,$room_type_id,$season){
 
         $criteria=array(
@@ -1752,6 +1569,7 @@ class QuoteDetails extends CApplicationComponent{
         return $price;
     }
 
+
     public function nights($d_start,$d_end){
 
         $nights= (strtotime($d_start)-strtotime($d_end))/86400;
@@ -1760,6 +1578,7 @@ class QuoteDetails extends CApplicationComponent{
 
         return $nights;
     }
+
 
     public function checkAvailability($serviceType,$checkin,$checkout){
 
@@ -1952,6 +1771,7 @@ class QuoteDetails extends CApplicationComponent{
         return array('attributes'=>$arrayAttributes,'errors'=>$arrayErrors);
 
     }
+
 
     public function reservationAdd($attributes,$status=1){
 
@@ -2156,6 +1976,9 @@ class QuoteDetails extends CApplicationComponent{
         $mpdf->Output('Reporte-Diario.pdf','D');
     }
 
+
+
+
     public function reportActivitiesSupplier($model,$nameCustomer){
 
         $subtotal=0;
@@ -2285,6 +2108,7 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
     public function campedReport($date=null){
 
         if($date==null){
@@ -2349,53 +2173,53 @@ class QuoteDetails extends CApplicationComponent{
             <tbody>
         ';
 
-            if($dataReader3){
+        if($dataReader3){
 
-                foreach($dataReader3 as $item){
+            foreach($dataReader3 as $item){
 
-                    $totalReservation=Reservation::model()->count(
-                        '(service_type="CAMPED" or service_type="TENT" or service_type="DAYPASS") and customer_reservation_id=:customerReservationId',
-                        array('customerReservationId'=>$item['customerReservationId'])
-                    );
+                $totalReservation=Reservation::model()->count(
+                    '(service_type="CAMPED" or service_type="TENT" or service_type="DAYPASS") and customer_reservation_id=:customerReservationId',
+                    array('customerReservationId'=>$item['customerReservationId'])
+                );
 
-                    $grupoant=$grupo;
-                    $grupo=$item['customerReservationId'];
-                    $pagosCliente=0;
-                    $saldo=0;
+                $grupoant=$grupo;
+                $grupo=$item['customerReservationId'];
+                $pagosCliente=0;
+                $saldo=0;
 
-                    $pricepets=$this->pricePets((int)$item['pets']);
-                    $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
-                    $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
+                $pricepets=$this->pricePets((int)$item['pets']);
+                $tot_noch_ta=$item['nigth_ta']*$item['price_ta'];
+                $tot_noch_tb=$item['nigth_tb']*$item['price_tb'];
 
-                    $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
-                    $command=Yii::app()->db->createCommand($sqlPayments);
-                    $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
-                    $payments=$command->queryAll();
+                $sqlPayments="SELECT * FROM payments where customer_reservation_id=:customerReservationId";
+                $command=Yii::app()->db->createCommand($sqlPayments);
+                $command->bindValue(":customerReservationId", $item['customerReservationId'] , PDO::PARAM_INT);
+                $payments=$command->queryAll();
 
-                    if($payments){
-                        foreach($payments as $pago){
-                            $pagosCliente=$pagosCliente+$pago['amount'];
-                        }
+                if($payments){
+                    foreach($payments as $pago){
+                        $pagosCliente=$pagosCliente+$pago['amount'];
                     }
+                }
 
-                    if($grupoant != $grupo){
-                        $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
-                    }
+                if($grupoant != $grupo){
+                    $tabledailyreport.='<tr><td colspan="7" align="center" bgcolor="#CCCCCC"><strong>'.strtoupper($item['first_name']." ".$item['last_name']).'</strong></td></tr>';
+                }
 
-                    $startDate=explode(" ",$item['checkin']);
-                    $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
-                    $horaEntrada=$startDate[1];
+                $startDate=explode(" ",$item['checkin']);
+                $fechaEntrada=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($startDate[0])));
+                $horaEntrada=$startDate[1];
 
-                    $endDate=explode(" ",$item['checkout']);
-                    $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
-                    $horaSalida=$endDate[1];
+                $endDate=explode(" ",$item['checkout']);
+                $fechaSalida=$this->toSpanishDateFromDb(date("Y-M-d",strtotime($endDate[0])));
+                $horaSalida=$endDate[1];
 
-                    $acampado="";
-                    if($item['service_type']=='TENT') $acampado=" rentada";
-                    if($item['service_type']=='CAMPED') $acampado=" con sus propias casas";
+                $acampado="";
+                if($item['service_type']=='TENT') $acampado=" rentada";
+                if($item['service_type']=='CAMPED') $acampado=" con sus propias casas";
 
 
-                    $tabledailyreport.='
+                $tabledailyreport.='
                             <tr>
                                 <td>
                                     <p>Servicio: '.Yii::t('mx',$item['service_type']). " ".$acampado.'</p>
@@ -2435,22 +2259,22 @@ class QuoteDetails extends CApplicationComponent{
                             </tr>
                             ';
 
-                    $counter++;
+                $counter++;
 
 
-                    if($counter<=$totalReservation){
+                if($counter<=$totalReservation){
 
-                        $subtotal=$subtotal+$item['price'];
-                        if($item['see_discount']==1) $discount=$discount+$this->getTotalDiscount($item['service_type'],$item['price'],$item['totalpax']);
+                    $subtotal=$subtotal+$item['price'];
+                    if($item['see_discount']==1) $discount=$discount+$this->getTotalDiscount($item['service_type'],$item['price'],$item['totalpax']);
 
-                    }
+                }
 
-                    if($counter == $totalReservation){
+                if($counter == $totalReservation){
 
-                        $saldo=$subtotal-$discount-$pagosCliente;
-                        $total=$total+$saldo;
+                    $saldo=$subtotal-$discount-$pagosCliente;
+                    $total=$total+$saldo;
 
-                        $tabledailyreport.='
+                    $tabledailyreport.='
                              <tr>
                                 <td colspan="10" rowspan="1" style="text-align:right; vertical-align:middle">
                                     <p style="text-align:right"><strong>Subtotal: $'.number_format($subtotal,2).'</strong></p>
@@ -2461,18 +2285,18 @@ class QuoteDetails extends CApplicationComponent{
                             </tr>
                         ';
 
-                        $counter=0;
-                        $subtotal=0;
-                        $discount=0;
-                    }
-
-                    $adultos=$adultos+$item['adults'];
-                    $niños=$niños+$item['children'];
-                    $mascotas=$mascotas+$item['pets'];
-
+                    $counter=0;
+                    $subtotal=0;
+                    $discount=0;
                 }
 
-                $tabledailyreport.='
+                $adultos=$adultos+$item['adults'];
+                $niños=$niños+$item['children'];
+                $mascotas=$mascotas+$item['pets'];
+
+            }
+
+            $tabledailyreport.='
                         <tr style="background:#EEEEEE;">
                             <td valign="middle" colspan="5" rowspan="1" style="text-align: center;vertical-align:middle;"><strong>TOTALES:</strong></td>
                             <td>
@@ -2483,9 +2307,9 @@ class QuoteDetails extends CApplicationComponent{
                             <td style="text-align: center;vertical-align:middle;">$'.number_format($total,2).'</td>
                         </tr>
                         ';
-            }else{
+        }else{
 
-                $tabledailyreport.='
+            $tabledailyreport.='
                     <p style="text-align: center;">
                         <span style="font-family:calibri;">
                             <span style="color:#99CC00;">
@@ -2493,13 +2317,14 @@ class QuoteDetails extends CApplicationComponent{
                             </span>
                         </span>
                     </p>';
-            }
+        }
 
-            $tabledailyreport.='</tbody></table>';
+        $tabledailyreport.='</tbody></table>';
 
-            return $tabledailyreport;
+        return $tabledailyreport;
 
     }
+
 
     public function dailyReport($date=null){
 
@@ -2567,7 +2392,7 @@ class QuoteDetails extends CApplicationComponent{
             $tot_noch_ta=$item->nigth_ta*$item->price_ta;
             $tot_noch_tb=$item->nigth_tb*$item->price_tb;
 
-            $aux=$tot_noch_ta+$tot_noch_tb+$pricepets+$item->price_early_checkin+$item->price_late_checkout;
+            $aux=$tot_noch_ta+$tot_noch_tb+($pricepets*$item->nights)+$item->price_early_checkin+$item->price_late_checkout;
             $totalx+=$aux;
 
             if($grupoant != $grupo){
@@ -2745,6 +2570,7 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
     public function reservationTable($fullName=null){
         $tabledailyreport='';
         $counter=0;
@@ -2834,7 +2660,6 @@ class QuoteDetails extends CApplicationComponent{
             );
 
             $grupoant=$grupo;
-
             $grupo=$item['first_name'];
 
             $in= date("Y-m-d H:i",strtotime($item['checkin']));
@@ -2848,14 +2673,7 @@ class QuoteDetails extends CApplicationComponent{
 
                 $view=Yii::app()->createUrl('reservation/view',array('id'=>$item['customerReservationID']));
                 $payment=Yii::app()->createUrl('/payments/index',array('id'=>$item['customerReservationID']));
-                //$cancel=Yii::app()->createUrl('/reservation/cancel',array('customerId'=>$item['customerReservationID']));
-
-                $cancel=CHtml::link('<i class="icon-remove icon-2x"></i>', array('/reservation/cancel','customerId'=>$item['customerReservationID']), array(
-                    'rel'=>'tooltip',
-                    'title'=>'Delete',
-                    'confirm' => Yii::t('mx','Are you sure?'),
-                    //'csrf'=>false,
-                ));
+                $cancel=Yii::app()->createUrl('/reservation/cancel',array('customerId'=>$item['customerReservationID']));
 
                 $reservationTable.='<tr>
                 <td colspan="17" align="center" bgcolor="#EEEEEE"><strong>'.$item['first_name'].' '.$item['last_name'].' - '.$item['state'].'</strong>
@@ -2868,7 +2686,10 @@ class QuoteDetails extends CApplicationComponent{
                         <a style="margin-right:10px;" class="view" title="'.Yii::t('mx','Register Deposit').'" rel="tooltip" href="'.$payment.'">
                             <i class="icon-money icon-2x"></i>
                         </a>
-                        '.$cancel.'
+
+                        <a style="margin-right:10px;" class="view" title="'.Yii::t('mx','Cancel').'" rel="tooltip" href="'.$cancel.'">
+                            <i class="icon-remove icon-2x"></i>
+                        </a>
 
                     </div>
                 </td>
@@ -3026,7 +2847,6 @@ class QuoteDetails extends CApplicationComponent{
             <table class="items table table-condensed table-bordered table-striped">
                 <thead>
                     <tr>
-
                         <th>'.Yii::t('mx','Cheq').'</th>
                          <th>'.Yii::t('mx','Date').'</th>
                         <th>'.Yii::t('mx','Rid To').'</th>
@@ -3074,6 +2894,7 @@ class QuoteDetails extends CApplicationComponent{
         $mpdf->Output('reporte.pdf','D');  //EYiiPdf::OUTPUT_TO_DOWNLOAD
 
     }
+
 
     public function EmailFormats($customerReservationId,$format,$response=null,$bankId=null){
 
@@ -3312,7 +3133,8 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-    public function getBankInformation($bankId){
+
+   public function getBankInformation($bankId){
 
        $bank=BankAccounts::model()->findByPk($bankId);
 
@@ -3508,6 +3330,7 @@ class QuoteDetails extends CApplicationComponent{
         return $lista;
     }
 
+
     public function changePriority($taskId){
 
         $task=Tasks::model()->findByPk($taskId);
@@ -3520,6 +3343,7 @@ class QuoteDetails extends CApplicationComponent{
         $task->save();
 
     }
+
 
     public function cronjob(){
 
@@ -3595,6 +3419,8 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
+
+
     private function reSchedule($name, DateTime $time, $url, $command, $frequency) {
 
 
@@ -3642,6 +3468,7 @@ class QuoteDetails extends CApplicationComponent{
 
        return $dia;
     }
+
 
     public function getdiasReales($diadelasemana,$diasparapagar,$hora,$disponibilidad){
 
@@ -3720,6 +3547,7 @@ class QuoteDetails extends CApplicationComponent{
         $factor = pow(10, $decimals);
         return (round($number*$factor)/$factor);
     }
+
 
     function numtoletras($xcifra)
     {
@@ -3865,6 +3693,7 @@ class QuoteDetails extends CApplicationComponent{
         } // ENDFOR ($xz)
         return trim($xcadena);
     }
+
 
     function numtoletras2($xcifra)
     {

@@ -15,6 +15,8 @@ class Sendmail extends CrugeMailer {
         );
     }
 
+
+
     public function sendEmail($to,$subject,$body){
         parent::sendEmail($to,$subject,$body);
     }

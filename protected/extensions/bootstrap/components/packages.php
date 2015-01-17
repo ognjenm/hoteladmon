@@ -40,19 +40,19 @@ return array(
 		'baseUrl' => $this->getAssetsUrl(),
 		'css' => array('css/bootstrap-yii.css'),
 	),
-    'jquery-css' => array(
-        'baseUrl' => $this->getAssetsUrl(),
-        'css' => array('css/jquery-ui-bootstrap.css'),
-    ),
-    'bootbox' => array(
-        'baseUrl' => $this->getAssetsUrl(),
-        'js' => array('js/bootstrap.bootbox.min.js'),
-    ),
-    'notify' => array(
-        'baseUrl' => $this->getAssetsUrl(),
-        'css' => array('css/bootstrap-notify.css'),
-        'js' => array('js/bootstrap.notify.js')
-    ),
+	'jquery-css' => array(
+		'baseUrl' => $this->getAssetsUrl(),
+		'css' => array('css/jquery-ui-bootstrap.css'),
+	),
+	'bootbox' => array(
+		'baseUrl' => $this->getAssetsUrl(),
+		'js' => array('js/bootstrap.bootbox.min.js'),
+	),
+	'notify' => array(
+		'baseUrl' => $this->getAssetsUrl(),
+		'css' => array('css/bootstrap-notify.css'),
+		'js' => array('js/bootstrap.notify.js')
+	),
 	//widgets start
 	'datepicker' => array(
 		'baseUrl' => $this->enableCdn ? '//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.0.2/' : $this->getAssetsUrl(),

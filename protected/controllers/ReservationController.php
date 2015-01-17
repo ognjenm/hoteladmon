@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 require_once(Yii::getPathOfAlias('ext')."/dhtmlx/connector/scheduler_connector.php");
 require_once(Yii::getPathOfAlias('ext')."/dhtmlx/connector/grid_connector.php");
@@ -20,6 +20,11 @@ class ReservationController extends Controller
     {
         return array(
 
+            /*array('allow',  // allow all users to perform 'index' and 'view' actions
+                'actions'=>array('roomsJson'),
+                'users'=>array('*'),
+            ),*/
+
             array('allow',
                 'actions'=>array('BudgetWithDiscount','delete','create','update',
                                  'index','view','exportPdf','dayPassBudget','sendByEmail',
@@ -32,7 +37,8 @@ class ReservationController extends Controller
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
                                  'schedulerOverview_update','campedReport','getCampedReport',
-                                 'cancel','disponibilidad','monthlyReport'
+                                 'roomsJson','cancel','disponibilidad','monthlyReport'
+
                 ),
                 'users'=>array('@'),
             ),
@@ -54,14 +60,7 @@ class ReservationController extends Controller
             )
         );
 
-        $table=Yii::app()->quoteUtil->reportHeader(Yii::app()->quoteUtil->toSpanishDateDescription(date('Y-M-d'))).'
-            <p style="text-align:right">
-                <span style="font-size:14px">
-                    <strong><span style="font-family:arial,helvetica,sans-serif">REPORTE DE DISPONIBILIDAD</span></strong>
-                </span>
-            </p>';
-
-        $table.='<table class="table" style="width:100%">';
+        $table='<table class="table" style="width:100%">';
 
         $cvPre='<tr><td>CV Pre-Reservada</td>';
         $cvRe='<tr><td>CV Reservada</td>';
@@ -167,6 +166,7 @@ class ReservationController extends Controller
 
     }
 
+
     public function actionDisponibilidad(){
 
         $tabla="";
@@ -197,6 +197,31 @@ class ReservationController extends Controller
 
         $this->redirect(array('index'));
 
+    }
+
+    public function actionRoomsJson(){
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            $roomType=$_POST['roomType'];
+            $checkin=$_POST['checkin'];
+            $checkout=$_POST['checkout'];
+            $serviceType=$_POST['serviceType'];
+            $array=array();
+
+            $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($serviceType,$checkin,$checkout);
+            $options=Rooms::model()->getRoomsavailable($roomUnavailable,$roomType);
+
+            if($options){
+                foreach ($options as $key => $value) {
+                    $array[]=array('key'=>$key,'value'=>$value);
+                }
+            }
+
+            echo CJSON::encode($array);
+            Yii::app()->end();
+
+        }
     }
 
     public function actionFilter(){
@@ -362,31 +387,76 @@ class ReservationController extends Controller
         $status=null;
         $concepts=array();
         $concept="nada";
+		
+		$arrayocupados=array();
+		$texto="";
+		$tipodecabaña="";
+		$disponibles=array();
 
         if($requestFormat==2) $status=5;
         if($requestFormat==1) $status=3;
+		
+		$reservations=Reservation::model()->findAll(array(
+			'condition'=>'customer_reservation_id=:customerReservationId',
+			'params'=>array('customerReservationId'=>$id)
+		));
+		
+		
+		foreach($reservations as $index=>$value){
+			
+			$arrayocupados[$index]=Reservation::model()->findAll(array(
+				'condition'=>'(room_id=:roomId AND checkin BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+							  (room_id=:roomId AND checkout BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
+							  (room_id=:roomId AND checkin <= :checkin and checkout >= :checkout AND (statux=5 or statux=8 or statux=9 or statux=10))',
+				'params'=>array('roomId'=>$value->room_id,':checkin'=>$value->checkin,':checkout'=>$value->checkout)
+			));
+						
+			
+			if(isset($arrayocupados[$index])){
+				$tipodecabaña=($value->room_type_id==1) ? "CV-" :"CA-";
+				$texto.="Ya existe una reservación para la cabaña ".$tipodecabaña.$value->room_id.", para estas fechas<br>";
+				
+				$aux=Yii::app()->quoteUtil->checkAvailability($value->service_type,$value->checkin,$value->checkout);
+				$aux2=Rooms::model()->getRoomsavailable($aux,$value->room_type_id);
+				
+				foreach($aux2 as $i=>$v){
+					array_push($disponibles,$v);
+				}
+				
+			}	
+			
+		}
 
-        $criteria=array(
-            'condition'=>'customer_reservation_id=:customerReservationId',
-            'params'=>array('customerReservationId'=>$id)
-        );
+				
+			if($arrayocupados){
+				$cabañas=implode(",",array_unique($disponibles));
+				$texto.="Por favor, seleccione una de las siguientes cabañas disponibles: ".$cabañas;
+				Yii::app()->user->setFlash('warning',$texto);
+			}
+		
 
-        $from=Poll::model()->find($criteria);
-        $customerReservation=CustomerReservations::model()->findByPk($id);
-        $customer=Customers::model()->findByPk($customerReservation->customer_id);
+			$criteria=array(
+				'condition'=>'customer_reservation_id=:customerReservationId',
+				'params'=>array('customerReservationId'=>$id)
+			);
+
+			$from=Poll::model()->find($criteria);
+			$customerReservation=CustomerReservations::model()->findByPk($id);
+			$customer=Customers::model()->findByPk($customerReservation->customer_id);
 
 
-       $format=Yii::app()->quoteUtil->EmailFormats($id,$requestFormat,$response,$bankId);
+			$format=Yii::app()->quoteUtil->EmailFormats($id,$requestFormat,$response,$bankId);
 
-        $this->render('accountNumber',array(
-            'format'=>$format,
-            'customerReservationId'=>$id,
-            'from'=>($from!=null) ? $from->used_email : Yii::app()->params['adminEmail'],
-            'email'=>$customer->email,
-            'cc'=>$customer->alternative_email,
-            'status'=>$status,
-            'requestFormat'=>$requestFormat
-        ));
+			$this->render('accountNumber',array(
+				'format'=>$format,
+				'customerReservationId'=>$id,
+				'from'=>($from!=null) ? $from->used_email : Yii::app()->params['adminEmail'],
+				'email'=>$customer->email,
+				'cc'=>$customer->alternative_email,
+				'status'=>$status,
+				'requestFormat'=>$requestFormat
+			));
+			
     }
 
     public function actionBudget($id){
@@ -507,7 +577,6 @@ class ReservationController extends Controller
                $budget_table=Yii::app()->quoteUtil->getTableCotizacion($models);
                $amountReservations=Yii::app()->quoteUtil->getTotalPrice($models,true);
            }
-
            if($customerReservation->see_discount==false){
                $budget_table=Yii::app()->quoteUtil->getCotizacionNoDiscount($models);
                $amountReservations=Yii::app()->quoteUtil->getTotalPrice($models,false);
@@ -963,7 +1032,8 @@ class ReservationController extends Controller
             Yii::app()->getSession()->add('modelExport',$models);
             Yii::app()->getSession()->add('seeDiscount',true);
 
-            echo Yii::app()->quoteUtil->tableCotization($models);
+            echo Yii::app()->quoteUtil->getTableCotizacion($models);
+
 
 
         }
@@ -1180,31 +1250,6 @@ class ReservationController extends Controller
 
     }
 
-    public function actionRoomsJson(){
-
-        if(Yii::app()->request->isAjaxRequest){
-
-            $roomType=$_POST['roomType'];
-            $checkin=$_POST['checkin'];
-            $checkout=$_POST['checkout'];
-            $serviceType=$_POST['serviceType'];
-            $array=array();
-
-            $roomUnavailable=Yii::app()->quoteUtil->checkAvailability($serviceType,$checkin,$checkout);
-            $options=Rooms::model()->getRoomsavailable($roomUnavailable,$roomType);
-
-            if($options){
-                foreach ($options as $key => $value) {
-                    $array[]=array('key'=>$key,'value'=>$value);
-                }
-            }
-
-            echo CJSON::encode($array);
-            Yii::app()->end();
-
-        }
-    }
-
     public function actionGetRooms(){
 
         //$model = new FBReservation;
@@ -1233,6 +1278,8 @@ class ReservationController extends Controller
                 Yii::app()->end();
         }
     }
+
+
 
     public function actionView($id){
 
@@ -1444,6 +1491,8 @@ class ReservationController extends Controller
         ));
 
 
+
+
         $this->render('view',array(
             'model'=>$models,
             'customerReservation'=>$customerReservation,
@@ -1463,6 +1512,7 @@ class ReservationController extends Controller
         ));
 
     }
+
 
     public function actionCreate()
     {
@@ -1582,9 +1632,12 @@ class ReservationController extends Controller
         ));
     }
 
+
+
     public function actionSaveReservation(){
 
         $res=array('ok'=>false);
+        $totalPrice=0;
         $customerSave=false;
         $reservationSave=false;
         $customer=new Customers;
@@ -1594,27 +1647,17 @@ class ReservationController extends Controller
 
         if(Yii::app()->request->isAjaxRequest){
 
+
             if(isset($_POST['Customers'])){
 
                 if($_POST['Customers']['id'] ==""){
                     $customer->attributes=$_POST['Customers'];
-
                     if($customer->save()==true){
 
                         $customerId = $customer->getPrimaryKey();
                         $customerReservation->see_discount=(int)Yii::app()->getSession()->get('seeDiscount');
                         $customerReservation->customer_id=(int)$customerId;
-
-                        $customerReservation->subtotal=Yii::app()->quoteUtil->getTotalPrice($reservations);
-
-                        if($customerReservation->see_discount==true){
-                            $customerReservation->discount_cabana=Yii::app()->quoteUtil->getDiscountCabanas($reservations);
-                            $customerReservation->discount_camped=Yii::app()->quoteUtil->getDiscountCamped($reservations);
-                            $customerReservation->discount_daypass=Yii::app()->quoteUtil->getDiscountDaypass($reservations);
-                        }
-
-                        $discount=$customerReservation->discount_cabana+$customerReservation->discount_camped+$customerReservation->discount_daypass;
-                        $customerReservation->total=$customerReservation->subtotal-$discount;
+                        $customerReservation->total=Yii::app()->quoteUtil->getTotalPrice($reservations,$customerReservation->see_discount);
 
                         if($customerReservation->save()==true){
                             $customerReservationId = $customerReservation->getPrimaryKey();
@@ -1631,17 +1674,7 @@ class ReservationController extends Controller
                     $customerId = $_POST['Customers']['id'];
                     $customerReservation->see_discount=(int)Yii::app()->getSession()->get('seeDiscount');
                     $customerReservation->customer_id=(int)$customerId;
-                    $customerReservation->subtotal=Yii::app()->quoteUtil->getTotalPrice($reservations);
-
-                    if($customerReservation->see_discount==true){
-                        $customerReservation->discount_cabana=Yii::app()->quoteUtil->getDiscountCabanas($reservations);
-                        $customerReservation->discount_camped=Yii::app()->quoteUtil->getDiscountCamped($reservations);
-                        $customerReservation->discount_daypass=Yii::app()->quoteUtil->getDiscountDaypass($reservations);
-                    }
-
-                    $discount=$customerReservation->discount_cabana+$customerReservation->discount_camped+$customerReservation->discount_daypass;
-                    $customerReservation->total=$customerReservation->subtotal-$discount;
-
+                    $customerReservation->total=Yii::app()->quoteUtil->getTotalPrice($reservations,$customerReservation->see_discount);
 
                     if($customerReservation->save()==true){
                         $customerReservationId = $customerReservation->getPrimaryKey();
@@ -1680,6 +1713,8 @@ class ReservationController extends Controller
         }
 
     }
+
+
 
     public function actionUpdate()
     {
@@ -1765,6 +1800,7 @@ class ReservationController extends Controller
 
     }
 
+
     public function actionDelete($id)
     {
         if(Yii::app()->request->isPostRequest)
@@ -1779,6 +1815,7 @@ class ReservationController extends Controller
         else
             throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
     }
+
 
     public function actionIndex(){
         Yii::import('bootstrap.widgets.TbForm');
@@ -1825,6 +1862,7 @@ class ReservationController extends Controller
         }
     }
 
+
     protected function performAjaxValidation($model){
         if (Yii::app()->getRequest()->getIsAjaxRequest()) {
 
@@ -1835,6 +1873,7 @@ class ReservationController extends Controller
             Yii::app()->end();
         }
     }
+
 
     public function actionChangeStatus(){
 

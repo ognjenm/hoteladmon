@@ -183,10 +183,9 @@ class CreditOperations extends CActiveRecord
     }
 
     public function afterFind() {
+        //        $this->datex=Yii::app()->quoteUtil->toSpanishDate($this->datex);
 
-        //$this->datex=Yii::app()->quoteUtil->toSpanishDate($this->datex);
-        $date= Yii::app()->quoteUtil->toSpanishDateFromDb(date("Y-M-d",strtotime($this->datex)));
-        //$date= date("d-M-Y",strtotime($this->datex));
+        $date= date("d-M-Y",strtotime($this->datex));
         $this->datex=$date;
 
         return  parent::afterFind();

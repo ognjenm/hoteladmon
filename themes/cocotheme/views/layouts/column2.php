@@ -16,9 +16,7 @@
                 <?php endif?>
 
                 <div class="box-title">
-                    <h3><i class="<?php echo $this->pageIcon; ?> icon-2x"></i>
-                        <?php echo $this->pageSubTitle; ?></h3>
-
+                    <h3><i class="<?php echo $this->pageIcon; ?> icon-2x"></i> <?php echo $this->pageSubTitle; ?></h3>
                 </div>
 
                 <div id="sidebar">

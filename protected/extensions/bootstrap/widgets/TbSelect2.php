@@ -103,8 +103,6 @@ class TbSelect2 extends CInputWidget
 
 		$defValue = !empty($this->val) ? ".select2('val', $this->val)" : '';
 
-
-
 		ob_start();
 		echo "jQuery('#{$id}').select2({$options})$defValue";
 		foreach ($this->events as $event => $handler) {

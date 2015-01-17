@@ -2,9 +2,15 @@
 
 class ProvidersController extends Controller
 {
-
+	/**
+	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
+	 * using two-column layout. See 'protected/views/layouts/column2.php'.
+	 */
 	public $layout='//layouts/column2';
 
+	/**
+	 * @return array action filters
+	 */
     public function filters()
     {
         return array(
@@ -12,12 +18,17 @@ class ProvidersController extends Controller
         );
     }
 
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
 	public function accessRules()
 	{
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view','delete','export','exportAll','import','getProvider','getFullName','getSuffix','getProviderDescription'),
+				'actions'=>array('create','update','index','view','delete','export','exportAll','import','getProvider','getFullName','getSuffix','lista'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -26,37 +37,8 @@ class ProvidersController extends Controller
 		);
 	}
 
-    public function actionGetProviderDescription(){
+    public function actionLista(){
 
-        $options=CHtml::tag('option', array('value'=>''),Yii::t('mx','Select'),true);
-
-        if(Yii::app()->request->isAjaxRequest){
-
-            if (isset($_POST['article_id'])) {
-
-                $articleId=(int)$_POST['article_id'];
-                $provider_id=Articles::model()->findByPk($articleId);
-
-                $provider=Providers::model()->findByPk($provider_id->provider_id);
-
-                if($provider){
-                    $empresa="";
-                    $empresa.=$provider->company != "" ? $provider->company." - " : "";
-                    $empresa.=$provider->first_name != "" ? $provider->first_name." " : "";
-                    $empresa.=$provider->middle_name != "" ? $provider->middle_name." " : "";
-                    $empresa.=$provider->last_name != "" ? $provider->last_name." - " : "";
-                    $empresa.=$provider->suffix != "" ? $provider->suffix : "";
-
-                    $options=CHtml::tag('option', array('value'=>$provider->id),CHtml::encode($empresa),true);
-
-                }
-
-
-            }
-
-            echo $options;
-            Yii::app()->end();
-        }
     }
 
     public function actionGetSuffix() {
@@ -151,6 +133,10 @@ class ProvidersController extends Controller
 
     }
 
+	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
 	public function actionView($id)
 	{
         $model=$this->loadModel($id);
@@ -168,6 +154,10 @@ class ProvidersController extends Controller
 		));
 	}
 
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
 	public function actionCreate()
 	{
         Yii::import('bootstrap.widgets.TbForm');
@@ -205,6 +195,11 @@ class ProvidersController extends Controller
 		));
 	}
 
+	/**
+	 * Updates a particular model.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
 	public function actionUpdate($id)
 	{
         Yii::import('bootstrap.widgets.TbForm');
@@ -243,6 +238,11 @@ class ProvidersController extends Controller
 		));
 	}
 
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
@@ -258,6 +258,9 @@ class ProvidersController extends Controller
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
+	/**
+	 * Lists all models.
+	 */
 	public function actionIndex()
 	{
         Yii::import('bootstrap.widgets.TbForm');
@@ -281,6 +284,15 @@ class ProvidersController extends Controller
 
 	}
 
+	/**
+	 * Manages all models.
+	 */
+
+	/**
+	 * Returns the data model based on the primary key given in the GET variable.
+	 * If the data model is not found, an HTTP exception will be raised.
+	 * @param integer the ID of the model to be loaded
+	 */
 	public function loadModel($id)
 	{
 		$model=Providers::model()->findByPk($id);
@@ -289,6 +301,10 @@ class ProvidersController extends Controller
 		return $model;
 	}
 
+	/**
+	 * Performs the AJAX validation.
+	 * @param CModel the model to be validated
+	 */
 	protected function performAjaxValidation($model)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='providers-form')

@@ -171,7 +171,6 @@ class TbTags extends CInputWidget
 	 *
 	 * @param string $id
 	 */
-
 	public function registerClientScript($id)
 	{
 		Yii::app()->bootstrap->registerAssetCss('bootstrap-tags.css');

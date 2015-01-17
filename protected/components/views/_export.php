@@ -1,1 +1,1 @@
-<?php echo $table; ?>
+<?php echo $model->content; ?>

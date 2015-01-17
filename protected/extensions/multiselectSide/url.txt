@@ -1,2 +1,0 @@
-http://loudev.com/
-http://www.jqueryscript.net/form/jQuery-Plugin-For-Side-By-Side-Multi-Items-Pick-List.html

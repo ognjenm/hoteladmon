@@ -1,21 +1,96 @@
 <?php
 
-
+/**
+ * JQRelcopy.php
+ *
+ * A wrapper for the jquery plugin 'relCopy'
+ *
+ * @link http://www.andresvidal.com/labs/relcopy.html
+ *
+ * @author Joe Blocher <yii@myticket.at>
+ * @copyright 2011 myticket it-solutions gmbh
+ * @license New BSD License
+ * @category User Interface
+ * @version 1.1
+ */
 class JQRelcopy extends CWidget
 {
-
+	/**
+	 * The text for the remove link
+	 * Can be an image tag too.
+	 * Leave empty to disable removing.
+	 *
+	 * @var string $removeText
+	 */
 	public $removeText;
+
+	/**
+	 * The htmlOptions for the remove link
+	 *
+	 * @var array $removeHtmlOptions
+	 */
 	public $removeHtmlOptions = array();
+
+	/**
+	 * Available options
+	 *
+	 * string excludeSelector - A jQuery selector used to exclude an element and its children
+	 * integer limit - The number of allowed copies. Default: 0 is unlimited
+	 * string append - Additional HTML to attach at the end of each copy.
+	 * string copyClass - A class to attach to each copy
+	 * boolean clearInputs - Option to clear each copies text input fields or textarea
+	 *
+	 * @var array $options
+	 */
 	public $options = array();
+
+	/**
+	 * The javascript code jsBeforeClone,jsAfterClone ...
+	 * This allows to handle widgets on cloning.
+	 * Important: 'this' is the current handled jQuery object
+	 * For CJuiDatePicker and extension 'datetimepicker' see prepared js-code below: afterNewIdDatePicker,afterNewIdDateTimePicker
+	 *
+	 * Howto if you have a CJuiDatePicker to clone:
+	 * Save the config in an extra variable in the view
+	 *
+	 * $datePickerConfig =  array('name'=>'dayofbirth',
+	 *     'language'=>'de',
+	 *     'options'=>array(
+	 *        'showAnim'=>'fold',
+	 *     ));
+	 *
+	 * $this->widget('zii.widgets.jui.CJuiDatePicker',$datePickerConfig);
+	 *
+	 * //Assign the prepared javascript code to jsAfterNewId
+	 * $this->widget('ext.jqrelcopy.JQRelcopy',
+	 * array(
+	 *    'jsAfterNewId' => JQRelcopy::afterNewIdDateTimePicker($datepickerConfig),
+	 *  ...
+	 *
+	 */
 	public $jsBeforeClone; // 'jsBeforeClone' => "alert(this.attr('class'));";
 	public $jsAfterClone;  // 'jsAfterClone' => "alert(this.attr('class'));";
 	public $jsBeforeNewId;  // 'jsBeforeNewId' => "alert(this.attr('id'));";
 	public $jsAfterNewId;  // 'jsAfterNewId' => "alert(this.attr('id'));";
 
 
+	/**
+	 * The assets url
+	 *
+	 * @var string $_assets
+	 */
 	private $_assets;
 
-
+	/**
+	 * Support for CJuiDatePicker
+	 * Set 'jsAfterNewId'=MultiModelForm::afterNewIdDateTimePicker($myFormConfig['elements']['mydate'])
+	 * if you use at least one datepicker.
+	 *
+	 * The options will be assigned from the config array of the element
+	 *
+	 * @param array $element
+	 * @return string
+	 */
 	public static function afterNewIdDatePicker($config)
 	{
 		$options = isset($config['options']) ? $config['options'] : array();
@@ -28,7 +103,13 @@ class JQRelcopy extends CWidget
 		return "if(this.hasClass('hasDatepicker')) {this.removeClass('hasDatepicker'); this.datepicker(jQuery.extend({showMonthAfterYear:false}, $language {$jsOptions}));};";
 	}
 
-
+	/**
+	 * Support for extension datetimepicker
+	 * @link http://www.yiiframework.com/extension/datetimepicker/
+	 *
+	 * @param array $element
+	 * @return string
+	 */
 	public static function afterNewIdDateTimePicker($config)
 	{
 		$options = isset($config['options']) ? $config['options'] : array();
@@ -58,6 +139,7 @@ class JQRelcopy extends CWidget
 				this.remove();
 				mmfAutoCompleteClone.autocomplete({$jsOptions});
 				mmfAutoCompleteParent.prepend(mmfAutoCompleteClone);
+
 			}";
 	}
 
@@ -66,6 +148,11 @@ class JQRelcopy extends CWidget
         $this->_assets=Yii::app()->getClientScript();
         $this->_assets->registerCoreScript('jquery');
         $this->_assets->registerScriptFile(Yii::app()->getAssetManager()->publish(dirname(__FILE__).DIRECTORY_SEPARATOR.'assets'.'/js/jquery.relcopy.yii.3.3.js'));
+
+
+		//$this->_assets = Yii::app()->assetManager->publish(dirname(__FILE__).DIRECTORY_SEPARATOR.'assets');
+
+		//Yii::app()->clientScript->registerCoreScript('jquery')->registerScriptFile($this->_assets.'/js/jquery.relcopy.yii.3.3.js');
 
 		if (!empty($this->removeText))
 		{

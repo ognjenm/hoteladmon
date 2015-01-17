@@ -1,54 +1,205 @@
-<section id="navigation-main">  
-<div class="navbar">
-	<div class="navbar-inner">
-    <div class="container">
-        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-  
-          <div class="nav-collapse">
-			<?php $this->widget('zii.widgets.CMenu',array(
-                    'htmlOptions'=>array('class'=>'nav'),
-                    'submenuHtmlOptions'=>array('class'=>'dropdown-menu'),
-					'itemCssClass'=>'item-test',
-                    'encodeLabel'=>false,
-                    'items'=>array(
-						array('label'=>'Home <span class="caret"></span>', 'url'=>array('/site/index'),'itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown","data-description"=>"our home page"), 
-                        'items'=>array(
-                            array('label'=>'Home 1 - Nivoslider', 'url'=>array('/site/index')),
-							array('label'=>'Home 2 - Bootstrap carousal', 'url'=>array('/site/page', 'view'=>'home2')),
-							array('label'=>'Home 3 - Piecemaker2', 'url'=>array('/site/page', 'view'=>'home3')),
-							array('label'=>'Home 4 - Static image', 'url'=>array('/site/page', 'view'=>'home4')),
-							array('label'=>'Home 5 - Video header', 'url'=>array('/site/page', 'view'=>'home5')),
-							array('label'=>'Home 6 - Without slider', 'url'=>array('/site/page', 'view'=>'home6')),
-                        )),
-						array('label'=>'Styles <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown","data-description"=>"6 styles"), 
-                        'items'=>array(
-                            array('label'=>'<span class="style" style="background-color:#0088CC;"></span> Style 1', 'url'=>"javascript:chooseStyle('none', 60)"),
-							array('label'=>'<span class="style" style="background-color:#e42e5d;"></span> Style 2', 'url'=>"javascript:chooseStyle('style2', 60)"),
-							array('label'=>'<span class="style" style="background-color:#c80681;"></span> Style 3', 'url'=>"javascript:chooseStyle('style3', 60)"),
-							array('label'=>'<span class="style" style="background-color:#51a351;"></span> Style 4', 'url'=>"javascript:chooseStyle('style4', 60)"),
-							array('label'=>'<span class="style" style="background-color:#b88006;"></span> Style 5', 'url'=>"javascript:chooseStyle('style5', 60)"),
-							array('label'=>'<span class="style" style="background-color:#f9630f;"></span> Style 6', 'url'=>"javascript:chooseStyle('style6', 60)"),
-                        )),
-						
-						array('label'=>'Features <span class="caret"></span>', 'url'=>array('/site/page', 'view'=>'columns'),'itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown","data-description"=>"cool features"), 
-                        'items'=>array(
-                            array('label'=>'Columns', 'url'=>array('/site/page', 'view'=>'columns')),
-							array('label'=>'Pricing tables', 'url'=>array('/site/page', 'view'=>'pricing-tables')),
-							array('label'=>'UI Elements', 'url'=>array('/site/page', 'view'=>'elements')),
-                        )),
+<?php $this->widget('bootstrap.widgets.TbNavbar', array(
+    'type' => 'null', // null or 'inverse'
+    'brand'=>Yii::t('mx', 'Home'),
+    //'brandUrl'=>array('/site/index'),
+    'collapse'=>true, // requires bootstrap-responsive.css
+ 	'fixed' => false,
+    'items'=>array(
+        array(
+            'class'=>'bootstrap.widgets.TbMenu',
+            'items'=>array(
 
-                        array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about'),'linkOptions'=>array("data-description"=>"what we are about"),),
-                       
-                        array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest,'linkOptions'=>array("data-description"=>"member area")),
-                        array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest,'linkOptions'=>array("data-description"=>"member area")),
+               /* array(  'label' =>Yii::t('mx','Home'),
+                    'url'=>array('/site/index'),
+                    'icon'=>'icon-home',
+                    'items' => array(
+                        array('label'=>Yii::t('mx','About'), 'url'=>array('/site/page', 'view'=>'about')),
+                        array('label'=>Yii::t('mx','Contact Us'), 'url'=>array('/site/contact')),
+                    )
+                ),*/
+
+                array(  'label' =>Yii::t('mx','Reservations'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Type Room'), 'url'=>array('/roomsType')),
+                        array('label'=>Yii::t('mx','Rooms'), 'url'=>array('/rooms')),
+                        array('label'=>Yii::t('mx','Reservation Type'), 'url'=>array('/typeReservation')),
+                        array('label'=>Yii::t('mx','Seasons'), 'url'=>array('/seasons')),
+                        array('label'=>Yii::t('mx','Reservations'), 'url'=>array('/reservation')),
+                        array('label'=>Yii::t('mx','Holidays'), 'url'=>array('/holidays')),
+                        array('label'=>Yii::t('mx','Expiration day pre booking'), 'url'=>array('/expirationdayPrebooking')),
+
+                    )
+                ),
+
+                array(  'label' =>Yii::t('mx','Rates'),
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'url' => '#',
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Rates'), 'url'=>array('/rates')),
+                        array('label'=>Yii::t('mx','Sales Agents'), 'url'=>array('/salesAgents')),
+                        array('label'=>Yii::t('mx','Reservation Channel'), 'url'=>array('/reservationChannel')),
+                        //array('label'=>Yii::t('mx','Camped And Daypass'), 'url'=>array('/campedAndDaypass')),
+                    )
+                ),
+                array(  'label' =>Yii::t('mx','Discounts'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Camped'), 'url'=>array('/campedDiscount')),
+                        array('label'=>Yii::t('mx','Cabana'), 'url'=>array('/cabanaDiscount')),
+                    )
+                ),
+
+                array(  'label' =>Yii::t('mx','Formats'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Formats'), 'url'=>array('/budgetFormat')),
+                        array('label'=>Yii::t('mx','Field Formats Text'), 'url'=>array('/policies')),
+                    )
+                ),
+
+                /*array(  'label' =>Yii::t('mx','Reports'),
+                    'url' => '#',
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Daily Report'), 'url'=>array('/reports')),
+
+                    )
+                ),*/
+
+                array(  'label' =>Yii::t('mx','Bracelets'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Manage'), 'url'=>array('/assignment')),
+                        array('label'=>Yii::t('mx','Uses'), 'url'=>array('/uses')),
+                        //array('label'=>Yii::t('mx','Employees'), 'url'=>array('/employees')),
+                        array('label'=>Yii::t('mx','Types Report'), 'url'=>array('/typesReport')),
+                        array('label'=>Yii::t('mx','Bracelets'), 'url'=>array('/bracelets')),
+                    )
+                ),
+
+                array(  'label' =>Yii::t('mx','Task'),
+                    'url' => '#',
+                    //'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Manage'), 'url'=>array('/tasks'),'visible'=>Yii::app()->user->isSuperAdmin),
+                        array('label'=>Yii::t('mx','My Tasks'), 'url'=>array('/tasks/myTasks'),'visible'=>!Yii::app()->user->isSuperAdmin),
+                    )
+                ),
+
+                array(  'label' =>Yii::t('mx','Providers'),
+                    'url' => '#',
+                    //'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Providers'), 'url'=>array('/providers')),
+                        array('label'=>Yii::t('mx','Units Of Measurement'), 'url'=>array('/unitsMeasurement')),
+                        array('label'=>Yii::t('mx','Articles'), 'url'=>array('/articles')),
+                        array('label'=>Yii::t('mx','Concept of payments'), 'url'=>array('/conceptPayments')),
+                        array('label'=>Yii::t('mx','Type Check'), 'url'=>array('/typeCheck')),
+                        array('label'=>Yii::t('mx','Invoices'), 'url'=>array('/directInvoice')),
+                    )
+                ),
+
+                array('label' =>Yii::t('mx','Customers'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Customers'), 'url'=>array('/customers')),
+                    )
+                ),
+
+                array(  'label' =>Yii::t('mx','Operations'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Assign Petty Cash'), 'url'=>array('/pettyCash')),
+                        array('label'=>Yii::t('mx','Employees - Cash'), 'url'=>array('/cash')),
+                    )
+                ),
+
+                array(  'label' =>Yii::t('mx','Banks'),
+                    'url' => '#',
+                    'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Banks'), 'url'=>array('/banks')),
+                        array('label'=>Yii::t('mx','Deposits'), 'url'=>array('/operations/deposit')),
+                        array('label'=>Yii::t('mx','Payments'), 'url'=>array('/operations/payment')),
+                        array('label'=>Yii::t('mx','Transfers'), 'url'=>array('/operations/transfer')),
+                        array('label'=>Yii::t('mx','Balance'), 'url'=>array('/operations')),
+                        array('label'=>Yii::t('mx','Payment Type'), 'url'=>array('/paymentsTypes')),
+                        array('label'=>Yii::t('mx','Persons authorized checks'), 'url'=>array('/authorizingPersons')),
+                    )
+                ),
+
+                array('label' =>Yii::t('mx','Billing'),
+                    'url' => '#',
+                    //'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Currency'), 'url'=>array('/currencies')),
+                        array('label'=>Yii::t('mx','Payment Terms'), 'url'=>array('/paymentTerms')),
+                        array('label'=>Yii::t('mx','Payment Methods'), 'url'=>array('/paymentMethods')),
+                        array('label'=>Yii::t('mx','Document Types'), 'url'=>array('/documentTypes')),
+                        array('label'=>Yii::t('mx','Concepts'), 'url'=>array('/concepts')),
+
+                        //array('label'=>Yii::t('mx','Invoices'), 'url'=>array('/invoices')),
+
+                    )
+                ),
+
+                array(  'label' => Yii::t('mx','Access Control'),
+                    'url' => '#',
+                    'items' =>array(
+                        array('label'=>Yii::t('mx','Update Profile'), 'url'=>array('/cruge/ui/editprofile')),
+                        array('label'=>Yii::t('mx','Manage Users'), 'url'=>array('/cruge/ui/usermanagementadmin')),
+                        array('label'=>Yii::t('mx','Manage Employees'), 'url'=>array('/employees')),
+                        array('label'=>Yii::t('mx','Roles'), 'url'=>array('/cruge/ui/rbaclistroles')),
+                        //array('label'=>Yii::t('mx','Tasks'), 'url'=>array('/cruge/ui/rbaclisttasks')),
+                        //array('label'=>Yii::t('mx','Operations'), 'url'=>array('/cruge/ui/rbaclistops')),
+                        array('label'=>Yii::t('mx','Assign Roles to user'), 'url'=>array('/cruge/ui/rbacusersassignments')),
+                        array('label'=>Yii::t('mx','Sessions'), 'url'=>array('/cruge/ui/sessionadmin')),
+                        array('label'=>Yii::t('mx','System Variables'), 'url'=>array('/cruge/ui/systemupdate')),
                     ),
-                )); ?>
-    	</div>
-    </div>
-	</div>
-</div>
-</section><!-- /#navigation-main -->
+                    'visible'=>Yii::app()->user->isSuperAdmin
+                ),
+
+                array('label' => Yii::t('mx','Audit Trail'),
+                    'url' => array('/auditTrail/admin'),
+                    'visible'=>Yii::app()->user->isSuperAdmin
+                ),
+
+                array(  'label' =>Yii::t('mx','Contracts'),
+                    'url' => '#',
+                    //'visible'=>Yii::app()->user->isSuperAdmin,
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Contracts'), 'url'=>array('/contractInformation')),
+                    )
+                ),
+                array(  'label' =>Yii::t('mx','Notes'),
+                    'url' => '#',
+                    'items' => array(
+                        array('label'=>Yii::t('mx','Notes'), 'url'=>array('/keep')),
+                    )
+                ),
+            ),
+        ),
+
+        array(
+            'class'=>'bootstrap.widgets.TbMenu',
+            'htmlOptions'=>array('class'=>'pull-right'),
+            'items'=>array(
+                //'---',
+                array('label'=>Yii::app()->user->name, 'url'=>'#','icon'=>'user','items'=>array(
+                    array('label'=>Yii::t('mx','Profile'),'icon'=>'user','url'=>array('/cruge/ui/editprofile')),
+                    '---',
+                    array('label'=>Yii::t('mx','Logout'), 'url'=>array('/cruge/ui/login'),'icon'=>'icon-white icon-off','visible'=>!Yii::app()->user->isGuest),
+                    array('label'=>Yii::t('mx','Login'), 'url'=>array('/cruge/ui/login'), 'visible'=>Yii::app()->user->isGuest),
+                )),
+            ),
+        ),
+
+    ),
+));
+?>

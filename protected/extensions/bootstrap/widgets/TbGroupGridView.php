@@ -134,6 +134,7 @@ class TbGroupGridView extends TbGridView
 			}
 		}
 
+
 		//values for first row
 		$lastStored = $this->getRowValues($groupColumns, $data[0], 0);
 		foreach ($lastStored as $colName => $value) {
@@ -144,8 +145,7 @@ class TbGroupGridView extends TbGridView
 			);
 		}
 
-
-        //iterate data
+		//iterate data
 		for ($i = 1; $i < count($data); $i++) {
 			//save row values in array
 			$current = $this->getRowValues($groupColumns, $data[$i], $i);
@@ -198,8 +198,7 @@ class TbGroupGridView extends TbGridView
 			}
 		}
 
-
-        //storing for last row
+		//storing for last row
 		foreach ($lastStored as $colName => $v) {
 			$prevIndex = $v['index'];
 			$this->_changes[$prevIndex]['columns'][$colName] = $v;
@@ -208,8 +207,7 @@ class TbGroupGridView extends TbGridView
 				$this->_changes[$prevIndex]['count'] = $v['count'];
 			}
 		}
-
-    }
+	}
 
 	/**
 	 * Renders a table body row.

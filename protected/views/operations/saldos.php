@@ -58,7 +58,6 @@ Yii::app()->clientScript->registerScript('filterss', "
     'closeText'=>'×',
     'alerts'=>array('info'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×')),
 ));
-
 ?>
 
 <?php echo $Formfilter->render(); ?>

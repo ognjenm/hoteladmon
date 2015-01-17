@@ -2,7 +2,7 @@ body
 {
     /* Font */
     font-family: sans-serif, Arial, Verdana, "Trebuchet MS";
-    font-size: 12px;
+    font-size: 10px;
 
     /* Text color */
     color: #333;
@@ -27,7 +27,7 @@ table {
 
 .table tfoot td{
     /*line-height: 1.5em;*/
-    font-size: 12px;
+    font-size: 10px;
 }
 
 .table th,

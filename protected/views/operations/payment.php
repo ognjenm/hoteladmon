@@ -115,8 +115,8 @@ $this->pageIcon='icon-ok';
     <?php  $this->widget('bootstrap.widgets.TbButton', array(
         'buttonType'=>'submit',
         'type'=>'primary',
-        'encodeLabel'=>false,
-        'label'=>$model->isNewRecord ? '<i class="icon-plus icon-white"></i> '.Yii::t('mx','Create') : '<i class="icon-ok icon-white"></i> '.Yii::t('mx','Save'),
+        'icon'=>$model->isNewRecord ? 'icon-plus icon-white' : 'icon-ok icon-white',
+        'label'=>$model->isNewRecord ? Yii::t('mx','Create') : Yii::t('mx','Save'),
     )); ?>
 </div>
 

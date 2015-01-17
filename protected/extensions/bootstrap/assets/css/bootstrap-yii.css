@@ -20,7 +20,6 @@
     -moz-box-sizing:border-box;
     box-sizing:border-box;
 }
-
 .grid-view { padding-top:20px; }
 .grid-view table.items th a {
     display:block;
