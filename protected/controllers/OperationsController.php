@@ -29,7 +29,7 @@ class OperationsController extends Controller
                     'index','view','deposit',
                     'payment','exportBalanceToPdf',
                     'cancel','ExportPdfToAccountant',
-                    'transfer','getOperation','saldos'),
+                    'transfer','getOperation','saldos','sumaOperations','closeOperations'),
 				'users'=>array('@'),
 			),
 
@@ -38,6 +38,56 @@ class OperationsController extends Controller
 			),
 		);
 	}
+
+    public function actionCloseOperations(){
+
+        $res=array('ok'=>false);
+        $suma=0;
+
+        if(Yii::app()->request->isPostRequest){
+
+            $values=$_POST['ids'];
+            $ids=explode(',',$values);
+
+            foreach($ids as $id){
+                $model=$this->loadModel($id);
+               $model->groupByOperation=strtotime(date('Y-m-d'));
+            }
+
+            $res=array('ok'=>true,'suma'=>number_format($suma,2));
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
+
+
+    }
+
+    public function actionSumaOperations(){
+
+        $res=array('ok'=>false);
+        $suma=0;
+
+        if(Yii::app()->request->isPostRequest){
+
+            $values=$_POST['ids'];
+            $ids=explode(',',$values);
+
+            foreach($ids as $id){
+                $model=$this->loadModel($id);
+                $commission=$model->vat_commission+$model->commission_fee;
+                $commission=$model->deposit-$commission;
+                $suma=$suma+$commission;
+            }
+
+            $res=array('ok'=>true,'suma'=>number_format($suma,2));
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
+    }
 
     public function actionSaldos($accountId,$accountType){
 
@@ -732,9 +782,12 @@ class OperationsController extends Controller
                     $model->cheq='DEP';
                     $model->released=BankAccounts::model()->accountByPk($accountId);
 
+                    $model->bank_concept=$model->bank_concept." #".$model->n_operation;
+
                     if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
                     if($model->person=="")          $model->person=Yii::t('mx','PENDING');
                     if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
+
 
                     if($model->save()){
                         $account->save();

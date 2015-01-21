@@ -40,7 +40,6 @@
                 return false;
             });
 
-
             $('.select-on-check').click(function(){
 
                 var invoice=$.fn.yiiGridView.getChecked('direct-invoice-grid','chk').toString();
@@ -147,11 +146,11 @@
             <p>
                 <?php echo $fOperations->renderBegin();
 
+                    echo $fOperations['datex'];
                     echo $fOperations['typeCheq'];
                     echo $fOperations['account_id'];
                     echo $fOperations['authorized'];
                     echo $fOperations['released'];
-
                     echo '<div class="pull-right">';
 
                     $this->widget('bootstrap.widgets.TbButton', array(

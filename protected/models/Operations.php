@@ -172,6 +172,26 @@ class Operations extends CActiveRecord
                         '
                     )
                 ),
+                'closeOperations' => array(
+                    'type' => 'ajaxSubmit',
+                    'label' => Yii::t('mx','Close operations'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-remove',
+                    'url'=>Yii::app()->createUrl('/operations/closeOperations'),
+                    'ajaxOptions' => array(
+                        'data'=>array("ids"=>"js:$.fn.yiiGridView.getChecked('operations-grid','chk').toString()"),
+                        'beforeSend' => 'function() {
+                            $("#maindiv").addClass("loading");
+                         }',
+                        'complete' => 'function() {
+                             $("#maindiv").removeClass("loading");
+                        }',
+                        'success' =>'function(data){
+                                $("#detailsGrid").html(data);
+                                $("#actions").show();
+                        }',
+                    ),
+                ),
             )
         );
     }
@@ -463,6 +483,11 @@ class Operations extends CActiveRecord
                 ),
                 'abonoencuenta'=>array(
                     'type'=>'checkbox',
+                ),
+                "datex"=>array(
+                    'type' => 'date',
+                    'prepend'=>'<i class="icon-calendar"></i>',
+                    'options'=>array('format'=>'dd-M-yyyy','autoclose'=>true),
                 ),
             ),
             'buttons' => array(

@@ -49,6 +49,7 @@
             'columns'=>array(
                 array(
                     'class'=>'CCheckBoxColumn',
+                    'id'=>'chk'
                 ),
                 array(
                     'name'=>'datex',

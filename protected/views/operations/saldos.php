@@ -15,6 +15,8 @@ $this->menu=array(
     array('label'=>Yii::t('mx','export Sheet To The Accountant'),'icon'=>'icon-file','url'=>array('/operations/exportPdfToAccountant')),
 );
 
+$url=$this->createUrl('sumaOperations');
+
 
 Yii::app()->clientScript->registerScript('filterss', "
 
@@ -30,7 +32,26 @@ Yii::app()->clientScript->registerScript('filterss', "
 
         });
 
-    ");
+        $('.select-on-check').click(function(){
+
+                var invoice=$.fn.yiiGridView.getChecked('operations-grid','chk').toString();
+
+                if(invoice!=''){
+                    $.ajax({
+                        url:'$url',
+                        data: { ids: invoice },
+                        type: 'POST',
+                        dataType: 'json',
+                        beforeSend: function() { $('#mainDiv').addClass('loading'); }
+                    })
+
+                    .done(function(data) {  $('#suma').html('$'+data.suma); })
+                    .fail(function() { bootbox.alert('Error');  })
+                    .always(function() { $('#mainDiv').removeClass('loading'); });
+                }
+
+            });
+    ",CClientScript::POS_END);
 
 ?>
 
@@ -62,14 +83,15 @@ Yii::app()->clientScript->registerScript('filterss', "
 
 <?php echo $Formfilter->render(); ?>
 
-<?php $this->renderPartial('_grid', array(
-    'dataProvider'=>$dataProvider,
-    'accountId'=>$accountId
-));
-?>
+<div id="suma" class="pull-right well">$0.00</div>
 
-
-
+<div id="mainDiv">
+    <?php $this->renderPartial('_grid', array(
+        'dataProvider'=>$dataProvider,
+        'accountId'=>$accountId
+    ));
+    ?>
+</div>
 
 <!-- Formulario para mostrar detalles !-->
 

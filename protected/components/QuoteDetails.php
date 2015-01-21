@@ -4008,6 +4008,8 @@ class QuoteDetails extends CApplicationComponent{
                 $counter++;
 
             }
+
+
             $table.='<tfoot>
                     <tr>
                     <td>
@@ -4255,7 +4257,7 @@ class QuoteDetails extends CApplicationComponent{
 
         $operation=new Operations;
         $operation->payment_type=$paymentType;
-        $operation->account_id=$accounId;;
+        $operation->account_id=$accounId;
         $operation->cheq=$paymentMethod;
         $operation->datex=$date;
         $operation->released=$released;

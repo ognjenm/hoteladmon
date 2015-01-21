@@ -116,12 +116,11 @@ class DirectInvoiceController extends Controller
             $conceptId=(int)$_POST['Operations']['concept'];
             $paymentMethod=(int)$_POST['Operations']['typeCheq'];
             $forBeneficiaryAccount=$_POST['Operations']['abonoencuenta'];
-
+            $date=$_POST['Operations']['datex'];
 
             $account=BankAccounts::model()->findByPk($accounId);
             $balance=$account->initial_balance-$totalPoliza;
             $account->initial_balance=$balance;
-            $account->consecutive=$account->consecutive+1;
 
             $released=Providers::model()->findByPk($providerId);
             $released=$released->company;
@@ -131,24 +130,27 @@ class DirectInvoiceController extends Controller
 
             switch($paymentMethod){
                 case 1 : //CHEQUE DE CAJA
-                    $operationId=Yii::app()->quoteUtil->registerAccountCheques(6,$accounId,$account->consecutive,date('d-M-Y'),$released,$concept,'-','',$totalPoliza,0,$balance);
+                    $operationId=Yii::app()->quoteUtil->registerAccountCheques(6,$accounId,$account->consecutive,$date,$released,$concept,'-','',$totalPoliza,0,$balance);
                     break;
 
                 case 2: //CHEQUE NOMINATIVO
-                    $operationId=Yii::app()->quoteUtil->registerAccountCheques(6,$accounId,$account->consecutive,date('d-M-Y'),$released,$concept,'-','',$totalPoliza,0,$balance);
+                    $operationId=Yii::app()->quoteUtil->registerAccountCheques(6,$accounId,$account->consecutive,$date,$released,$concept,'-','',$totalPoliza,0,$balance);
                     break;
 
                 case 3: // TRANSFERENCIA ELECTRONICA A TERCEROS
-                    $operationId=Yii::app()->quoteUtil->registerAccountCheques(5,$accounId,'TRA',date('d-M-Y'),$released,$concept,'-','',$totalPoliza,0,$balance);
+                    $operationId=Yii::app()->quoteUtil->registerAccountCheques(5,$accounId,'TRA',$date,$released,$concept,'-','',$totalPoliza,0,$balance);
                     break;
 
                 case 4: // TARJETA DEBITO
-                    $operationId=Yii::app()->quoteUtil->registerAccountDebit(3,$accounId,'RET',date('d-M-Y'),$released,$concept,'-','',$totalPoliza,0,$balance);
+                    $operationId=Yii::app()->quoteUtil->registerAccountDebit(3,$accounId,'RET',$date,$released,$concept,'-','',$totalPoliza,0,$balance);
                     break;
                 case 6: // TARJETA CREDITO
-                    $operationId=Yii::app()->quoteUtil->registerAccountCredit(4,$accounId,'RET',date('d-M-Y'),$released,$concept,'-','',$totalPoliza,0,$balance);
+                    $operationId=Yii::app()->quoteUtil->registerAccountCredit(4,$accounId,'RET',$date,$released,$concept,'-','',$totalPoliza,0,$balance);
                     break;
             }
+
+            $account->consecutive=$account->consecutive+1;
+
 
 
             if(!is_array($operationId)){

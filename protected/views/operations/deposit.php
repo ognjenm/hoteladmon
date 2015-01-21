@@ -73,6 +73,8 @@ $this->pageIcon='icon-ok';
 
     <?php echo $form->textFieldRow($model,'bank_concept',array('class'=>'span5','maxlength'=>100)); ?>
 
+    <?php echo $form->textFieldRow($model,'n_operation',array('class'=>'span5','maxlength'=>100)); ?>
+
     <div class="control-group">
         <div class="input-append">
             <?php echo $form->textFieldRow($model,'deposit',array('prepend'=>'$')); ?>
