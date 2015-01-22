@@ -551,6 +551,7 @@ class OperationsController extends Controller
 
         $numcheques=0;
 
+
         switch($accountType){
             case 1:
                 $model=new Operations;
@@ -563,6 +564,13 @@ class OperationsController extends Controller
                     $model->account_id=$accountId;
                     $model->cheq='TRA';
                     $model->person='------';
+
+                    $providerId=(int)$_POST['Operations']['released'];
+
+                    if(!empty($providerId)){
+                        $provider=Providers::model()->findByPk($providerId);
+                        $model->released=$provider->company;
+                    }
 
                     $balance=$account->initial_balance-$model->retirement;
                     $account->initial_balance=$balance;
@@ -610,6 +618,13 @@ class OperationsController extends Controller
                     $model->cheq='TRA';
                     $model->person='------';
 
+                    $providerId=(int)$_POST['Operations']['released'];
+
+                    if(!empty($providerId)){
+                        $provider=Providers::model()->findByPk($providerId);
+                        $model->released=$provider->company;
+                    }
+
                     $balance=$account->initial_balance-$model->retirement;
                     $account->initial_balance=$balance;
                     $model->balance=$balance;
@@ -648,6 +663,13 @@ class OperationsController extends Controller
                     $model->cheq='TRA';
                     $model->person='------';
 
+                    $providerId=(int)$_POST['Operations']['released'];
+
+                    if(!empty($providerId)){
+                        $provider=Providers::model()->findByPk($providerId);
+                        $model->released=$provider->company;
+                    }
+
                     $balance=$account->initial_balance-$model->retirement;
                     $account->initial_balance=$balance;
                     $model->balance=$balance;
@@ -684,6 +706,13 @@ class OperationsController extends Controller
                     $model->account_id=$accountId;
                     $model->cheq='TRA';
                     $model->person='------';
+
+                    $providerId=(int)$_POST['Operations']['released'];
+
+                    if(!empty($providerId)){
+                        $provider=Providers::model()->findByPk($providerId);
+                        $model->released=$provider->company;
+                    }
 
                     $balance=$account->initial_balance-$model->retirement;
                     $account->initial_balance=$balance;
@@ -722,6 +751,13 @@ class OperationsController extends Controller
                     $model->cheq='TRA';
                     $model->person='------';
 
+                    $providerId=(int)$_POST['Operations']['released'];
+
+                    if(!empty($providerId)){
+                        $provider=Providers::model()->findByPk($providerId);
+                        $model->released=$provider->company;
+                    }
+
                     $balance=$account->initial_balance-$model->retirement;
                     $account->initial_balance=$balance;
                     $model->balance=$balance;
@@ -755,10 +791,45 @@ class OperationsController extends Controller
 
         $display=$accountTypes->tipe.'-'.$bankAccount;
 
+        $invoice=new DirectInvoice('search');
+        $invoice->unsetAttributes();  // clear any default values
+
+
         $this->render('payment',array(
             'model'=>$model,
-            'display'=>$display
+            'display'=>$display,
+            'invoice'=>$invoice
         ));
+    }
+
+    public function actionGetInvoices(){
+
+        if(Yii::app()->request->isPostRequest){
+
+            /*$criteria=new CDbCriteria;
+            $criteria->condition = 'provider_id=:providerId';
+            $criteria->params = array(':providerId'=>$_POST['provider_id']);
+
+            $data= new CActiveDataProvider('DirectInvoice', array(
+                'keyAttribute'=>'id',
+                'criteria'=>$criteria,
+                'pagination'=>array(
+                    'pageSize'=>Yii::app()->params['pagination']
+                ),
+            ));*/
+
+            $data=DirectInvoice::model()->findByPk((int)$_POST['provider_id']);
+
+            $data=new CArrayDataProvider($data);
+
+
+
+            //echo CJSON::encode(array("invoices"=>$data));
+            //Yii::app()->end();
+
+
+        }
+
     }
 
     public function actionDeposit($accountId,$accountType){

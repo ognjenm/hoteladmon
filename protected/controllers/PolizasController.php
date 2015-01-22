@@ -256,6 +256,7 @@ class PolizasController extends Controller
 	{
         $model=new Polizas('search');
         $model->unsetAttributes();  // clear any default values
+
         if(isset($_GET['Polizas']))
         $model->attributes=$_GET['Polizas'];
 

@@ -34,42 +34,45 @@ $this->pageIcon='icon-ok';
 ?>
 
 
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-    'id'=>'operations-form',
-    'enableAjaxValidation'=>false,
-)); ?>
+<div class="row-fluid">
+    <div class="span4">
 
-    <p class="help-block"><?php echo Yii::t('mx','Fields with'); ?>
-        <span class="required">*</span>
-        <?php echo Yii::t('mx','are required');?>.
-    </p>
+        <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+            'id'=>'operations-form',
+            'enableAjaxValidation'=>false,
+        )); ?>
 
-    <?php echo $form->errorSummary($model); ?>
+        <?php echo $form->errorSummary($model); ?>
 
 
-<?php echo $form->datepickerRow($model,'datex',array(
-    'prepend'=>'<i class="icon-calendar"></i>',
-    'options'=>array(
-        'format'=>'yyyy-M-dd',
-        'autoclose'=>true
-    )
-)); ?>
+        <p class="help-block"><?php echo Yii::t('mx','Fields with'); ?>
+            <span class="required">*</span>
+            <?php echo Yii::t('mx','are required');?>.
+        </p>
 
-<?php echo $form->dropDownListRow($model,'payment_type',PaymentsTypes::model()->listAll(),array(
-    'class'=>'span5',
-    'prompt'=>Yii::t('mx','Select')
-)); ?>
+        <?php echo $form->datepickerRow($model,'datex',array(
+            'prepend'=>'<i class="icon-calendar"></i>',
+            'options'=>array(
+                'format'=>'yyyy-M-dd',
+                'autoclose'=>true
+            )
+        )); ?>
 
-<?php /*echo $form->dropDownListRow($model,'account_id',BankAccounts::model()->listAll(),array(
+        <?php echo $form->dropDownListRow($model,'payment_type',PaymentsTypes::model()->listAll(),array(
+            'class'=>'span12',
+            'prompt'=>Yii::t('mx','Select')
+        )); ?>
+
+        <?php /*echo $form->dropDownListRow($model,'account_id',BankAccounts::model()->listAll(),array(
     'class'=>'span5',
     'prompt'=>Yii::t('mx','Select')
 ));*/  ?>
 
-<?php echo CHtml::label(Yii::t('mx','Payment To'),'pagar_a'); ?>
-<?php echo CHtml::dropDownList('pagar_a','',array(1=>Yii::t('mx','Provider'),2=>Yii::t('mx','Other')),array(
-    'class'=>'span5',
-    'prompt'=>Yii::t('mx','Select'),
-    'onchange'=>'
+        <?php echo CHtml::label(Yii::t('mx','Payment To'),'pagar_a'); ?>
+        <?php echo CHtml::dropDownList('pagar_a','',array(1=>Yii::t('mx','Provider'),2=>Yii::t('mx','Other')),array(
+            'class'=>'span12',
+            'prompt'=>Yii::t('mx','Select'),
+            'onchange'=>'
                     if($(this).val()==1){
                         $("#divperson").show();
                         $("#divother").hide();
@@ -78,47 +81,109 @@ $this->pageIcon='icon-ok';
                             $("#divperson").hide();
                     }
                 '
-)); ?>
+        )); ?>
 
-<div id="divperson" style="display: none">
+        <div id="divperson" style="display: none">
 
-    <?php echo $form->select2Row($model, 'released',
-        array(
-            'data' =>Providers::model()->listAllCompanyByIndexText(),
-            'options' => array(
-                'placeholder' =>Yii::t('mx','Select'),
-                'allowClear' => true,
-                'width' => '40%',
+            <?php echo $form->select2Row($model, 'released',
+                array(
+                    'data' =>Providers::model()->listAllOrganization(),
+                    'options' => array(
+                        'placeholder' =>Yii::t('mx','Select'),
+                        'allowClear' => true,
+                        'width' => '100%'
+                    ),
+                    'events' =>array(
+                        'change'=>'js:function(e){
+
+                            $.ajax({
+                                url: "'.CController::createUrl('/operations/getInvoices').'",
+                                data: { provider_id: $(this).val()  },
+                                type: "POST",
+                                dataType:"json",
+                                beforeSend: function() { $(".row-fluid").addClass("loading"); }
+                            })
+
+                            .done(function(data) {
+
+                                   // $.fn.yiiGridView.update("direct-invoice-grid");
+
+
+                                    $.fn.yiiGridView.update("direct-invoice-grid", {
+                                        data:data.invoices
+                                    });
+
+                            })
+
+                            .fail(function() {  bootbox.alert("error"); })
+                            .always(function() { $(".row-fluid").removeClass("loading"); });
+                        }'
+                    ),
+                )
+            );
+
+            ?>
+
+
+        </div>
+
+        <div id="divother" style="display: none">
+            <?php echo CHtml::label(Yii::t('mx','Released To'),'name'); ?>
+            <?php echo CHtml::textField('name','',array('class'=>'span12')); ?>
+        </div>
+
+        <?php echo $form->textFieldRow($model,'concept',array('class'=>'span12','maxlength'=>100)); ?>
+
+        <?php echo $form->textFieldRow($model,'bank_concept',array('class'=>'span12','maxlength'=>100)); ?>
+
+        <?php echo $form->textFieldRow($model,'retirement',array('class'=>'span12','prepend'=>'$')); ?>
+
+
+        <div class="form-actions">
+            <?php  $this->widget('bootstrap.widgets.TbButton', array(
+                'buttonType'=>'submit',
+                'type'=>'primary',
+                'icon'=>$model->isNewRecord ? 'icon-plus icon-white' : 'icon-ok icon-white',
+                'label'=>$model->isNewRecord ? Yii::t('mx','Create') : Yii::t('mx','Save'),
+            )); ?>
+        </div>
+
+
+        <?php $this->endWidget(); ?>
+
+    </div>
+    <div class="span6">
+        <?php $this->widget('bootstrap.widgets.TbGridView',array(
+            'id'=>'direct-invoice-grid',
+            'type' => 'hover condensed',
+            'emptyText' => Yii::t('mx','There are no data to display'),
+            'showTableOnEmpty' => false,
+            'summaryText' => '<strong>'.Yii::t('mx','Direct Invoices').': {count}</strong>',
+            'template' => '{items}{pager}',
+            'responsiveTable' => true,
+            'enablePagination'=>true,
+            'dataProvider'=>$invoice->search(),
+            'pager' => array(
+                'class' => 'bootstrap.widgets.TbPager',
+                'displayFirstAndLast' => true,
+                'lastPageLabel'=>Yii::t('mx','Last'),
+                'firstPageLabel'=>Yii::t('mx','First'),
             ),
-        )
-    );
+            'selectableRows'=>2,
+            'columns'=>array(
+                array(
+                    'id'=>'chk',
+                    'class'=>'CCheckBoxColumn'
+                ),
+                'datex',
+                'n_invoice',
+                array(
+                    'name'=>'total',
+                    'value'=>'number_format($data->total,2)'
+                ),
 
-    ?>
-
-
+            ),
+        ));
+        ?>
+    </div>
 </div>
-
-<div id="divother" style="display: none">
-    <?php echo CHtml::label(Yii::t('mx','Released To'),'name'); ?>
-    <?php echo CHtml::textField('name','',array('class'=>'span5')); ?>
-</div>
-
-
-<?php echo $form->textFieldRow($model,'concept',array('class'=>'span5','maxlength'=>100)); ?>
-
-<?php echo $form->textFieldRow($model,'bank_concept',array('class'=>'span5','maxlength'=>100)); ?>
-
-<?php echo $form->textFieldRow($model,'retirement',array('prepend'=>'$')); ?>
-
-
-<div class="form-actions">
-    <?php  $this->widget('bootstrap.widgets.TbButton', array(
-        'buttonType'=>'submit',
-        'type'=>'primary',
-        'icon'=>$model->isNewRecord ? 'icon-plus icon-white' : 'icon-ok icon-white',
-        'label'=>$model->isNewRecord ? Yii::t('mx','Create') : Yii::t('mx','Save'),
-    )); ?>
-</div>
-
-
-<?php $this->endWidget(); ?>
