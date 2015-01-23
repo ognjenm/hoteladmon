@@ -21,6 +21,16 @@ $this->menu=array(
 $this->pageSubTitle=Yii::t('mx','Cuenta Bancaria Pago');
 $this->pageIcon='icon-ok';
 
+
+    Yii::app()->clientScript->registerScript('selectx', "
+
+            $('.select-on-check').click(function(){
+
+                alert('hola...');
+
+            });
+    ");
+
 ?>
 
 <?php echo Yii::app()->user->setFlash('info',"<h3>".$display."</h3>"); ?>
@@ -95,28 +105,9 @@ $this->pageIcon='icon-ok';
                     ),
                     'events' =>array(
                         'change'=>'js:function(e){
-
-                            $.ajax({
-                                url: "'.CController::createUrl('/operations/getInvoices').'",
-                                data: { provider_id: $(this).val()  },
-                                type: "POST",
-                                dataType:"json",
-                                beforeSend: function() { $(".row-fluid").addClass("loading"); }
+                            $.fn.yiiGridView.update("direct-invoice-grid", {
+                                data: { provider_id: $(this).val()  }
                             })
-
-                            .done(function(data) {
-
-                                   // $.fn.yiiGridView.update("direct-invoice-grid");
-
-
-                                    $.fn.yiiGridView.update("direct-invoice-grid", {
-                                        data:data.invoices
-                                    });
-
-                            })
-
-                            .fail(function() {  bootbox.alert("error"); })
-                            .always(function() { $(".row-fluid").removeClass("loading"); });
                         }'
                     ),
                 )
@@ -156,20 +147,21 @@ $this->pageIcon='icon-ok';
         <?php $this->widget('bootstrap.widgets.TbGridView',array(
             'id'=>'direct-invoice-grid',
             'type' => 'hover condensed',
-            'emptyText' => Yii::t('mx','There are no data to display'),
+            'emptyText' => Yii::t('mx','There are no invoices to display'),
             'showTableOnEmpty' => false,
             'summaryText' => '<strong>'.Yii::t('mx','Direct Invoices').': {count}</strong>',
             'template' => '{items}{pager}',
             'responsiveTable' => true,
             'enablePagination'=>true,
-            'dataProvider'=>$invoice->search(),
+            'dataProvider'=>$invoice,
+            //'rowHtmlOptionsExpression'=>'array("data-id"=>$data->id)',
             'pager' => array(
                 'class' => 'bootstrap.widgets.TbPager',
                 'displayFirstAndLast' => true,
                 'lastPageLabel'=>Yii::t('mx','Last'),
                 'firstPageLabel'=>Yii::t('mx','First'),
             ),
-            'selectableRows'=>2,
+            'selectableRows'=>1,
             'columns'=>array(
                 array(
                     'id'=>'chk',
@@ -179,7 +171,7 @@ $this->pageIcon='icon-ok';
                 'n_invoice',
                 array(
                     'name'=>'total',
-                    'value'=>'number_format($data->total,2)'
+                    'value'=>'"$".number_format($data->total,2)'
                 ),
 
             ),

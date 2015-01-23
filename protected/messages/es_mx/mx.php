@@ -788,7 +788,8 @@ return array(
     'Canceled Check'=>'Cancelar Cheque',
     'Monthly report'=>'Reporte mensual',
     'Calculate commission'=>'Calcular comisión',
-    'Close operations'=>'Cerrar operaciones'
+    'Close operations'=>'Cerrar operaciones',
+    'There are no invoices to display'=>'No hay facturas para mostrar'
 
 
 

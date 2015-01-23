@@ -791,8 +791,22 @@ class OperationsController extends Controller
 
         $display=$accountTypes->tipe.'-'.$bankAccount;
 
-        $invoice=new DirectInvoice('search');
-        $invoice->unsetAttributes();  // clear any default values
+        $criteria=new CDbCriteria;
+        $criteria->condition = 'provider_id=:providerId';
+        $criteria->params = array(':providerId'=>0);
+
+        if(isset($_GET['provider_id'])){
+            $criteria=new CDbCriteria;
+            $criteria->condition = 'provider_id=:providerId and isactive=1';
+            $criteria->params = array(':providerId'=>(int)$_GET['provider_id']);
+        }
+
+        $invoice= new CActiveDataProvider('DirectInvoice', array(
+            'criteria'=>$criteria,
+            'pagination'=>array(
+                'pageSize'=>Yii::app()->params['pagination']
+            ),
+        ));
 
 
         $this->render('payment',array(
@@ -810,7 +824,7 @@ class OperationsController extends Controller
             $criteria->condition = 'provider_id=:providerId';
             $criteria->params = array(':providerId'=>$_POST['provider_id']);
 
-            $data= new CActiveDataProvider('DirectInvoice', array(
+            $invoice= new CActiveDataProvider('DirectInvoice', array(
                 'keyAttribute'=>'id',
                 'criteria'=>$criteria,
                 'pagination'=>array(
@@ -822,10 +836,9 @@ class OperationsController extends Controller
 
             $data=new CArrayDataProvider($data);
 
+            echo CJSON::encode($data);
 
-
-            //echo CJSON::encode(array("invoices"=>$data));
-            //Yii::app()->end();
+            Yii::app()->end();
 
 
         }
