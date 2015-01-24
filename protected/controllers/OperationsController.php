@@ -549,7 +549,16 @@ class OperationsController extends Controller
 
     public function actionPayment($accountId,$accountType){
 
+
+        Yii::import('bootstrap.widgets.TbForm');
+        $conceptPayments=new ConceptPayments;
         $numcheques=0;
+
+        $Fconcept= TbForm::createForm($conceptPayments->formConcept(),$conceptPayments,
+            array('htmlOptions'=>array('class'=>'well'),
+                'type'=>'inline',
+            )
+        );
 
 
         switch($accountType){
@@ -795,14 +804,35 @@ class OperationsController extends Controller
         $criteria->condition = 'provider_id=:providerId';
         $criteria->params = array(':providerId'=>0);
 
+        $critConcept=new CDbCriteria;
+        $critConcept->condition = 'provider_id=:providerId';
+        $critConcept->params = array(':providerId'=>0);
+
+
         if(isset($_GET['provider_id'])){
+            $providerId=(int)$_GET['provider_id'];
+
             $criteria=new CDbCriteria;
             $criteria->condition = 'provider_id=:providerId and isactive=1';
-            $criteria->params = array(':providerId'=>(int)$_GET['provider_id']);
+            $criteria->params = array(':providerId'=>$providerId);
+
+            $critConcept=new CDbCriteria;
+            $critConcept->condition = 'provider_id=:providerId';
+            $critConcept->params = array(':providerId'=>$providerId);
+
         }
 
         $invoice= new CActiveDataProvider('DirectInvoice', array(
+            'keyAttribute'=>'total',
             'criteria'=>$criteria,
+            'pagination'=>array(
+                'pageSize'=>Yii::app()->params['pagination']
+            ),
+        ));
+
+        $concepts= new CActiveDataProvider('ConceptPayments', array(
+            'keyAttribute'=>'concept',
+            'criteria'=>$critConcept,
             'pagination'=>array(
                 'pageSize'=>Yii::app()->params['pagination']
             ),
@@ -812,7 +842,9 @@ class OperationsController extends Controller
         $this->render('payment',array(
             'model'=>$model,
             'display'=>$display,
-            'invoice'=>$invoice
+            'invoice'=>$invoice,
+            'concepts'=>$concepts,
+            'Fconcept'=>$Fconcept,
         ));
     }
 

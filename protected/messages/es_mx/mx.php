@@ -789,7 +789,8 @@ return array(
     'Monthly report'=>'Reporte mensual',
     'Calculate commission'=>'Calcular comisión',
     'Close operations'=>'Cerrar operaciones',
-    'There are no invoices to display'=>'No hay facturas para mostrar'
+    'There are no invoices to display'=>'No hay facturas para mostrar',
+    'There are no concepts to display'=>'No hay conceptos para mostrar'
 
 
 

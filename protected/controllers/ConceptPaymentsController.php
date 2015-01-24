@@ -18,17 +18,13 @@ class ConceptPaymentsController extends Controller
 		);
 	}
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
+
 	public function accessRules()
 	{
 		return array(
 
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view','delete'),
+				'actions'=>array('create','update','index','view','delete','concepts'),
 				'users'=>array('@'),
 			),
 
@@ -36,6 +32,28 @@ class ConceptPaymentsController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+
+	public function actionConcepts(){
+
+		$res=array('ok'=>false);
+
+		if(Yii::app()->request->isPostRequest){
+
+			$providerId=(int)$_POST['provider_id'];
+			$concept=$_POST['concept'];
+
+			$model= new ConceptPayments;
+			$model->provider_id=$providerId;
+			$model->concept=$concept;
+
+			if($model->save()){$res=array('ok'=>true); }
+
+			echo CJSON::encode($res);
+			Yii::app()->end();
+
+		}
+
 	}
 
 
@@ -46,10 +64,7 @@ class ConceptPaymentsController extends Controller
 		));
 	}
 
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
+
 	public function actionCreate()
 	{
 		$model=new ConceptPayments;

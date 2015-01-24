@@ -85,6 +85,53 @@ class ConceptPayments extends CActiveRecord
         return $list;
     }
 
+    public function formConcept(){
+
+        return array(
+            'id'=>'ConceptForm',
+            'showErrorSummary' => true,
+            'elements'=>array(
+                'concept'=>array(
+                    'type'=>'text',
+                    'class'=>'span10'
+                ),
+            ),
+            'buttons' => array(
+                'concepts' => array(
+                    'type' => 'button',
+                    'icon'=>'icon-ok',
+                    'layoutType' => 'primary',
+                    'label' => Yii::t('mx','Create'),
+                    'htmlOptions'=>array(
+                        'onclick'=>"
+
+                             var providerId=$('#Operations_released').val();
+                             var conceptx=$('#ConceptPayments_concept').val();
+
+                             $.ajax({
+                                url: '".CController::createUrl('/conceptPayments/concepts')."',
+                                data: { provider_id: providerId,concept: conceptx  },
+                                type: 'POST',
+                                dataType: 'json',
+                                beforeSend: function() { $('.row-fluid').addClass('saving'); }
+                            })
+
+                            .done(function(data) {
+                                if(data.ok==true){
+                                    $('#modal-concept').modal('hide');
+                                    $.fn.yiiGridView.update('concepts-grid');
+                                }
+                             })
+
+                            .fail(function() { bootbox.alert('Error');  })
+                            .always(function() { $('.row-fluid').removeClass('saving'); });
+                        "
+                    )
+                ),
+            )
+
+        );
+    }
 
     public function getForm(){
 
