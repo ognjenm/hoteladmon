@@ -697,6 +697,12 @@ class OperationsController extends Controller
 
                     if($model->save()){
                         $account->save();
+
+                        $facturaId=(int)$_POST['invoiceId'];
+                        $factura=DirectInvoice::model()->findByPk($facturaId);
+                        $factura->isactive=0;
+                        $factura->save();
+
                         Yii::app()->user->setFlash('success','Success');
                         $this->redirect(array('index'));
                     }
@@ -741,6 +747,12 @@ class OperationsController extends Controller
 
                     if($model->save()){
                         $account->save();
+
+                        $facturaId=(int)$_POST['invoiceId'];
+                        $factura=DirectInvoice::model()->findByPk($facturaId);
+                        $factura->isactive=0;
+                        $factura->save();
+
                         Yii::app()->user->setFlash('success','Success');
                         $this->redirect(array('index'));
                     }
@@ -785,6 +797,12 @@ class OperationsController extends Controller
 
                     if($model->save()){
                         $account->save();
+
+                        $facturaId=(int)$_POST['invoiceId'];
+                        $factura=DirectInvoice::model()->findByPk($facturaId);
+                        $factura->isactive=0;
+                        $factura->save();
+
                         Yii::app()->user->setFlash('success','Success');
                         $this->redirect(array('index'));
                     }
@@ -823,7 +841,7 @@ class OperationsController extends Controller
         }
 
         $invoice= new CActiveDataProvider('DirectInvoice', array(
-            'keyAttribute'=>'total',
+            'keyAttribute'=>'id',
             'criteria'=>$criteria,
             'pagination'=>array(
                 'pageSize'=>Yii::app()->params['pagination']

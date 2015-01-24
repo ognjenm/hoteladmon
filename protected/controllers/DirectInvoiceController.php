@@ -12,7 +12,6 @@ class DirectInvoiceController extends Controller
 		);
 	}
 
-
 	public function accessRules()
 	{
 		return array(
@@ -26,6 +25,24 @@ class DirectInvoiceController extends Controller
 		);
 	}
 
+    public function actionGetDataConcept(){
+
+        $res=array('ok'=>false);
+
+        if(Yii::app()->request->isPostRequest){
+
+            $id=(int)$_POST['invoiceId'];
+
+            $invoice=DirectInvoice::model()->findByPk($id);
+
+            $res=array('ok'=>true,'invoice'=>$invoice);
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
+
+    }
 
     public function actionPoliza(){
 
@@ -231,7 +248,6 @@ class DirectInvoiceController extends Controller
 
     }
 
-
     public function actionView($id)
 	{
         $invoice=$this->loadModel($id);
@@ -252,7 +268,6 @@ class DirectInvoiceController extends Controller
             'itemsIvoice'=>$itemsIvoice
 		));
 	}
-
 
 	public function actionCreate($PolizaId=null)
 	{
@@ -366,7 +381,6 @@ class DirectInvoiceController extends Controller
         return $items;
     }
 
-
 	public function actionUpdate($id)
 	{
         Yii::import('ext.jqrelcopy.JQRelcopy');
@@ -398,11 +412,6 @@ class DirectInvoiceController extends Controller
 		));
 	}
 
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
 	public function actionDelete($id)
 	{
 		if(Yii::app()->request->isPostRequest)
@@ -418,9 +427,6 @@ class DirectInvoiceController extends Controller
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	/**
-	 * Lists all models.
-	 */
 	public function actionIndex()
 	{
 
@@ -526,4 +532,5 @@ class DirectInvoiceController extends Controller
 			Yii::app()->end();
 		}
 	}
+
 }

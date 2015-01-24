@@ -25,15 +25,36 @@ $this->pageIcon='icon-ok';
     Yii::app()->clientScript->registerScript('selectx', "
 
             function mostrarDetalles(){
-                var total = $.fn.yiiGridView.getSelection('direct-invoice-grid');
-                $('#Operations_retirement').val(total);
-                $('#invoiceId').val(total);
+
+                var invoiceId = $.fn.yiiGridView.getSelection('direct-invoice-grid').toString();
+
+                $.ajax({
+                    url: '".CController::createUrl('/directInvoice/getDataConcept')."',
+                    data: { invoiceId: invoiceId },
+                    type: 'POST',
+                    dataType: 'json',
+                    beforeSend: function() { $('.row-fluid').addClass('saving'); }
+                })
+
+                .done(function(data) {
+                    if(data.ok==true){
+                        $('#DebitOperations_retirement').val(data.invoice.total);
+                        $('#CreditOperations_retirement').val(data.invoice.total);
+                        $('#InvestmentOperations_retirement').val(data.invoice.total);
+                        $('#invoiceId').val(data.invoice.id);
+                    }
+                })
+
+                .fail(function() { bootbox.alert('Error');  })
+                .always(function() { $('.row-fluid').removeClass('saving'); });
 
             }
 
             function mostrarConcepts(){
                 var concept = $.fn.yiiGridView.getSelection('concepts-grid');
-                $('#Operations_concept').val(concept);
+                $('#DebitOperations_concept').val(concept);
+                $('#CreditOperations_concept').val(concept);
+                $('#InvestmentOperations_concept').val(concept);
             }
     ");
 
