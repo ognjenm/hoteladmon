@@ -38,9 +38,7 @@ $this->pageIcon='icon-ok';
 
                 .done(function(data) {
                     if(data.ok==true){
-                        $('#DebitOperations_retirement').val(data.invoice.total);
-                        $('#CreditOperations_retirement').val(data.invoice.total);
-                        $('#InvestmentOperations_retirement').val(data.invoice.total);
+                        $('#Operations_retirement').val(data.invoice.total);
                         $('#invoiceId').val(data.invoice.id);
                     }
                 })
@@ -52,9 +50,7 @@ $this->pageIcon='icon-ok';
 
             function mostrarConcepts(){
                 var concept = $.fn.yiiGridView.getSelection('concepts-grid');
-                $('#DebitOperations_concept').val(concept);
-                $('#CreditOperations_concept').val(concept);
-                $('#InvestmentOperations_concept').val(concept);
+                $('#Operations_concept').val(concept);
             }
     ");
 

@@ -10452,3 +10452,243 @@ Stack trace:
 REQUEST_URI=/hoteladmon/index.php?accountId=7&accountType=1&ajax=direct-invoice-grid&provider_id=295&r=operations%2Fpayment
 HTTP_REFERER=http://localhost/hoteladmon/index.php?r=operations/payment&accountId=7&accountType=1
 ---
+2015/01/24 10:10:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "GetDataConcept".' in F:\localhost\htdocs\yiiframe\web\CController.php:483
+Stack trace:
+#0 F:\localhost\htdocs\yiiframe\web\CController.php(270): CController->missingAction('GetDataConcept')
+#1 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(282): CController->run('GetDataConcept')
+#2 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(141): CWebApplication->runController('directInvoice/G...')
+#3 F:\localhost\htdocs\yiiframe\base\CApplication.php(180): CWebApplication->processRequest()
+#4 F:\localhost\htdocs\hoteladmon\index.php(31): CApplication->run()
+#5 {main}
+REQUEST_URI=/hoteladmon/index.php?r=directInvoice/GetDataConcept
+HTTP_REFERER=http://localhost/hoteladmon/index.php?r=operations/payment&accountId=7&accountType=1
+---
+2015/01/24 10:10:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "getDataConcept".' in F:\localhost\htdocs\yiiframe\web\CController.php:483
+Stack trace:
+#0 F:\localhost\htdocs\yiiframe\web\CController.php(270): CController->missingAction('getDataConcept')
+#1 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(282): CController->run('getDataConcept')
+#2 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(141): CWebApplication->runController('directInvoice/g...')
+#3 F:\localhost\htdocs\yiiframe\base\CApplication.php(180): CWebApplication->processRequest()
+#4 F:\localhost\htdocs\hoteladmon\index.php(31): CApplication->run()
+#5 {main}
+REQUEST_URI=/hoteladmon/index.php?r=directInvoice/getDataConcept
+HTTP_REFERER=http://localhost/hoteladmon/index.php?r=operations/payment&accountId=7&accountType=1
+---
+2015/01/24 13:26:28 [error] [php] Undefined index: Operations (F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php:675)
+Stack trace:
+#0 F:\localhost\htdocs\yiiframe\web\actions\CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#1 F:\localhost\htdocs\yiiframe\web\CController.php(308): CInlineAction->runWithParams()
+#2 F:\localhost\htdocs\yiiframe\web\filters\CFilterChain.php(133): OperationsController->runAction()
+#3 F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php(90): CFilterChain->run()
+#4 F:\localhost\htdocs\yiiframe\web\filters\CFilter.php(38): CrugeAccessControlFilter->preFilter()
+#5 F:\localhost\htdocs\yiiframe\web\filters\CFilterChain.php(130): CrugeAccessControlFilter->filter()
+#6 F:\localhost\htdocs\yiiframe\web\CController.php(291): CFilterChain->run()
+#7 F:\localhost\htdocs\yiiframe\web\CController.php(265): OperationsController->runActionWithFilters()
+#8 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(282): OperationsController->run()
+#9 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(141): CWebApplication->runController()
+#10 F:\localhost\htdocs\yiiframe\base\CApplication.php(180): CWebApplication->processRequest()
+#11 F:\localhost\htdocs\hoteladmon\index.php(31): CWebApplication->run()
+REQUEST_URI=/hoteladmon/index.php?r=operations/payment&accountId=8&accountType=3
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (675)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:11:39 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:11:39 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:19:28 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:19:28 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:19:30 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:19:30 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:19:57 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:19:57 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (107)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:29 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:29 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:43 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:43 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:43 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:43 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:44 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:36:44 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:40:05 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:40:05 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:40:44 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:40:44 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:47:36 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:47:36 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:47:52 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:47:52 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:49:36 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:49:36 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:56 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:56 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:52:58 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:32 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:32 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:33 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:33 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:34 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:34 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:34 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:34 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:38 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:38 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:38 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:38 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:38 [warning] [application] Failed to set unsafe attribute "inicio" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/01/26 11:53:38 [warning] [application] Failed to set unsafe attribute "fin" of "Operations".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\OperationsController.php (108)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)

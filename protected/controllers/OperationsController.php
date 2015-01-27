@@ -94,133 +94,26 @@ class OperationsController extends Controller
         $botones=Yii::app()->quoteUtil->menuAccounts();
         Yii::import('bootstrap.widgets.TbForm');
 
-        switch($accountType){
+        $filter=new Operations('search');
+        $filter->unsetAttributes();
+        $filter->account_id=$accountId;
 
-            case 1: //cheques
+        $Formfilter = TbForm::createForm($filter->getFilter(),$filter,
+            array('htmlOptions'=>array('class'=>'well'),
+                'type'=>'inline',
+            )
+        );
 
-                $filter=new Operations('search');
-                $filter->unsetAttributes();
+        if(isset($_GET['Operations'])) {
+            $filter->attributes=$_GET['Operations'];
+        }
 
-                $Formfilter = TbForm::createForm($filter->getFilter(),$filter,
-                    array('htmlOptions'=>array('class'=>'well'),
-                        'type'=>'inline',
-                    )
-                );
+        if(isset($_GET['Operations']['inicio']) && isset($_GET['Operations']['fin'])) {
 
-                if(isset($_GET['Operations'])) {
-                    $filter->attributes=$_GET['Operations'];
-                }
-
-                if(isset($_GET['Operations']['inicio']) && isset($_GET['Operations']['fin'])) {
-
-                    $filter->inicio=$_GET['Operations']['inicio'];
-                    $filter->fin=$_GET['Operations']['fin'];
-                    Yii::app()->getSession()->add('dateStart',$_GET['Operations']['inicio']);
-                    Yii::app()->getSession()->add('dateEnd',$_GET['Operations']['fin']);
-                }
-
-            break;
-
-            case 2: //intercuenta
-
-                $filter=new IntercuentaOperations('search');
-                $filter->unsetAttributes();
-
-                $Formfilter = TbForm::createForm($filter->getFilter(),$filter,
-                    array('htmlOptions'=>array('class'=>'well'),
-                        'type'=>'inline',
-                    )
-                );
-
-                if(isset($_GET['IntercuentaOperations'])) {
-                    $filter->attributes=$_GET['IntercuentaOperations'];
-                }
-
-                if(isset($_GET['IntercuentaOperations']['inicio']) && isset($_GET['IntercuentaOperations']['fin'])) {
-
-                    $filter->inicio=$_GET['IntercuentaOperations']['inicio'];
-                    $filter->fin=$_GET['IntercuentaOperations']['fin'];
-                    Yii::app()->getSession()->add('dateStart',$_GET['IntercuentaOperations']['inicio']);
-                    Yii::app()->getSession()->add('dateEnd',$_GET['IntercuentaOperations']['fin']);
-                }
-
-                break;
-
-            case 3: //tarjeta debito
-
-                $filter=new DebitOperations('search');
-                $filter->unsetAttributes();
-
-                $Formfilter = TbForm::createForm($filter->getFilter(),$filter,
-                    array('htmlOptions'=>array('class'=>'well'),
-                        'type'=>'inline',
-                    )
-                );
-
-                if(isset($_GET['DebitOperations'])) {
-                    $filter->attributes=$_GET['DebitOperations'];
-                }
-
-                if(isset($_GET['DebitOperations']['inicio']) && isset($_GET['DebitOperations']['fin'])) {
-
-                    $filter->inicio=$_GET['DebitOperations']['inicio'];
-                    $filter->fin=$_GET['DebitOperations']['fin'];
-                    Yii::app()->getSession()->add('dateStart',$_GET['DebitOperations']['inicio']);
-                    Yii::app()->getSession()->add('dateEnd',$_GET['DebitOperations']['fin']);
-                }
-
-                break;
-
-            case 4: //tarjeta credito
-
-                $filter=new CreditOperations('search');
-                $filter->unsetAttributes();
-
-                $Formfilter = TbForm::createForm($filter->getFilter(),$filter,
-                    array('htmlOptions'=>array('class'=>'well'),
-                        'type'=>'inline',
-                    )
-                );
-
-                if(isset($_GET['CreditOperations'])) {
-                    $filter->attributes=$_GET['CreditOperations'];
-                }
-
-                if(isset($_GET['CreditOperations']['inicio']) && isset($_GET['CreditOperations']['fin'])) {
-
-                    $filter->inicio=$_GET['CreditOperations']['inicio'];
-                    $filter->fin=$_GET['CreditOperations']['fin'];
-                    Yii::app()->getSession()->add('dateStart',$_GET['CreditOperations']['inicio']);
-                    Yii::app()->getSession()->add('dateEnd',$_GET['CreditOperations']['fin']);
-                }
-
-                break;
-
-            case 4: //tarjeta credito
-
-                $filter=new CreditOperations('search');
-                $filter->unsetAttributes();
-
-                $Formfilter = TbForm::createForm($filter->getFilter(),$filter,
-                    array('htmlOptions'=>array('class'=>'well'),
-                        'type'=>'inline',
-                    )
-                );
-
-                if(isset($_GET['CreditOperations'])) {
-                    $filter->attributes=$_GET['CreditOperations'];
-                }
-
-                if(isset($_GET['CreditOperations']['inicio']) && isset($_GET['CreditOperations']['fin'])) {
-
-                    $filter->inicio=$_GET['CreditOperations']['inicio'];
-                    $filter->fin=$_GET['CreditOperations']['fin'];
-                    Yii::app()->getSession()->add('dateStart',$_GET['CreditOperations']['inicio']);
-                    Yii::app()->getSession()->add('dateEnd',$_GET['CreditOperations']['fin']);
-                }
-
-                break;
-
+            $filter->inicio=$_GET['Operations']['inicio'];
+            $filter->fin=$_GET['Operations']['fin'];
+            Yii::app()->getSession()->add('dateStart',$_GET['Operations']['inicio']);
+            Yii::app()->getSession()->add('dateEnd',$_GET['Operations']['fin']);
         }
 
 
@@ -295,243 +188,47 @@ class OperationsController extends Controller
 
     public function actionTransfer($accountId,$accountType){
 
-        switch($accountType){
-            case 1:
-
-                $model=new Operations;
-                $modelDestination= new Operations;
-
-                if(isset($_POST['Operations'])){
-
-                    $model->attributes=$_POST['Operations'];
-                    $destinationAccountId=(int)$_POST['destinationAccount'];
-
-                    $balanceSource=BankAccounts::model()->consultRetirement($accountId,$model->retirement);
-                    $balanceDestination=BankAccounts::model()->consultDeposit($destinationAccountId,$model->retirement);
-
-                    $bankAccountSource=BankAccounts::model()->accountByPk($accountId);
-                    $bankAccountDestination=BankAccounts::model()->accountByPk($destinationAccountId);
-
-                    $model->payment_type=5;
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->released=$bankAccountDestination;
-                    $model->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountDestination;
-                    $model->person='------';
-                    $model->balance=$balanceSource;
-
-                    $modelDestination->payment_type=5;
-                    $modelDestination->account_id=$destinationAccountId;
-                    $modelDestination->cheq='TRA';
-                    $modelDestination->datex=$model->datex;
-                    $modelDestination->released=$bankAccountDestination;
-                    $modelDestination->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountSource;
-                    $modelDestination->person='------';
-                    $modelDestination->deposit=$model->retirement;
-                    $modelDestination->balance=$balanceDestination;
-
-
-                    if($model->save() && $modelDestination->save()){
-
-                        Yii::app()->quoteUtil->retirementAccount($accountId,$model->retirement);
-                        Yii::app()->quoteUtil->depositAccount($destinationAccountId,$model->retirement);
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-
-                }
-
-            break;
-
-            case 2:
-
-                $model=new IntercuentaOperations;
-                $modelDestination= new IntercuentaOperations;
-
-                if(isset($_POST['IntercuentaOperations'])){
-
-                    $model->attributes=$_POST['IntercuentaOperations'];
-                    $destinationAccountId=(int)$_POST['destinationAccount'];
-
-                    $balanceSource=BankAccounts::model()->consultRetirement($accountId,$model->retirement);
-                    $balanceDestination=BankAccounts::model()->consultDeposit($destinationAccountId,$model->retirement);
-
-                    $bankAccountSource=BankAccounts::model()->accountByPk($accountId);
-                    $bankAccountDestination=BankAccounts::model()->accountByPk($destinationAccountId);
-
-                    $model->payment_type=5;
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->released=$bankAccountDestination;
-                    $model->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountDestination;
-                    $model->person='------';
-                    $model->balance=$balanceSource;
-
-                    $modelDestination->payment_type=5;
-                    $modelDestination->account_id=$destinationAccountId;
-                    $modelDestination->cheq='TRA';
-                    $modelDestination->datex=$model->datex;
-                    $modelDestination->released=$bankAccountDestination;
-                    $modelDestination->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountSource;
-                    $modelDestination->person='------';
-                    $modelDestination->deposit=$model->retirement;
-                    $modelDestination->balance=$balanceDestination;
-
-
-                    if($model->save() && $modelDestination->save()){
-
-                        Yii::app()->quoteUtil->retirementAccount($accountId,$model->retirement);
-                        Yii::app()->quoteUtil->depositAccount($destinationAccountId,$model->retirement);
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-
-                }
-
-            break;
-
-            case 3:
-
-                $model=new DebitOperations;
-                $modelDestination= new DebitOperations;
-
-                if(isset($_POST['DebitOperations'])){
-
-                    $model->attributes=$_POST['DebitOperations'];
-                    $destinationAccountId=(int)$_POST['destinationAccount'];
-
-                    $balanceSource=BankAccounts::model()->consultRetirement($accountId,$model->retirement);
-                    $balanceDestination=BankAccounts::model()->consultDeposit($destinationAccountId,$model->retirement);
-
-                    $bankAccountSource=BankAccounts::model()->accountByPk($accountId);
-                    $bankAccountDestination=BankAccounts::model()->accountByPk($destinationAccountId);
-
-                    $model->payment_type=5;
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->released=$bankAccountDestination;
-                    $model->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountDestination;
-                    $model->person='------';
-                    $model->balance=$balanceSource;
-
-                    $modelDestination->payment_type=5;
-                    $modelDestination->account_id=$destinationAccountId;
-                    $modelDestination->cheq='TRA';
-                    $modelDestination->datex=$model->datex;
-                    $modelDestination->released=$bankAccountDestination;
-                    $modelDestination->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountSource;
-                    $modelDestination->person='------';
-                    $modelDestination->deposit=$model->retirement;
-                    $modelDestination->balance=$balanceDestination;
-
-
-                    if($model->save() && $modelDestination->save()){
-
-                        Yii::app()->quoteUtil->retirementAccount($accountId,$model->retirement);
-                        Yii::app()->quoteUtil->depositAccount($destinationAccountId,$model->retirement);
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 4:
-
-                $model=new CreditOperations;
-                $modelDestination= new CreditOperations;
-
-                if(isset($_POST['CreditOperations'])){
-
-                    $model->attributes=$_POST['CreditOperations'];
-                    $destinationAccountId=(int)$_POST['destinationAccount'];
-
-                    $balanceSource=BankAccounts::model()->consultRetirement($accountId,$model->retirement);
-                    $balanceDestination=BankAccounts::model()->consultDeposit($destinationAccountId,$model->retirement);
-
-                    $bankAccountSource=BankAccounts::model()->accountByPk($accountId);
-                    $bankAccountDestination=BankAccounts::model()->accountByPk($destinationAccountId);
-
-                    $model->payment_type=5;
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->released=$bankAccountDestination;
-                    $model->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountDestination;
-                    $model->person='------';
-                    $model->balance=$balanceSource;
-
-                    $modelDestination->payment_type=5;
-                    $modelDestination->account_id=$destinationAccountId;
-                    $modelDestination->cheq='TRA';
-                    $modelDestination->datex=$model->datex;
-                    $modelDestination->released=$bankAccountDestination;
-                    $modelDestination->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountSource;
-                    $modelDestination->person='------';
-                    $modelDestination->deposit=$model->retirement;
-                    $modelDestination->balance=$balanceDestination;
-
-
-                    if($model->save() && $modelDestination->save()){
-
-                        Yii::app()->quoteUtil->retirementAccount($accountId,$model->retirement);
-                        Yii::app()->quoteUtil->depositAccount($destinationAccountId,$model->retirement);
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 5:
-
-                $model=new InvestmentOperations;
-                $modelDestination= new InvestmentOperations;
-
-                if(isset($_POST['InvestmentOperations'])){
-
-                    $model->attributes=$_POST['InvestmentOperations'];
-                    $destinationAccountId=(int)$_POST['destinationAccount'];
-
-                    $balanceSource=BankAccounts::model()->consultRetirement($accountId,$model->retirement);
-                    $balanceDestination=BankAccounts::model()->consultDeposit($destinationAccountId,$model->retirement);
-
-                    $bankAccountSource=BankAccounts::model()->accountByPk($accountId);
-                    $bankAccountDestination=BankAccounts::model()->accountByPk($destinationAccountId);
-
-                    $model->payment_type=5;
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->released=$bankAccountDestination;
-                    $model->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountDestination;
-                    $model->person='------';
-                    $model->balance=$balanceSource;
-
-                    $modelDestination->payment_type=5;
-                    $modelDestination->account_id=$destinationAccountId;
-                    $modelDestination->cheq='TRA';
-                    $modelDestination->datex=$model->datex;
-                    $modelDestination->released=$bankAccountDestination;
-                    $modelDestination->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountSource;
-                    $modelDestination->person='------';
-                    $modelDestination->deposit=$model->retirement;
-                    $modelDestination->balance=$balanceDestination;
-
-
-                    if($model->save() && $modelDestination->save()){
-
-                        Yii::app()->quoteUtil->retirementAccount($accountId,$model->retirement);
-                        Yii::app()->quoteUtil->depositAccount($destinationAccountId,$model->retirement);
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
+        $model=new Operations;
+        $modelDestination= new Operations;
+
+        if(isset($_POST['Operations'])){
+
+            $model->attributes=$_POST['Operations'];
+            $destinationAccountId=(int)$_POST['destinationAccount'];
+
+            $balanceSource=BankAccounts::model()->consultRetirement($accountId,$model->retirement);
+            $balanceDestination=BankAccounts::model()->consultDeposit($destinationAccountId,$model->retirement);
+
+            $bankAccountSource=BankAccounts::model()->accountByPk($accountId);
+            $bankAccountDestination=BankAccounts::model()->accountByPk($destinationAccountId);
+
+            $model->payment_type=5;
+            $model->account_id=$accountId;
+            $model->cheq='TRA';
+            $model->released=$bankAccountDestination;
+            $model->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountDestination;
+            $model->person='------';
+            $model->balance=$balanceSource;
+
+            $modelDestination->payment_type=5;
+            $modelDestination->account_id=$destinationAccountId;
+            $modelDestination->cheq='TRA';
+            $modelDestination->datex=$model->datex;
+            $modelDestination->released=$bankAccountDestination;
+            $modelDestination->concept=Yii::t('mx','INTERACCOUNT TRANSFER').' '.$bankAccountSource;
+            $modelDestination->person='------';
+            $modelDestination->deposit=$model->retirement;
+            $modelDestination->balance=$balanceDestination;
+
+
+            if($model->save() && $modelDestination->save()){
+
+                Yii::app()->quoteUtil->retirementAccount($accountId,$model->retirement);
+                Yii::app()->quoteUtil->depositAccount($destinationAccountId,$model->retirement);
+
+                Yii::app()->user->setFlash('success','Success');
+                $this->redirect(array('index'));
+            }
 
         }
 
@@ -549,10 +246,10 @@ class OperationsController extends Controller
 
     public function actionPayment($accountId,$accountType){
 
-
         Yii::import('bootstrap.widgets.TbForm');
         $conceptPayments=new ConceptPayments;
         $numcheques=0;
+        $cheque=false;
 
         $Fconcept= TbForm::createForm($conceptPayments->formConcept(),$conceptPayments,
             array('htmlOptions'=>array('class'=>'well'),
@@ -560,256 +257,62 @@ class OperationsController extends Controller
             )
         );
 
+        $model=new Operations;
 
-        switch($accountType){
-            case 1:
-                $model=new Operations;
+        if(isset($_POST['Operations'])){
 
-                if(isset($_POST['Operations'])){
+            $account=BankAccounts::model()->findByPk($accountId);
 
-                    $account=BankAccounts::model()->findByPk($accountId);
+            $model->attributes=$_POST['Operations'];
+            $model->account_id=$accountId;
+            $model->cheq='TRA';
+            $model->person='------';
 
-                    $model->attributes=$_POST['Operations'];
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->person='------';
+            $providerId=(int)$_POST['Operations']['released'];
 
-                    $providerId=(int)$_POST['Operations']['released'];
+            if(!empty($providerId)){
+                $provider=Providers::model()->findByPk($providerId);
+                $model->released=$provider->company;
+            }
 
-                    if(!empty($providerId)){
-                        $provider=Providers::model()->findByPk($providerId);
-                        $model->released=$provider->company;
-                    }
-
-                    $balance=$account->initial_balance-$model->retirement;
-                    $account->initial_balance=$balance;
-                    $model->balance=$balance;
-
-                    if($model->payment_type==6){
-
-                        $numcheques=BankAccounts::model()->numerosCheque($accountId);
-
-                        $model->cheq=$account->consecutive;
-                        $account->consecutive=$account->consecutive+1;
-
-                    }
+            $balance=$account->initial_balance-$model->retirement;
+            $account->initial_balance=$balance;
+            $model->balance=$balance;
 
 
-                    if(!empty($_POST['name'])) {
-                        $model->released=$_POST['name'];
-                    }
+            if(!empty($_POST['name'])) {
+                $model->released=$_POST['name'];
+            }
 
-                    if($model->person=="") $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
+            if($model->person=="") $model->person=Yii::t('mx','PENDING');
+            if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
 
-                    if($numcheques > 0){
-                        $model->save();
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success! numero de cheques disponibles: '.$numcheques);
-                        $this->redirect(array('index'));
-                    }else{
-                        Yii::app()->user->setFlash('error','error! No hay cheques disponibles');
-                        $this->redirect(array('index'));
-                    }
+            if($model->payment_type==6){
+
+                $numcheques=BankAccounts::model()->numerosCheque($accountId);
+                $model->cheq=$account->consecutive;
+                $account->consecutive=$account->consecutive+1;
+                $cheque=true;
+
+            }
+
+            if($cheque){
+                if($numcheques > 0){
+                    $model->save();
+                    $account->save();
+                    Yii::app()->user->setFlash('success','Success! numero de cheques disponibles: '.$numcheques);
+                    $this->redirect(array('index'));
+                }else{
+                    Yii::app()->user->setFlash('error','error! No hay cheques disponibles');
+                    $this->redirect(array('index'));
                 }
+            }else{
 
-            break;
-
-            case 2:
-                $model=new IntercuentaOperations;
-
-                if(isset($_POST['IntercuentaOperations'])){
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-
-                    $model->attributes=$_POST['IntercuentaOperations'];
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->person='------';
-
-                    $providerId=(int)$_POST['Operations']['released'];
-
-                    if(!empty($providerId)){
-                        $provider=Providers::model()->findByPk($providerId);
-                        $model->released=$provider->company;
-                    }
-
-                    $balance=$account->initial_balance-$model->retirement;
-                    $account->initial_balance=$balance;
-                    $model->balance=$balance;
-
-                    if($model->payment_type==6){
-                        $model->cheq=$account->consecutive;
-                        $account->consecutive=$account->consecutive+1;
-                    }
-
-                    if(!empty($_POST['name'])) {
-                        $model->released=$_POST['name'];
-                    }
-
-                    if($model->person=="") $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-
-            break;
-
-            case 3:
-                $model=new DebitOperations;
-
-                if(isset($_POST['DebitOperations'])){
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-
-                    $model->attributes=$_POST['DebitOperations'];
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->person='------';
-
-                    $providerId=(int)$_POST['Operations']['released'];
-
-                    if(!empty($providerId)){
-                        $provider=Providers::model()->findByPk($providerId);
-                        $model->released=$provider->company;
-                    }
-
-                    $balance=$account->initial_balance-$model->retirement;
-                    $account->initial_balance=$balance;
-                    $model->balance=$balance;
-
-                    if($model->payment_type==6){
-                        $model->cheq=$account->consecutive;
-                        $account->consecutive=$account->consecutive+1;
-                    }
-
-                    if(!empty($_POST['name'])) {
-                        $model->released=$_POST['name'];
-                    }
-
-                    if($model->person=="") $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-
-                        $facturaId=(int)$_POST['invoiceId'];
-                        $factura=DirectInvoice::model()->findByPk($facturaId);
-                        $factura->isactive=0;
-                        $factura->save();
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 4:
-                $model=new CreditOperations;
-
-                if(isset($_POST['CreditOperations'])){
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-
-                    $model->attributes=$_POST['CreditOperations'];
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->person='------';
-
-                    $providerId=(int)$_POST['Operations']['released'];
-
-                    if(!empty($providerId)){
-                        $provider=Providers::model()->findByPk($providerId);
-                        $model->released=$provider->company;
-                    }
-
-                    $balance=$account->initial_balance-$model->retirement;
-                    $account->initial_balance=$balance;
-                    $model->balance=$balance;
-
-                    if($model->payment_type==6){
-                        $model->cheq=$account->consecutive;
-                        $account->consecutive=$account->consecutive+1;
-                    }
-
-                    if(!empty($_POST['name'])) {
-                        $model->released=$_POST['name'];
-                    }
-
-                    if($model->person=="") $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-
-                        $facturaId=(int)$_POST['invoiceId'];
-                        $factura=DirectInvoice::model()->findByPk($facturaId);
-                        $factura->isactive=0;
-                        $factura->save();
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 5:
-                $model=new InvestmentOperations;
-
-                if(isset($_POST['InvestmentOperations'])){
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-
-                    $model->attributes=$_POST['InvestmentOperations'];
-                    $model->account_id=$accountId;
-                    $model->cheq='TRA';
-                    $model->person='------';
-
-                    $providerId=(int)$_POST['Operations']['released'];
-
-                    if(!empty($providerId)){
-                        $provider=Providers::model()->findByPk($providerId);
-                        $model->released=$provider->company;
-                    }
-
-                    $balance=$account->initial_balance-$model->retirement;
-                    $account->initial_balance=$balance;
-                    $model->balance=$balance;
-
-                    if($model->payment_type==6){
-                        $model->cheq=$account->consecutive;
-                        $account->consecutive=$account->consecutive+1;
-                    }
-
-                    if(!empty($_POST['name'])) {
-                        $model->released=$_POST['name'];
-                    }
-
-                    if($model->person=="") $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="") $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-
-                        $facturaId=(int)$_POST['invoiceId'];
-                        $factura=DirectInvoice::model()->findByPk($facturaId);
-                        $factura->isactive=0;
-                        $factura->save();
-
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
+                $model->save();
+                $account->save();
+                Yii::app()->user->setFlash('success','Success!');
+                $this->redirect(array('index'));
+            }
 
         }
 
@@ -870,18 +373,6 @@ class OperationsController extends Controller
 
         if(Yii::app()->request->isPostRequest){
 
-            /*$criteria=new CDbCriteria;
-            $criteria->condition = 'provider_id=:providerId';
-            $criteria->params = array(':providerId'=>$_POST['provider_id']);
-
-            $invoice= new CActiveDataProvider('DirectInvoice', array(
-                'keyAttribute'=>'id',
-                'criteria'=>$criteria,
-                'pagination'=>array(
-                    'pageSize'=>Yii::app()->params['pagination']
-                ),
-            ));*/
-
             $data=DirectInvoice::model()->findByPk((int)$_POST['provider_id']);
 
             $data=new CArrayDataProvider($data);
@@ -897,179 +388,49 @@ class OperationsController extends Controller
 
     public function actionDeposit($accountId,$accountType){
 
-        switch($accountType){
-            case 1:
+        $model=new Operations;
 
-                $model=new Operations;
+        if(isset($_POST['Operations'])){
 
-                if(isset($_POST['Operations'])){
+            $model->attributes=$_POST['Operations'];
 
-                    $model->attributes=$_POST['Operations'];
+            $account=BankAccounts::model()->findByPk($accountId);
 
-                    $account=BankAccounts::model()->findByPk($accountId);
+            $balance=$account->initial_balance+$model->deposit;
 
-                    $balance=$account->initial_balance+$model->deposit;
-                    $account->initial_balance=$balance;
+            if(!empty($_POST['Operations']['vat_commission']) && !empty($_POST['Operations']['commission_fee'])){
 
-                    $model->account_id=$accountId;
-                    $model->balance=$balance;
-                    $model->cheq='DEP';
-                    $model->released=BankAccounts::model()->accountByPk($accountId);
+                $vatCommission=$_POST['Operations']['vat_commission'];
+                $commissionFee=$_POST['Operations']['commission_fee'];
+                $comision=$vatCommission+$commissionFee;
 
-                    $model->bank_concept=$model->bank_concept." #".$model->n_operation;
+                $model->vat_commission=$vatCommission;
+                $model->commission_fee=$commissionFee;
 
-                    if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
-                    if($model->person=="")          $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
+                $balance=$account->initial_balance+$model->deposit-$comision;
 
+            }
 
-                    if($model->save()){
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
+            $account->initial_balance=$balance;
 
-            break;
+            $model->account_id=$accountId;
+            $model->balance=$balance;
+            $model->cheq='DEP';
+            $model->released=BankAccounts::model()->accountByPk($accountId);
 
-            case 2:
+            $model->bank_concept=$model->bank_concept." #".$model->n_operation;
 
-                $model=new IntercuentaOperations();
+            if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
+            if($model->person=="")          $model->person=Yii::t('mx','PENDING');
+            if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
 
-                if(isset($_POST['IntercuentaOperations'])){
-
-                    $model->attributes=$_POST['IntercuentaOperations'];
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-                    $balance=$account->initial_balance+$model->deposit;
-                    $account->initial_balance=$balance;
-
-                    $model->account_id=$accountId;
-                    $model->balance=$balance;
-                    $model->cheq='DEP';
-                    $model->released=BankAccounts::model()->accountByPk($accountId);
-
-                    if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
-                    if($model->person=="")          $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 3:
-
-                $model=new DebitOperations();
-
-                if(isset($_POST['DebitOperations'])){
-
-                    $model->attributes=$_POST['DebitOperations'];
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-
-
-                    $vatCommission=$_POST['DebitOperations']['vat_commission'];
-                    $commissionFee=$_POST['DebitOperations']['commission_fee'];
-                    $comision=$vatCommission+$commissionFee;
-
-                    $balance=$account->initial_balance+$model->deposit-$comision;
-                    $account->initial_balance=$balance;
-
-                    $model->account_id=$accountId;
-                    $model->balance=$balance;
-                    $model->cheq='DEP';
-                    $model->released=BankAccounts::model()->accountByPk($accountId);
-
-                    $model->vat_commission=$vatCommission;
-                    $model->commission_fee=$commissionFee;
-
-                    if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
-                    if($model->person=="")          $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 4:
-
-                $model=new CreditOperations();
-
-                if(isset($_POST['CreditOperations'])){
-
-                    $model->attributes=$_POST['CreditOperations'];
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-
-                    $vatCommission=$_POST['DebitOperations']['vat_commission'];
-                    $commissionFee=$_POST['DebitOperations']['commission_fee'];
-                    $comision=$vatCommission+$commissionFee;
-
-                    $balance=$account->initial_balance+$model->deposit-$comision;
-                    $account->initial_balance=$balance;
-
-                    $model->account_id=$accountId;
-                    $model->balance=$balance;
-                    $model->cheq='DEP';
-                    $model->released=BankAccounts::model()->accountByPk($accountId);
-
-                    $model->vat_commission=$vatCommission;
-                    $model->commission_fee=$commissionFee;
-
-                    if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
-                    if($model->person=="")          $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
-            case 5:
-
-                $model=new InvestmentOperations();
-
-                if(isset($_POST['InvestmentOperations'])){
-
-                    $model->attributes=$_POST['InvestmentOperations'];
-
-                    $account=BankAccounts::model()->findByPk($accountId);
-                    $balance=$account->initial_balance+$model->deposit;
-                    $account->initial_balance=$balance;
-
-                    $model->account_id=$accountId;
-                    $model->balance=$balance;
-                    $model->cheq='DEP';
-                    $model->released=BankAccounts::model()->accountByPk($accountId);
-
-                    if($model->concept=="")         $model->concept=Yii::t('mx','PENDING FOR BILLING');
-                    if($model->person=="")          $model->person=Yii::t('mx','PENDING');
-                    if($model->bank_concept=="")    $model->bank_concept=Yii::t('mx','PENDING');
-
-                    if($model->save()){
-                        $account->save();
-                        Yii::app()->user->setFlash('success','Success');
-                        $this->redirect(array('index'));
-                    }
-                }
-
-            break;
-
+            if($model->save()){
+                $account->save();
+                Yii::app()->user->setFlash('success','Success');
+                $this->redirect(array('index'));
+            }
         }
+
 
         $accountTypes=AccountTypes::model()->findByPk($accountType);
         $bankAccount=BankAccounts::model()->accountByPk($accountId);
