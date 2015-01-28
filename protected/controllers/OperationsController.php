@@ -47,14 +47,19 @@ class OperationsController extends Controller
         if(Yii::app()->request->isPostRequest){
 
             $values=$_POST['ids'];
+            $suma=$_POST['suma'];
             $ids=explode(',',$values);
+
+            $operationGroup=strtotime(date('Y-m-d')).rand(0, 1000);
 
             foreach($ids as $id){
                 $model=$this->loadModel($id);
-               $model->groupByOperation=strtotime(date('Y-m-d'));
+                $model->operations_group=$operationGroup;
+                $model->charge_bank=$suma;
+                $model->save();
             }
 
-            $res=array('ok'=>true,'suma'=>number_format($suma,2));
+            $res=array('ok'=>true);
 
             echo CJSON::encode($res);
             Yii::app()->end();
@@ -81,7 +86,7 @@ class OperationsController extends Controller
                 $suma=$suma+$commission;
             }
 
-            $res=array('ok'=>true,'suma'=>number_format($suma,2));
+            $res=array('ok'=>true,'suma'=>number_format($suma,2),'sumaNoFormat'=>$suma);
 
             echo CJSON::encode($res);
             Yii::app()->end();
@@ -301,17 +306,23 @@ class OperationsController extends Controller
                     $model->save();
                     $account->save();
                     Yii::app()->user->setFlash('success','Success! numero de cheques disponibles: '.$numcheques);
-                    $this->redirect(array('index'));
+                    $this->redirect(array('operations/saldos','accountId'=>$accountId,'accountType'=>$accountType));
                 }else{
                     Yii::app()->user->setFlash('error','error! No hay cheques disponibles');
-                    $this->redirect(array('index'));
+                    $this->redirect(array('operations/payments','accountId'=>$accountId,'accountType'=>$accountType));
                 }
             }else{
 
                 $model->save();
                 $account->save();
+
+                $facturaId=(int)$_POST['invoiceId'];
+                $factura=DirectInvoice::model()->findByPk($facturaId);
+                $factura->isactive=0;
+                $factura->save();
+
                 Yii::app()->user->setFlash('success','Success!');
-                $this->redirect(array('index'));
+                $this->redirect(array('operations/saldos','accountId'=>$accountId,'accountType'=>$accountType));
             }
 
         }
@@ -427,7 +438,7 @@ class OperationsController extends Controller
             if($model->save()){
                 $account->save();
                 Yii::app()->user->setFlash('success','Success');
-                $this->redirect(array('index'));
+                $this->redirect(array('operations/saldos','accountId'=>$accountId,'accountType'=>$accountType));
             }
         }
 

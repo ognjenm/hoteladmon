@@ -16,7 +16,7 @@ class DirectInvoiceController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update','index','view','delete','getArticle','sumaInvoices','poliza','history'),
+				'actions'=>array('create','update','index','view','delete','getArticle','sumaInvoices','poliza','history','getDataConcept'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users

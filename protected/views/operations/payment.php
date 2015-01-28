@@ -62,7 +62,11 @@ $this->pageIcon='icon-ok';
     'block'=>true,
     'fade'=>true,
     'closeText'=>'×',
-    'alerts'=>array('info'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×')),
+    'alerts'=>array(
+        'info'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+        'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+        'error'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+    ),
 ));
 ?>
 

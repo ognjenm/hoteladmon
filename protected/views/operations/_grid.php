@@ -15,7 +15,8 @@
             )
         )
 
-    ));?>
+    ));
+    ?>
 
         <?php $this->widget('bootstrap.widgets.TbGroupGridView',array(
             'id'=>'operations-grid',
@@ -31,6 +32,7 @@
                 'displayFirstAndLast' => true,
             ),
             'selectableRows'=>2,
+            'selectionChanged'=>'sumaOperaciones',
             'dataProvider'=>$dataProvider->search($accountId),
             'filter'=>$dataProvider,
             'rowCssClassExpression'=>function($row, $data){
@@ -44,12 +46,17 @@
                 return $class;
             },
 
-            //'mergeColumns' => array('charge_bank'),
+            'mergeColumns' => array('charge_bank','operations_group'),
 
             'columns'=>array(
                 array(
                     'class'=>'CCheckBoxColumn',
                     'id'=>'chk'
+                ),
+                array(
+                    'name'=>'operations_group',
+                    'value'=>'$data->operations_group',
+                    'visible'=>false
                 ),
                 array(
                     'name'=>'datex',

@@ -20,6 +20,8 @@ $url=$this->createUrl('sumaOperations');
 
 Yii::app()->clientScript->registerScript('filterss', "
 
+        var sumaTotal=0;
+
        $('#filterForm').submit(function(){
 
             $('#operations-grid').yiiGridView('update', {
@@ -32,9 +34,9 @@ Yii::app()->clientScript->registerScript('filterss', "
 
         });
 
-        $('.select-on-check').click(function(){
+        function sumaOperaciones(){
 
-                var invoice=$.fn.yiiGridView.getChecked('operations-grid','chk').toString();
+                var invoice = $.fn.yiiGridView.getSelection('operations-grid').toString();
 
                 if(invoice!=''){
                     $.ajax({
@@ -45,12 +47,15 @@ Yii::app()->clientScript->registerScript('filterss', "
                         beforeSend: function() { $('#mainDiv').addClass('loading'); }
                     })
 
-                    .done(function(data) {  $('#suma').html('$'+data.suma); })
+                    .done(function(data) {
+                        $('#suma').html('$'+data.suma);
+                        sumaTotal=data.sumaNoFormat;
+                    })
                     .fail(function() { bootbox.alert('Error');  })
                     .always(function() { $('#mainDiv').removeClass('loading'); });
                 }
+        }
 
-            });
     ",CClientScript::POS_END);
 
 ?>
