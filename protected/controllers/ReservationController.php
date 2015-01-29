@@ -179,23 +179,35 @@ class ReservationController extends Controller
 
     public function actionCancel($customerId){
 
-        $reservation=Reservation::model()->findAll(
-            array(
-                'condition'=>'customer_reservation_id=:customerId',
-                'params'=>array('customerId'=>$customerId)
-            )
-        );
 
-        if($reservation){
-            foreach($reservation as $item){
-                $item->statux="CANCELLED";
-                $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
-                $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
-                $item->save();
+        if(isset($_POST['data'])){
+
+            $reservation=Reservation::model()->findAll(
+                array(
+                    'condition'=>'customer_reservation_id=:customerId',
+                    'params'=>array('customerId'=>$customerId)
+                )
+            );
+
+            if($reservation){
+                foreach($reservation as $item){
+                    $item->statux="CANCELLED";
+                    $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
+                    $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
+                    $item->save();
+                }
             }
+
+            $this->redirect(array('index'));
+
         }
 
-        $this->redirect(array('index'));
+        $customerReservation=CustomerReservations::model()->findByPk($customerId);
+
+
+        $this->render('cancel',array(
+            'customerReservation'=>$customerReservation
+        ));
 
     }
 
@@ -1278,8 +1290,6 @@ class ReservationController extends Controller
                 Yii::app()->end();
         }
     }
-
-
 
     public function actionView($id){
 

@@ -46,18 +46,18 @@
                 return $class;
             },
 
-            'mergeColumns' => array('charge_bank','operations_group'),
+           // 'mergeColumns' => array('charge_bank'),
 
             'columns'=>array(
                 array(
                     'class'=>'CCheckBoxColumn',
                     'id'=>'chk'
                 ),
-                array(
+                /*array(
                     'name'=>'operations_group',
                     'value'=>'$data->operations_group',
                     'visible'=>false
-                ),
+                ),*/
                 array(
                     'name'=>'datex',
                     'value'=>'$data->datex',

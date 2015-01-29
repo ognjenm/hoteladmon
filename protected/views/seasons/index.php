@@ -14,8 +14,6 @@
     $this->pageIcon='icon-cogs';
 
 
-
-
     if(Yii::app()->user->hasFlash('success')):
     Yii::app()->user->setFlash('success', '<strong>done!</strong> '.Yii::app()->user->getFlash('success'));
     endif;
