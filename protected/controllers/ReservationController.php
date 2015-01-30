@@ -179,8 +179,23 @@ class ReservationController extends Controller
 
     public function actionCancel($customerId){
 
+        Yii::import('bootstrap.widgets.TbForm');
 
-        if(isset($_POST['data'])){
+        $reservation=new Reservation;
+
+        $Formcancel = TbForm::createForm($reservation->getFormCancel(),$reservation,
+            array('htmlOptions'=>array(
+                'class'=>'well'),
+                'type'=>'inline',
+            )
+        );
+
+
+        if(isset($_POST['Reservation']['cancelDate'])){
+
+            $candelDate=$_POST['Reservation']['cancelDate'];
+            $candelDate=strtotime(Yii::app()->quoteUtil->toEnglishDateTime($candelDate));
+
 
             $reservation=Reservation::model()->findAll(
                 array(
@@ -189,16 +204,45 @@ class ReservationController extends Controller
                 )
             );
 
+            $totalREserv=CustomerReservations::model()->findByPk($customerId);
+            $total=$totalREserv->total;
+            $descuento=0;
+
+
             if($reservation){
                 foreach($reservation as $item){
-                    $item->statux="CANCELLED";
-                    $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
-                    $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
-                    $item->save();
+
+                    if($item->statux=="RESERVED" || $item->statux=="RESERVED-PENDING"){
+                        $fechaReserv=strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin));
+
+                        $diferencia=$fechaReserv-$candelDate;
+                        $diferencia= round(($diferencia/60)/60);
+
+                       if($diferencia>=144)  $descuento=0;
+
+                       if($diferencia>=48 && $diferencia<=143) $descuento=($total*20)/100;
+
+                        if($diferencia>=24 && $diferencia<=47) $descuento=($total*50)/100;
+
+                        if($diferencia<24) $descuento=$total;
+
+                        $item->statux="CANCELLED";
+                        $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
+                        $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
+                        $item->save();
+
+                        //&$this->redirect(array('index'));
+
+                        echo "descuento: ".$descuento."\n";
+                        echo "Diferencia en horas: ".$diferencia;
+
+                    }
+
+
+
+
                 }
             }
-
-            $this->redirect(array('index'));
 
         }
 
@@ -206,7 +250,8 @@ class ReservationController extends Controller
 
 
         $this->render('cancel',array(
-            'customerReservation'=>$customerReservation
+            'customerReservation'=>$customerReservation,
+            'Formcancel'=>$Formcancel
         ));
 
     }

@@ -18,18 +18,17 @@
     $this->pageSubTitle=Yii::t('mx','Cancel');
     $this->pageIcon='icon-list-alt';
 
-    echo Yii::app()->user->setFlash('info', $customerReservation->customer->first_name.' '.$customerReservation->customer->last_name);
+    echo Yii::app()->user->setFlash('danger',"<h3>Cancelar Reservación: ".$customerReservation->customer->first_name.' '.$customerReservation->customer->last_name."</h3>");
 
      $this->widget('bootstrap.widgets.TbAlert', array(
         'block'=>true,
         'fade'=>true,
         'closeText'=>'×',
         'alerts'=>array(
-            'info'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×')
+            'danger'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×')
         ),
     ));
 
 
+   $this->renderPartial('_cancel', array('Formcancel'=>$Formcancel));
 
-
-    $this->renderPartial('_cancel', array());

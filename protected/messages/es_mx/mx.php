@@ -790,7 +790,8 @@ return array(
     'Calculate commission'=>'Calcular comisión',
     'Close operations'=>'Cerrar operaciones',
     'There are no invoices to display'=>'No hay facturas para mostrar',
-    'There are no concepts to display'=>'No hay conceptos para mostrar'
+    'There are no concepts to display'=>'No hay conceptos para mostrar',
+    'Date and time of cancellation'=>'Fecha y hora de cancelación'
 
 
 

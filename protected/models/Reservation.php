@@ -8,6 +8,7 @@ class Reservation extends CActiveRecord
     public $first_name;
     public $roomName;
     public $customerId;
+    public $cancelDate;
 
 	public static function model($className=__CLASS__)
 	{
@@ -28,7 +29,7 @@ class Reservation extends CActiveRecord
 			array('customer_reservation_id, room_id, adults, children, pets, totalpax, nigth_ta, nigth_tb, nights', 'numerical', 'integerOnly'=>true),
 			array('room_type_id, price_ta, price_tb, price_early_checkin, price_late_checkout, price', 'length', 'max'=>10),
 			//array('statux', 'length', 'max'=>13),
-			array('checkin, checkin_hour, checkout, checkout_hour,description,service_type,statux', 'safe'),
+			array('checkin, checkin_hour, checkout, checkout_hour,description,service_type,statux,cancelDate', 'safe'),
 			array('id,customer_reservation_id, checkin, checkin_hour, checkout, checkout_hour, statux,first_name,roomName', 'safe', 'on'=>'search'),
 		);
 	}
@@ -132,6 +133,7 @@ class Reservation extends CActiveRecord
             'first_name'=>'',    //Yii::t('mx','First Name'),
             'roomName'=>Yii::t('mx','Cabana'),
             'service_type'=>Yii::t('mx','Service Type'),
+            'cancelDate'=>Yii::t('mx','Date and time of cancellation')
         );
     }
 
@@ -349,6 +351,40 @@ class Reservation extends CActiveRecord
         );
     }
 
+    public function getFormCancel(){
+        return array(
+            'id'=>'cancelForm',
+            'elements'=>array(
+                "cancelDate" => array(
+                    'type'=>'application.extensions.CJuiDateTimePicker.CJuiDateTimePicker',
+                    'language'=>substr(Yii::app()->getLanguage(), 0, 2),
+                    'mode'=>'datetime',
+                    'options'=>array(
+                        'showAnim'=>'slide',
+                        'changeYear' => true,
+                        'changeMonth' => true,
+                        'dateFormat'=>'dd-M-yy',
+                        'timeText'=> Yii::t('mx','Schedule'),
+                        'hourText'=> Yii::t('mx','Hour'),
+                        'minuteText'=>Yii::t('mx','Minute'),
+                        'timeOnlyTitle'=>Yii::t('mx','Choose Time'),
+                    ),
+                    'htmlOptions' => array(
+                        'class' => 'input-medium',
+                    ),
+                ),
+            ),
+            'buttons' => array(
+                'cancel' => array(
+                    'type' => 'submit',
+                    'label' => Yii::t('mx','Cancel'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-ok'
+                ),
+            )
+        );
+    }
+
     public function getFormFilter(){
 
         return array(
@@ -422,7 +458,6 @@ class Reservation extends CActiveRecord
                                 $("#reservationsContainer").hide();
                         }',
                     ),
-
                 ),
             )
         );
