@@ -351,7 +351,7 @@ class Reservation extends CActiveRecord
         );
     }
 
-    public function getFormCancel(){
+    public function getFormCancel($customerId){
         return array(
             'id'=>'cancelForm',
             'elements'=>array(
@@ -380,6 +380,34 @@ class Reservation extends CActiveRecord
                     'label' => Yii::t('mx','Cancel'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-ok'
+                ),
+                'si' => array(
+                    'type' => 'submit',
+                    'label' => Yii::t('mx','Si'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-ok',
+                    'url'=>Yii::app()->createUrl('/reservation/getStatus'),
+                    'ajaxOptions' => array(
+                        'data'=>array('customerId'=>$customerId),
+                        'type'=>'POST',
+                        'beforeSend' => 'function() {
+                            $("#reservation-grid-inner").addClass("loading");
+                         }',
+                        'complete' => 'function() {
+                             $("#reservation-grid-inner").removeClass("loading");
+                        }',
+                        'success' =>'function(data){
+                                $("#reservationsFilter").html(data);
+                                $("#reservationsContainer").hide();
+                        }',
+                    ),
+                ),
+                'no' => array(
+                    'type' => 'link',
+                    'label' => Yii::t('mx','No'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-remove',
+                    'url'=>Yii::app()->createUrl('/reservation/index'),
                 ),
             )
         );

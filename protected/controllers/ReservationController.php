@@ -37,7 +37,7 @@ class ReservationController extends Controller
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
                                  'schedulerOverview_update','campedReport','getCampedReport',
-                                 'roomsJson','cancel','disponibilidad','monthlyReport'
+                                 'roomsJson','cancel','disponibilidad','monthlyReport','getStatus'
 
                 ),
                 'users'=>array('@'),
@@ -47,6 +47,36 @@ class ReservationController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public function actionGetStatus(){
+
+        $res=array('ok'=>false);
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            if(isset($_POST['customerId'])){
+                $customerId=(int)$_POST['customerId'];
+
+                $reservation=Reservation::model()->find(array(
+                    'condition'=>'customer_reservation_id=:customerReservationId',
+                    'params'=>array(':customerReservationId'=>$customerId)
+                ));
+
+                if($reservation->statux=='RESERVED' || $reservation->statux=='RESERVED-PENDING'){
+                    $res=array('ok'=>true);
+                }
+            }
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
+
+
+
+
+
     }
 
     public function actionMonthlyReport(){
@@ -166,7 +196,6 @@ class ReservationController extends Controller
 
     }
 
-
     public function actionDisponibilidad(){
 
         $tabla="";
@@ -183,7 +212,7 @@ class ReservationController extends Controller
 
         $reservation=new Reservation;
 
-        $Formcancel = TbForm::createForm($reservation->getFormCancel(),$reservation,
+        $Formcancel = TbForm::createForm($reservation->getFormCancel($customerId),$reservation,
             array('htmlOptions'=>array(
                 'class'=>'well'),
                 'type'=>'inline',
@@ -193,8 +222,13 @@ class ReservationController extends Controller
 
         if(isset($_POST['Reservation']['cancelDate'])){
 
-            $candelDate=$_POST['Reservation']['cancelDate'];
-            $candelDate=strtotime(Yii::app()->quoteUtil->toEnglishDateTime($candelDate));
+            $today=$_POST['Reservation']['cancelDate'];
+            $todayFecha=substr($today,0,11);
+            $todayHora=substr($today,12,5);
+
+            $cancelDate=Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($todayFecha);
+            $cancelDate=$cancelDate." ".$todayHora;
+            $cancelDate=strtotime($cancelDate);
 
 
             $reservation=Reservation::model()->findAll(
@@ -212,10 +246,25 @@ class ReservationController extends Controller
             if($reservation){
                 foreach($reservation as $item){
 
-                    if($item->statux=="RESERVED" || $item->statux=="RESERVED-PENDING"){
-                        $fechaReserv=strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin));
+                    if($item->statux=="PRE-RESERVED"){
+                        $item->statux="CANCELLED";
+                        $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
+                        $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
+                        $item->save();
+                    }
 
-                        $diferencia=$fechaReserv-$candelDate;
+                    if($item->statux=="RESERVED" || $item->statux=="RESERVED-PENDING"){
+
+                        $dateReservation=$item->checkin;
+                        $reservationDate=substr($dateReservation,0,11);
+                        $reservationTime=substr($dateReservation,12,5);
+
+                        $reservation=Yii::app()->quoteUtil->toEnglishDate($reservationDate);
+                        $reservation=$reservation." ".$reservationTime;
+                        $reservation=strtotime($reservation);
+
+                        $diferencia=$reservation-$cancelDate;
+
                         $diferencia= round(($diferencia/60)/60);
 
                        if($diferencia>=144)  $descuento=0;
@@ -233,13 +282,7 @@ class ReservationController extends Controller
 
                         //&$this->redirect(array('index'));
 
-                        echo "descuento: ".$descuento."\n";
-                        echo "Diferencia en horas: ".$diferencia;
-
                     }
-
-
-
 
                 }
             }
@@ -1568,7 +1611,6 @@ class ReservationController extends Controller
 
     }
 
-
     public function actionCreate()
     {
         Yii::import('bootstrap.widgets.TbForm');
@@ -1687,8 +1729,6 @@ class ReservationController extends Controller
         ));
     }
 
-
-
     public function actionSaveReservation(){
 
         $res=array('ok'=>false);
@@ -1768,8 +1808,6 @@ class ReservationController extends Controller
         }
 
     }
-
-
 
     public function actionUpdate()
     {
@@ -1855,7 +1893,6 @@ class ReservationController extends Controller
 
     }
 
-
     public function actionDelete($id)
     {
         if(Yii::app()->request->isPostRequest)
@@ -1870,7 +1907,6 @@ class ReservationController extends Controller
         else
             throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
     }
-
 
     public function actionIndex(){
         Yii::import('bootstrap.widgets.TbForm');
@@ -1917,7 +1953,6 @@ class ReservationController extends Controller
         }
     }
 
-
     protected function performAjaxValidation($model){
         if (Yii::app()->getRequest()->getIsAjaxRequest()) {
 
@@ -1928,7 +1963,6 @@ class ReservationController extends Controller
             Yii::app()->end();
         }
     }
-
 
     public function actionChangeStatus(){
 

@@ -7,4 +7,11 @@
  */
 ?>
 
-<?php echo $Formcancel->render(); ?>
+<?php echo $Formcancel->renderBegin(); ?>
+
+    <div class="form-actions">
+        <?php echo $Formcancel->renderElement('si'); ?>
+        <?php echo $Formcancel->renderElement('no'); ?>
+    </div>
+
+<?php echo $Formcancel->renderEnd(); ?>
