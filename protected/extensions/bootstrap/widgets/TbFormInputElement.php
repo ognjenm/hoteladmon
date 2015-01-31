@@ -50,7 +50,7 @@ class TbFormInputElement extends CFormInputElement
 		'uneditable' => 'uneditableRow',
 		'radiolistinline' => 'radioButtonListInlineRow',
 		'checkboxlistinline' => 'checkBoxListInlineRow',
-		'select2' => 'select2Row'
+		'select2' => 'select2Row',
 	);
 
 	/**

@@ -382,7 +382,7 @@ class Reservation extends CActiveRecord
                     'icon'=>'icon-ok'
                 ),
                 'si' => array(
-                    'type' => 'submit',
+                    'type' => 'ajaxSubmit',
                     'label' => Yii::t('mx','Si'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-ok',
@@ -390,15 +390,18 @@ class Reservation extends CActiveRecord
                     'ajaxOptions' => array(
                         'data'=>array('customerId'=>$customerId),
                         'type'=>'POST',
+                        'dataType'=>'json',
                         'beforeSend' => 'function() {
-                            $("#reservation-grid-inner").addClass("loading");
+                            $("#mainDiv").addClass("loading");
                          }',
                         'complete' => 'function() {
-                             $("#reservation-grid-inner").removeClass("loading");
+                             $("#mainDiv").removeClass("loading");
                         }',
                         'success' =>'function(data){
-                                $("#reservationsFilter").html(data);
-                                $("#reservationsContainer").hide();
+                                if(data.ok==true){
+                                        $("#fechayhora").show("slow");
+                                        $("#botones").hide("slow");
+                                }
                         }',
                     ),
                 ),

@@ -7,11 +7,15 @@
  */
 ?>
 
-<?php echo $Formcancel->renderBegin(); ?>
+    <?php echo $Formcancel->renderBegin(); ?>
 
-    <div class="form-actions">
-        <?php echo $Formcancel->renderElement('si'); ?>
-        <?php echo $Formcancel->renderElement('no'); ?>
-    </div>
+        <div id="fechayhora" style="display: none">
+            <?php echo $Formcancel->renderElement('cancelDate'); ?>
+        </div>
 
-<?php echo $Formcancel->renderEnd(); ?>
+        <div id="botones">
+            <?php echo $Formcancel->renderElement('si'); ?>
+            <?php echo $Formcancel->renderElement('no'); ?>
+        </div>
+
+    <?php echo $Formcancel->renderEnd(); ?>

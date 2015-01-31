@@ -29,5 +29,8 @@
         ),
     ));
 
+?>
 
-   $this->renderPartial('_cancel', array('Formcancel'=>$Formcancel));
+<div class="mainDiv">
+<?php  $this->renderPartial('_cancel', array('Formcancel'=>$Formcancel)); ?>
+</div>
