@@ -791,10 +791,11 @@ return array(
     'Close operations'=>'Cerrar operaciones',
     'There are no invoices to display'=>'No hay facturas para mostrar',
     'There are no concepts to display'=>'No hay conceptos para mostrar',
-    'Date and time of cancellation'=>'Fecha y hora de cancelación'
-
-
-
+    'Date and time of cancellation'=>'Fecha y hora de cancelación',
+    'Type reimburse'=>'Forma de reembolso',
+    'Penalty charge'=>'Cargo de penalización',
+    'Reimburse'=>'Reembolso',
+    'Total reservation'=>'Total de la reservación'
 
 
 );

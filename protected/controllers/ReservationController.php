@@ -37,7 +37,7 @@ class ReservationController extends Controller
                                  'getInformation','dailyReport','exportDailyReport',
                                  'getDailyReport','scheduler_cabana_update','filter',
                                  'schedulerOverview_update','campedReport','getCampedReport',
-                                 'roomsJson','cancel','disponibilidad','monthlyReport','getStatus'
+                                 'roomsJson','cancel','disponibilidad','monthlyReport','getStatus','getAmount'
 
                 ),
                 'users'=>array('@'),
@@ -49,9 +49,84 @@ class ReservationController extends Controller
         );
     }
 
+    public function actionGetAmount(){
+
+        $res=array('ok'=>false,'amount'=>0);
+        $status=null;
+        $checkin=null;
+        $cargo=0;
+        $reembolso=0;
+
+        if(Yii::app()->request->isAjaxRequest){
+
+            if(isset($_POST['customerId'])){
+                $customerId=(int)$_POST['customerId'];
+
+                $customerReservation=CustomerReservations::model()->findByPk($customerId);
+
+                $reservation=Reservation::model()->findAll(
+                    array(
+                        'condition'=>'customer_reservation_id=:customerId',
+                        'params'=>array('customerId'=>$customerId)
+                    )
+                );
+
+                $payments=Payments::model()->find(array(
+                    'condition'=>'customer_reservation_id=:customerReservationId',
+                    'params'=>array('customerReservationId'=>$customerId)
+                ));
+
+                $total=$customerReservation->total;
+
+                foreach($reservation as $item){
+                    $status=$item->statux;
+                    $checkin=$item->checkin;
+                    break;
+                }
+
+                $today=$_POST['cancelDate'];
+                $todayFecha=substr($today,0,11);
+                $todayHora=substr($today,12,5);
+
+                $cancelDate=Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($todayFecha);
+                $cancelDate=$cancelDate." ".$todayHora;
+                $cancelDate=strtotime($cancelDate);
+
+                $dateReservation=$checkin;
+                $reservationDate=substr($dateReservation,0,11);
+                $reservationTime=substr($dateReservation,12,5);
+
+                $reservation=Yii::app()->quoteUtil->toEnglishDate($reservationDate);
+                $reservation=$reservation." ".$reservationTime;
+                $reservation=strtotime($reservation);
+
+                $diferencia=$reservation-$cancelDate;
+
+                $diferencia= round(($diferencia/60)/60);
+
+                if($diferencia>=144)  $cargo=0;
+
+                if($diferencia>=48 && $diferencia<=143) $cargo=($total*20)/100;
+
+                if($diferencia>=24 && $diferencia<=47) $cargo=($total*50)/100;
+
+                if($diferencia<24) $cargo=$total;
+
+                $reembolso=$payments->amount-$cargo;
+
+                $res=array('ok'=>true,'charge'=>$cargo,'reimburse'=>$reembolso,'total'=>$total);
+
+            }
+
+            echo CJSON::encode($res);
+            Yii::app()->end();
+
+        }
+    }
+
     public function actionGetStatus(){
 
-        $res=array('ok'=>false);
+        $res=array('ok'=>false,'status'=>'null');
 
         if(Yii::app()->request->isAjaxRequest){
 
@@ -63,19 +138,80 @@ class ReservationController extends Controller
                     'params'=>array(':customerReservationId'=>$customerId)
                 ));
 
-                if($reservation->statux=='RESERVED' || $reservation->statux=='RESERVED-PENDING'){
-                    $res=array('ok'=>true);
-                }
+                $res=array('ok'=>true,'status'=>$reservation->statux);
+
             }
 
             echo CJSON::encode($res);
             Yii::app()->end();
 
         }
+    }
+
+    public function actionCancel($customerId){
+
+        Yii::import('bootstrap.widgets.TbForm');
+
+        $reservation=new Reservation;
+
+        $Formcancel = TbForm::createForm($reservation->getFormCancel($customerId),$reservation,
+            array('htmlOptions'=>array(
+                'class'=>'well'),
+                'type'=>'horizontal',
+            )
+        );
+
+        if(isset($_POST['Reservation']['Reservation_type_reimburse'])){
+
+            $reservation=Reservation::model()->findAll(
+                array(
+                    'condition'=>'customer_reservation_id=:customerId',
+                    'params'=>array('customerId'=>$customerId)
+                )
+            );
+
+            if($reservation){
+                foreach($reservation as $item){
+
+                    $item->statux="CANCELLED";
+                    $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
+                    $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
+                    $item->save();
+                }
+            }
+
+            if($_POST['Reservation']['Reservation_type_reimburse']){
+
+            }
+
+            $payment=new Operations;
+            $payment->cheq='DEP';
+            $payment->person=$person;
+            $payment->released=BankAccounts::model()->accountByPk($model->account_id);
+            $payment->balance=$balance;
+            $payment->concept=Yii::t('mx','PENDING FOR BILLING');
+            $payment->deposit=$model->amount;
+            $payment->datex=date('Y-m-d');
+            $payment->baucher=$model->baucher;
+            $payment->n_operation=$model->n_operation;
+            $payment->n_tarjeta=$model->n_tarjeta;
+            $payment->payment_type=$model->payment_type;
+            $payment->account_id=$model->account_id;
+
+            //$this->redirect(array('index'));
+
+            //aki va el codigo
 
 
+        }
+
+        $customerReservation=CustomerReservations::model()->findByPk($customerId);
 
 
+        $this->render('cancel',array(
+            'customerReservation'=>$customerReservation,
+            'Formcancel'=>$Formcancel
+        ));
 
     }
 
@@ -202,99 +338,6 @@ class ReservationController extends Controller
 
         $this->render('disponibilidad',array(
             'tabla'=>$tabla,
-        ));
-
-    }
-
-    public function actionCancel($customerId){
-
-        Yii::import('bootstrap.widgets.TbForm');
-
-        $reservation=new Reservation;
-
-        $Formcancel = TbForm::createForm($reservation->getFormCancel($customerId),$reservation,
-            array('htmlOptions'=>array(
-                'class'=>'well'),
-                'type'=>'inline',
-            )
-        );
-
-
-        if(isset($_POST['Reservation']['cancelDate'])){
-
-            $today=$_POST['Reservation']['cancelDate'];
-            $todayFecha=substr($today,0,11);
-            $todayHora=substr($today,12,5);
-
-            $cancelDate=Yii::app()->quoteUtil->ToEnglishDateFromFormatdMyyyy($todayFecha);
-            $cancelDate=$cancelDate." ".$todayHora;
-            $cancelDate=strtotime($cancelDate);
-
-
-            $reservation=Reservation::model()->findAll(
-                array(
-                    'condition'=>'customer_reservation_id=:customerId',
-                    'params'=>array('customerId'=>$customerId)
-                )
-            );
-
-            $totalREserv=CustomerReservations::model()->findByPk($customerId);
-            $total=$totalREserv->total;
-            $descuento=0;
-
-
-            if($reservation){
-                foreach($reservation as $item){
-
-                    if($item->statux=="PRE-RESERVED"){
-                        $item->statux="CANCELLED";
-                        $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
-                        $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
-                        $item->save();
-                    }
-
-                    if($item->statux=="RESERVED" || $item->statux=="RESERVED-PENDING"){
-
-                        $dateReservation=$item->checkin;
-                        $reservationDate=substr($dateReservation,0,11);
-                        $reservationTime=substr($dateReservation,12,5);
-
-                        $reservation=Yii::app()->quoteUtil->toEnglishDate($reservationDate);
-                        $reservation=$reservation." ".$reservationTime;
-                        $reservation=strtotime($reservation);
-
-                        $diferencia=$reservation-$cancelDate;
-
-                        $diferencia= round(($diferencia/60)/60);
-
-                       if($diferencia>=144)  $descuento=0;
-
-                       if($diferencia>=48 && $diferencia<=143) $descuento=($total*20)/100;
-
-                        if($diferencia>=24 && $diferencia<=47) $descuento=($total*50)/100;
-
-                        if($diferencia<24) $descuento=$total;
-
-                        $item->statux="CANCELLED";
-                        $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
-                        $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
-                        $item->save();
-
-                        //&$this->redirect(array('index'));
-
-                    }
-
-                }
-            }
-
-        }
-
-        $customerReservation=CustomerReservations::model()->findByPk($customerId);
-
-
-        $this->render('cancel',array(
-            'customerReservation'=>$customerReservation,
-            'Formcancel'=>$Formcancel
         ));
 
     }

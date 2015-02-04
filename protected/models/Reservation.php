@@ -9,6 +9,11 @@ class Reservation extends CActiveRecord
     public $roomName;
     public $customerId;
     public $cancelDate;
+    public $type_reimburse;
+    public $charge;
+    public $reimburse;
+    public $total;
+
 
 	public static function model($className=__CLASS__)
 	{
@@ -133,7 +138,12 @@ class Reservation extends CActiveRecord
             'first_name'=>'',    //Yii::t('mx','First Name'),
             'roomName'=>Yii::t('mx','Cabana'),
             'service_type'=>Yii::t('mx','Service Type'),
-            'cancelDate'=>Yii::t('mx','Date and time of cancellation')
+            'cancelDate'=>Yii::t('mx','Date and time of cancellation'),
+            'type_reimburse'=>Yii::t('mx','Type reimburse'),
+            'charge'=>Yii::t('mx','Penalty charge'),
+            'reimburse'=>Yii::t('mx','Reimburse'),
+            'total'=>Yii::t('mx','Total reservation')
+
         );
     }
 
@@ -355,6 +365,32 @@ class Reservation extends CActiveRecord
         return array(
             'id'=>'cancelForm',
             'elements'=>array(
+                "total"=>array(
+                    'type'=>'text',
+                    'class' => 'input-medium',
+                    'disabled'=>'disabled'
+                ),
+                "charge"=>array(
+                   'type'=>'text',
+                   'class' => 'input-medium',
+                    'disabled'=>'disabled'
+                ),
+                "reimburse"=>array(
+                    'type'=>'text',
+                    'class' => 'input-medium',
+                    'disabled'=>'disabled'
+                ),
+                "type_reimburse"=>array(
+                    'type'=>'dropdownlist',
+                    'class' => 'input-medium',
+                    'items'=>array(
+                        'TRANSFER'=>Yii::t('mx','Transfer'),
+                        'CHEQUE'=>Yii::t('mx','Cheque'),
+                        'TARJETA'=>Yii::t('mx','Tarjet'),
+                        'CASH-DEPOSIT'=>Yii::t('mx','Cash deposit')
+                    ),
+                    'prompt'=>Yii::t('mx','Select')
+                ),
                 "cancelDate" => array(
                     'type'=>'application.extensions.CJuiDateTimePicker.CJuiDateTimePicker',
                     'language'=>substr(Yii::app()->getLanguage(), 0, 2),
@@ -377,7 +413,7 @@ class Reservation extends CActiveRecord
             'buttons' => array(
                 'cancel' => array(
                     'type' => 'submit',
-                    'label' => Yii::t('mx','Cancel'),
+                    'label' => Yii::t('mx','Aplicar Cargo'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-ok'
                 ),
@@ -399,8 +435,15 @@ class Reservation extends CActiveRecord
                         }',
                         'success' =>'function(data){
                                 if(data.ok==true){
-                                        $("#fechayhora").show("slow");
-                                        $("#botones").hide("slow");
+
+                                        if(data.status=="RESERVED" || data.status=="RESERVED-PENDING"){
+                                            $("#fechayhora").show("slow");
+                                            $("#botones").hide("slow");
+                                        }
+
+                                        if(data.status=="PRE-RESERVED"){
+
+                                        }
                                 }
                         }',
                     ),
@@ -411,6 +454,33 @@ class Reservation extends CActiveRecord
                     'layoutType' => 'primary',
                     'icon'=>'icon-remove',
                     'url'=>Yii::app()->createUrl('/reservation/index'),
+                ),
+                'ok' => array(
+                    'type' => 'ajaxSubmit',
+                    'label' => Yii::t('mx','ok'),
+                    'layoutType' => 'primary',
+                    'icon'=>'icon-ok',
+                    'url'=>Yii::app()->createUrl('/reservation/getAmount'),
+                    'ajaxOptions' => array(
+                        'data'=>array('customerId'=>$customerId,'cancelDate'=>'js:$("#Reservation_cancelDate").val()'),
+                        'type'=>'POST',
+                        'dataType'=>'json',
+                        'beforeSend' => 'function() {
+                            $("#mainDiv").addClass("loading");
+                         }',
+                        'complete' => 'function() {
+                             $("#mainDiv").removeClass("loading");
+                        }',
+                        'success' =>'function(data){
+                                if(data.ok==true){
+                                            $("#Reservation_total").val(data.total)
+                                            $("#Reservation_charge").val(data.charge);
+                                            $("#Reservation_reimburse").val(data.reimburse);
+                                            $("#devolucionDiv").show("slow");
+                                            $("#fechayhora").hide("slow");
+                                }
+                        }',
+                    ),
                 ),
             )
         );
