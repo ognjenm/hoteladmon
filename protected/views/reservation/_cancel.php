@@ -21,6 +21,8 @@
             <?php echo $Formcancel['charge']; ?>
             <?php echo $Formcancel['reimburse']; ?>
             <?php echo $Formcancel['type_reimburse']; ?>
+            <?php echo $Formcancel['account_id']; ?>
+            <?php echo $Formcancel['status']; ?>
             <?php echo $Formcancel->renderElement('cancel'); ?>
         </div>
 

@@ -13,6 +13,8 @@ class Reservation extends CActiveRecord
     public $charge;
     public $reimburse;
     public $total;
+    public $account_id;
+    public $status;
 
 
 	public static function model($className=__CLASS__)
@@ -142,8 +144,9 @@ class Reservation extends CActiveRecord
             'type_reimburse'=>Yii::t('mx','Type reimburse'),
             'charge'=>Yii::t('mx','Penalty charge'),
             'reimburse'=>Yii::t('mx','Reimburse'),
-            'total'=>Yii::t('mx','Total reservation')
-
+            'total'=>Yii::t('mx','Total reservation'),
+            'account_id'=>Yii::t('mx','Account'),
+            'status'=>Yii::t('mx','Status')
         );
     }
 
@@ -365,30 +368,34 @@ class Reservation extends CActiveRecord
         return array(
             'id'=>'cancelForm',
             'elements'=>array(
+                "status"=>array(
+                    'type'=>'hidden',
+                ),
+                "account_id"=>array(
+                    'type'=>'dropdownlist',
+                    'class' => 'input-medium',
+                    'items'=>BankAccounts::model()->listAll(),
+                    'prompt'=>Yii::t('mx','Select')
+                ),
                 "total"=>array(
                     'type'=>'text',
                     'class' => 'input-medium',
-                    'disabled'=>'disabled'
+                    'readonly'=>'readonly'
                 ),
                 "charge"=>array(
                    'type'=>'text',
                    'class' => 'input-medium',
-                    'disabled'=>'disabled'
+                    'readonly'=>'readonly'
                 ),
                 "reimburse"=>array(
                     'type'=>'text',
                     'class' => 'input-medium',
-                    'disabled'=>'disabled'
+                    'readonly'=>'readonly'
                 ),
                 "type_reimburse"=>array(
                     'type'=>'dropdownlist',
                     'class' => 'input-medium',
-                    'items'=>array(
-                        'TRANSFER'=>Yii::t('mx','Transfer'),
-                        'CHEQUE'=>Yii::t('mx','Cheque'),
-                        'TARJETA'=>Yii::t('mx','Tarjet'),
-                        'CASH-DEPOSIT'=>Yii::t('mx','Cash deposit')
-                    ),
+                    'items'=>PaymentsTypes::model()->listAll(),
                     'prompt'=>Yii::t('mx','Select')
                 ),
                 "cancelDate" => array(
@@ -476,6 +483,7 @@ class Reservation extends CActiveRecord
                                             $("#Reservation_total").val(data.total)
                                             $("#Reservation_charge").val(data.charge);
                                             $("#Reservation_reimburse").val(data.reimburse);
+                                            $("#Reservation_status").val(data.status);
                                             $("#devolucionDiv").show("slow");
                                             $("#fechayhora").hide("slow");
                                 }

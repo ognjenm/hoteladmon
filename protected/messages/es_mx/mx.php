@@ -795,7 +795,8 @@ return array(
     'Type reimburse'=>'Forma de reembolso',
     'Penalty charge'=>'Cargo de penalización',
     'Reimburse'=>'Reembolso',
-    'Total reservation'=>'Total de la reservación'
+    'Total reservation'=>'Total de la reservación',
+    'Customer reimbursement'=>'Reembolso al cliente'
 
 
 );

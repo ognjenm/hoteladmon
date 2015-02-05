@@ -20,12 +20,18 @@
 
     echo Yii::app()->user->setFlash('danger',"<h3>Cancelar Reservación: ".$customerReservation->customer->first_name.' '.$customerReservation->customer->last_name." ?</h3>");
 
+    if(Yii::app()->user->hasFlash('error')):
+        Yii::app()->user->setFlash('warning',Yii::app()->user->getFlash('error'));
+    endif;
+
      $this->widget('bootstrap.widgets.TbAlert', array(
         'block'=>true,
         'fade'=>true,
         'closeText'=>'×',
         'alerts'=>array(
-            'danger'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×')
+            'danger'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+            'success'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
+            'warning'=>array('block'=>true, 'fade'=>true, 'closeText'=>'×'),
         ),
     ));
 

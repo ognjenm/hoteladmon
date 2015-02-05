@@ -4269,8 +4269,11 @@ class QuoteDetails extends CApplicationComponent{
         $operation->balance=$balance;
 
         if($operation->save()){
+
             return $operation->id;
+
         }else{
+
             return $operation->getErrors();
         }
 

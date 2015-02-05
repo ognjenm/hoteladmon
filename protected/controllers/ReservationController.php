@@ -114,7 +114,7 @@ class ReservationController extends Controller
 
                 $reembolso=$payments->amount-$cargo;
 
-                $res=array('ok'=>true,'charge'=>$cargo,'reimburse'=>$reembolso,'total'=>$total);
+                $res=array('ok'=>true,'charge'=>$cargo,'reimburse'=>$reembolso,'total'=>$total,'status'=>$status);
 
             }
 
@@ -152,56 +152,85 @@ class ReservationController extends Controller
 
         Yii::import('bootstrap.widgets.TbForm');
 
-        $reservation=new Reservation;
+        $mreservation=new Reservation;
 
-        $Formcancel = TbForm::createForm($reservation->getFormCancel($customerId),$reservation,
+        $Formcancel = TbForm::createForm($mreservation->getFormCancel($customerId),$mreservation,
             array('htmlOptions'=>array(
                 'class'=>'well'),
                 'type'=>'horizontal',
             )
         );
 
-        if(isset($_POST['Reservation']['Reservation_type_reimburse'])){
+        if(isset($_POST['Reservation'])){
 
-            $reservation=Reservation::model()->findAll(
-                array(
-                    'condition'=>'customer_reservation_id=:customerId',
-                    'params'=>array('customerId'=>$customerId)
-                )
-            );
 
-            if($reservation){
-                foreach($reservation as $item){
+            if($_POST['Reservation']['status']=='RESERVED' || $_POST['Reservation']['status']=='RESERVED-PENDING'){
+                Yii::app()->quoteUtil->changeStatusReservation($customerId,"CANCELLED");
 
-                    $item->statux="CANCELLED";
-                    $item->checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkin)));
-                    $item->checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->toEnglishDateTime($item->checkout)));
-                    $item->save();
+                $retirement=$_POST['Reservation']['reimburse'];
+                $account_id=$_POST['Reservation']['account_id'];
+                $customerReservation=CustomerReservations::model()->findByPk($customerId);
+
+                $account=BankAccounts::model()->findByPk($account_id);
+                $balance=$account->initial_balance-$retirement;
+                $account->initial_balance=$balance;
+                $errors=null;
+                $cheque=false;
+
+                switch($_POST['Reservation']['type_reimburse']){
+                    case 5: //transferencia electronica
+                        $released=$customerReservation->customer->first_name." ".$customerReservation->customer->last_name;
+                        $concept=Yii::t('mx','Customer reimbursement')." ".Yii::t('mx','PENDING FOR BILLING');
+                        //payment type, account_id, cheq, date, released, concept, person, bank concept, retirement, deposit, balance;
+                        $errors=Yii::app()->quoteUtil->registerAccountCheques(5,$account_id,'TRA',date('Y-m-d'),$released,$concept,'------------','',$retirement,0,$balance);
+
+                        break;
+
+                    case 6: //cheque
+                        $released=$customerReservation->customer->first_name." ".$customerReservation->customer->last_name;
+                        $concept=Yii::t('mx','Customer reimbursement')." ".Yii::t('mx','PENDING FOR BILLING');
+                        $errors=Yii::app()->quoteUtil->registerAccountCheques(6,$account_id,$account->consecutive,date('Y-m-d'),$released,$concept,'------------','',$retirement,0,$balance);
+
+                        $numcheques=BankAccounts::model()->numerosCheque($account_id);
+                        $account->consecutive=$account->consecutive+1;
+                        $cheque=true;
+                        break;
+
+                }
+
+                if(is_array($errors)){
+
+                    $texto="";
+
+                    foreach($errors as $error){
+                        $texto.=$error;
+                    }
+
+                    Yii::app()->user->setFlash('error',$texto);
+                    $this->redirect(array('cancel','customerId'=>$customerId));
+
+                }else{
+
+                    $account->save();
+
+                    if($cheque){
+
+                        if($numcheques > 0){
+                            Yii::app()->user->setFlash('success','Success! numero de cheques disponibles: '.$numcheques);
+                            $this->redirect(array('index'));
+                        }else{
+                            Yii::app()->user->setFlash('error','error! No hay cheques disponibles');
+                            $this->redirect(array('cancel','customerId'=>$customerId));
+                        }
+                    }
                 }
             }
 
-            if($_POST['Reservation']['Reservation_type_reimburse']){
-
+            if($_POST['Reservation']['status']=='PRE-RESERVED'){
+                Yii::app()->quoteUtil->changeStatusReservation($customerId,"CANCELLED");
+                Yii::app()->user->setFlash('success','Success!');
+                $this->redirect(array('index'));
             }
-
-            $payment=new Operations;
-            $payment->cheq='DEP';
-            $payment->person=$person;
-            $payment->released=BankAccounts::model()->accountByPk($model->account_id);
-            $payment->balance=$balance;
-            $payment->concept=Yii::t('mx','PENDING FOR BILLING');
-            $payment->deposit=$model->amount;
-            $payment->datex=date('Y-m-d');
-            $payment->baucher=$model->baucher;
-            $payment->n_operation=$model->n_operation;
-            $payment->n_tarjeta=$model->n_tarjeta;
-            $payment->payment_type=$model->payment_type;
-            $payment->account_id=$model->account_id;
-
-            //$this->redirect(array('index'));
-
-            //aki va el codigo
-
 
         }
 
