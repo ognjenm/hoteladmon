@@ -127,6 +127,7 @@ class ReservationController extends Controller
     public function actionGetStatus(){
 
         $res=array('ok'=>false,'status'=>'null');
+        $url=false;
 
         if(Yii::app()->request->isAjaxRequest){
 
@@ -138,7 +139,12 @@ class ReservationController extends Controller
                     'params'=>array(':customerReservationId'=>$customerId)
                 ));
 
-                $res=array('ok'=>true,'status'=>$reservation->statux);
+                if($reservation->statux=="PRE-RESERVED"){
+                    Yii::app()->quoteUtil->changeStatusReservation($customerId,"CANCELLED");
+                    $url=Yii::app()->createUrl('/reservation/index');
+                }
+
+                $res=array('ok'=>true,'status'=>$reservation->statux,'url'=>$url);
 
             }
 
@@ -163,8 +169,8 @@ class ReservationController extends Controller
 
         if(isset($_POST['Reservation'])){
 
-
             if($_POST['Reservation']['status']=='RESERVED' || $_POST['Reservation']['status']=='RESERVED-PENDING'){
+
                 Yii::app()->quoteUtil->changeStatusReservation($customerId,"CANCELLED");
 
                 $retirement=$_POST['Reservation']['reimburse'];
@@ -206,12 +212,11 @@ class ReservationController extends Controller
                         $texto.=$error;
                     }
 
+
                     Yii::app()->user->setFlash('error',$texto);
                     $this->redirect(array('cancel','customerId'=>$customerId));
 
                 }else{
-
-                    $account->save();
 
                     if($cheque){
 
@@ -223,13 +228,13 @@ class ReservationController extends Controller
                             $this->redirect(array('cancel','customerId'=>$customerId));
                         }
                     }
-                }
-            }
 
-            if($_POST['Reservation']['status']=='PRE-RESERVED'){
-                Yii::app()->quoteUtil->changeStatusReservation($customerId,"CANCELLED");
-                Yii::app()->user->setFlash('success','Success!');
-                $this->redirect(array('index'));
+                    $account->save();
+                    Yii::app()->user->setFlash('success','Success!');
+                    $this->redirect(array('index'));
+
+                }
+
             }
 
         }
@@ -574,17 +579,24 @@ class ReservationController extends Controller
 		));
 		
 		
-		foreach($reservations as $index=>$value){
+		foreach($reservations as $value){
 			
-			$arrayocupados[$index]=Reservation::model()->findAll(array(
+			$arrayocupados=Reservation::model()->find(array(
+
 				'condition'=>'(room_id=:roomId AND checkin BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
 							  (room_id=:roomId AND checkout BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
 							  (room_id=:roomId AND checkin <= :checkin and checkout >= :checkout AND (statux=5 or statux=8 or statux=9 or statux=10))',
 				'params'=>array('roomId'=>$value->room_id,':checkin'=>$value->checkin,':checkout'=>$value->checkout)
+
+
+
 			));
-						
+
+            print_r($arrayocupados);
+
 			
-			if(isset($arrayocupados[$index])){
+			if(!empty($arrayocupados)){
+
 				$tipodecabaña=($value->room_type_id==1) ? "CV-" :"CA-";
 				$texto.="Ya existe una reservación para la cabaña ".$tipodecabaña.$value->room_id.", para estas fechas<br>";
 				
@@ -595,7 +607,7 @@ class ReservationController extends Controller
 					array_push($disponibles,$v);
 				}
 				
-			}	
+			}
 			
 		}
 

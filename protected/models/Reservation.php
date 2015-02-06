@@ -449,7 +449,7 @@ class Reservation extends CActiveRecord
                                         }
 
                                         if(data.status=="PRE-RESERVED"){
-
+                                           location.href=data.url;
                                         }
                                 }
                         }',

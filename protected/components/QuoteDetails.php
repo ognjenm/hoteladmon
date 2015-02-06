@@ -2348,7 +2348,7 @@ class QuoteDetails extends CApplicationComponent{
         $reservations=Reservation::model()->findAll(array(
             "condition"=>"service_type='CABANA' AND (statux='RESERVED' OR statux='OCCUPIED' OR statux='PRE-RESERVED') AND (checkin <= :inicio AND checkout > :fin OR substr(checkin,1,16)= :inicio)",
             "params"=>array("inicio"=>$fecha1." 15:00","fin"=>$fecha1." 13:00"),
-            "order"=>"customer_reservation_id,room_id"
+            "order"=>"room_id"
         ));
 
         $tabledailyreport=$this->reportHeader($this->toSpanishDateDescription(date('Y-M-d',strtotime($fecha1)))).'
@@ -4255,18 +4255,20 @@ class QuoteDetails extends CApplicationComponent{
 
     public function registerAccountCheques($paymentType,$accounId,$paymentMethod,$date,$released,$concept,$person,$bankConcept,$retirement,$deposit,$balance){
 
-        $operation=new Operations;
-        $operation->payment_type=$paymentType;
-        $operation->account_id=$accounId;
-        $operation->cheq=$paymentMethod;
-        $operation->datex=$date;
-        $operation->released=$released;
-        $operation->concept=$concept;
-        $operation->person=$person;
-        $operation->bank_concept=$bankConcept;
-        $operation->retirement=$retirement;
-        $operation->deposit=$deposit;
-        $operation->balance=$balance;
+
+            $operation=new Operations;
+            $operation->payment_type=$paymentType;
+            $operation->account_id=$accounId;
+            $operation->cheq=$paymentMethod;
+            $operation->datex=$date;
+            $operation->released=$released;
+            $operation->concept=$concept;
+            $operation->person=$person;
+            $operation->bank_concept=$bankConcept;
+            $operation->retirement=$retirement;
+            $operation->deposit=$deposit;
+            $operation->balance=$balance;
+            $operation->save();
 
         if($operation->save()){
 
@@ -4325,7 +4327,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-
     public function menuAccounts(){
 
         $botones=array();
@@ -4370,7 +4371,6 @@ class QuoteDetails extends CApplicationComponent{
         return $botones;
     }
 
-
     public function firstDayThisMonth(){
         $fecha = new DateTime();
         $fecha->modify('first day of this month');
@@ -4390,7 +4390,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-
     public function reportHeader($date=false){
 
 
@@ -4406,7 +4405,6 @@ class QuoteDetails extends CApplicationComponent{
         return $header;
 
     }
-
 
     public function retirementAccount($accountId,$retirement){
 

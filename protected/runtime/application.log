@@ -11868,3 +11868,70 @@ in F:\localhost\htdocs\hoteladmon\protected\extensions\bootstrap\widgets\TbExten
 2015/02/04 18:28:45 [error] [exception.CrugeException.401] action_reservation_cancel<br/>401
 REQUEST_URI=/hoteladmon/index.php?r=reservation/cancel&customerId=393
 ---
+2015/02/05 10:19:41 [error] [exception.CException] exception 'CException' with message 'Property "Operations.payment_tpe" is not defined.' in F:\localhost\htdocs\yiiframe\base\CComponent.php:173
+Stack trace:
+#0 F:\localhost\htdocs\yiiframe\db\ar\CActiveRecord.php(161): CComponent->__set('payment_tpe', 5)
+#1 F:\localhost\htdocs\hoteladmon\protected\components\QuoteDetails.php(4259): CActiveRecord->__set('payment_tpe', 5)
+#2 F:\localhost\htdocs\hoteladmon\protected\controllers\ReservationController.php(185): QuoteDetails->registerAccountCheques(5, '6', 'TRA', '2015-02-05', 'Jazmin Odeth Ro...', 'Reembolso al cl...', '------------', '', '3000', 0, -10484.43)
+#3 [internal function]: ReservationController->actionCancel('393')
+#4 F:\localhost\htdocs\yiiframe\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(ReservationController), Array)
+#5 F:\localhost\htdocs\yiiframe\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(ReservationController), Object(ReflectionMethod), Array)
+#6 F:\localhost\htdocs\yiiframe\web\CController.php(308): CInlineAction->runWithParams(Array)
+#7 F:\localhost\htdocs\yiiframe\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#8 F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php(90): CFilterChain->run()
+#9 F:\localhost\htdocs\yiiframe\web\filters\CFilter.php(38): CrugeAccessControlFilter->preFilter(Object(CFilterChain))
+#10 F:\localhost\htdocs\yiiframe\web\filters\CFilterChain.php(130): CFilter->filter(Object(CFilterChain))
+#11 F:\localhost\htdocs\yiiframe\web\CController.php(291): CFilterChain->run()
+#12 F:\localhost\htdocs\yiiframe\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(282): CController->run('cancel')
+#14 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(141): CWebApplication->runController('reservation/can...')
+#15 F:\localhost\htdocs\yiiframe\base\CApplication.php(180): CWebApplication->processRequest()
+#16 F:\localhost\htdocs\hoteladmon\index.php(31): CApplication->run()
+#17 {main}
+REQUEST_URI=/hoteladmon/index.php?r=reservation/cancel&customerId=393
+HTTP_REFERER=http://localhost/hoteladmon/index.php?r=reservation/cancel&customerId=393
+---
+2015/02/05 10:22:31 [error] [exception.CException] exception 'CException' with message 'QuoteDetails and its behaviors do not have a method or closure named "refresh".' in F:\localhost\htdocs\yiiframe\base\CComponent.php:266
+Stack trace:
+#0 F:\localhost\htdocs\hoteladmon\protected\components\QuoteDetails.php(4276): CComponent->__call('refresh', Array)
+#1 F:\localhost\htdocs\hoteladmon\protected\components\QuoteDetails.php(4276): QuoteDetails->refresh()
+#2 F:\localhost\htdocs\hoteladmon\protected\controllers\ReservationController.php(185): QuoteDetails->registerAccountCheques(5, '6', 'TRA', '2015-02-05', 'Jazmin Odeth Ro...', 'Reembolso al cl...', '------------', '', '3000', 0, -10484.43)
+#3 [internal function]: ReservationController->actionCancel('393')
+#4 F:\localhost\htdocs\yiiframe\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(ReservationController), Array)
+#5 F:\localhost\htdocs\yiiframe\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(ReservationController), Object(ReflectionMethod), Array)
+#6 F:\localhost\htdocs\yiiframe\web\CController.php(308): CInlineAction->runWithParams(Array)
+#7 F:\localhost\htdocs\yiiframe\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#8 F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php(90): CFilterChain->run()
+#9 F:\localhost\htdocs\yiiframe\web\filters\CFilter.php(38): CrugeAccessControlFilter->preFilter(Object(CFilterChain))
+#10 F:\localhost\htdocs\yiiframe\web\filters\CFilterChain.php(130): CFilter->filter(Object(CFilterChain))
+#11 F:\localhost\htdocs\yiiframe\web\CController.php(291): CFilterChain->run()
+#12 F:\localhost\htdocs\yiiframe\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(282): CController->run('cancel')
+#14 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(141): CWebApplication->runController('reservation/can...')
+#15 F:\localhost\htdocs\yiiframe\base\CApplication.php(180): CWebApplication->processRequest()
+#16 F:\localhost\htdocs\hoteladmon\index.php(31): CApplication->run()
+#17 {main}
+REQUEST_URI=/hoteladmon/index.php?r=reservation/cancel&customerId=393
+HTTP_REFERER=http://localhost/hoteladmon/index.php?r=reservation/cancel&customerId=393
+---
+2015/02/05 11:14:29 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "index".' in F:\localhost\htdocs\yiiframe\web\CWebApplication.php:286
+Stack trace:
+#0 F:\localhost\htdocs\yiiframe\web\CWebApplication.php(141): CWebApplication->runController('index')
+#1 F:\localhost\htdocs\yiiframe\base\CApplication.php(180): CWebApplication->processRequest()
+#2 F:\localhost\htdocs\hoteladmon\index.php(31): CApplication->run()
+#3 {main}
+REQUEST_URI=/hoteladmon/index.php?r=index
+HTTP_REFERER=http://localhost/hoteladmon/index.php?r=reservation/cancel&customerId=393
+---
+2015/02/05 12:39:51 [warning] [application] Failed to set unsafe attribute "id" of "Reservation".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\ReservationController.php (1864)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/02/05 12:39:51 [warning] [application] Failed to set unsafe attribute "id" of "Reservation".
+in F:\localhost\htdocs\hoteladmon\protected\controllers\ReservationController.php (1864)
+in F:\localhost\htdocs\hoteladmon\protected\modules\cruge\components\CrugeAccessControlFilter.php (90)
+in F:\localhost\htdocs\hoteladmon\index.php (31)
+2015/02/05 18:24:07 [error] [exception.CrugeException.401] action_reservation_emailFormats<br/>401
+REQUEST_URI=/hoteladmon/index.php?r=reservation/emailFormats&id=445
+HTTP_REFERER=http://localhost/hoteladmon/index.php?r=reservation/view&id=445
+---
