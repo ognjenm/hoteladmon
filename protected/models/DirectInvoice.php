@@ -40,7 +40,6 @@ class DirectInvoice extends CActiveRecord
 		);
 	}
 
-
 	public function relations()
 	{
 		return array(
@@ -49,7 +48,6 @@ class DirectInvoice extends CActiveRecord
             'documentType' => array(self::BELONGS_TO, 'DocumentTypes', 'document_type_id'),
 		);
 	}
-
 
 	public function attributeLabels()
 	{
@@ -125,11 +123,11 @@ class DirectInvoice extends CActiveRecord
 
         $criteria->with = array(
             'documentType' => array(
-                'together'=>false,
+                'together'=>true,
                 'joinType' => 'INNER JOIN',
             ),
             'provider' => array(
-                'together'=>false,
+                'together'=>true,
                 'joinType' => 'INNER JOIN',
             ),
         );
@@ -144,7 +142,8 @@ class DirectInvoice extends CActiveRecord
 
         if(isset($_POST['DirectInvoice']['search'])){
             $criteria->condition = 'match(provider.company,provider.first_name,provider.middle_name,provider.last_name,provider.suffix,provider.note) against(:busqueda in boolean mode)';
-            $criteria->params = array(':busqueda'=>$_POST['DirectInvoice']['search']);
+            //$criteria->params = array(':busqueda'=>$_POST['DirectInvoice']['search']);
+            $criteria->params = array(':busqueda'=>'"'.$_GET['Providers']['search'].'"');
         }
 
 
@@ -169,12 +168,12 @@ class DirectInvoice extends CActiveRecord
             ),
             'buttons' => array(
                 'filter' => array(
-                    'type' => 'ajaxSubmit',
+                    'type' => 'submit',
                     'label' => Yii::t('mx','Ok'),
                     'layoutType' => 'primary',
                     'icon'=>'icon-search',
-                    'url'=>Yii::app()->createUrl('/DirectInvoice/index'),
-                    'ajaxOptions' => array(
+                    'url'=>Yii::app()->createUrl('/directInvoice/index'),
+                    /*'ajaxOptions' => array(
                         'Type'=>'POST',
                         'dataType'=>'json',
                         'beforeSend' => 'function() {
@@ -184,11 +183,11 @@ class DirectInvoice extends CActiveRecord
                              $("#direct-invoice-grid-inner").removeClass("loading");
                         }',
                         'success' =>'function(data){
-                            /*$("#direct-invoice-grid").yiiGridView("update", {
+                            $("#direct-invoice-grid").yiiGridView("update", {
                                 data: $(this).serialize()
-                            });*/
+                            });
                         }',
-                    ),
+                    ),*/
                 ),
             )
         );

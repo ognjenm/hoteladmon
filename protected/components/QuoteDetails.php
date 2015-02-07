@@ -1448,7 +1448,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-
     public function getLateCheckOut($checkoutHour,$totalPax){
 
         $priceLateCheckout=0;
@@ -1463,7 +1462,6 @@ class QuoteDetails extends CApplicationComponent{
         return $priceLateCheckout;
 
     }
-
 
     public function getPriceCabana($adults,$children,$service_type,$room_type_id,$nights,$season){
 
@@ -1550,7 +1548,6 @@ class QuoteDetails extends CApplicationComponent{
 
     }
 
-
     public function getPriceDaypass($adults,$children,$service_type,$room_type_id,$season){
 
         $criteria=array(
@@ -1569,14 +1566,13 @@ class QuoteDetails extends CApplicationComponent{
         return $price;
     }
 
-
     public function nights($d_start,$d_end){
 
-        $nights= (strtotime($d_start)-strtotime($d_end))/86400;
-        $nights= abs($nights);
-        $nights = floor($nights);
+        $datetime1 = new DateTime($d_start);
+        $datetime2 = new DateTime($d_end);
+        $interval = $datetime1->diff($datetime2);
 
-        return $nights;
+        return $interval->format('%a');
     }
 
 

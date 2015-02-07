@@ -35,6 +35,16 @@
 
     Yii::app()->clientScript->registerScript('search', "
 
+        $('#filterForm').submit(function(){
+
+            $('#direct-invoice-grid').yiiGridView('update', {
+                data: $(this).serialize()
+            });
+
+            return false;
+
+        });
+
             $('#transport').click(function(){
                 $('#transportdisplay').toggle();
                 return false;

@@ -443,7 +443,6 @@ class DirectInvoiceController extends Controller
             )
         );
 
-
         $fTransporte = TbForm::createForm($transporte->getForm(),$transporte,
             array('htmlOptions'=>array('class'=>'well'),
                 'type'=>'inline',
@@ -470,16 +469,17 @@ class DirectInvoiceController extends Controller
 
         $model=new DirectInvoice('search');
         $model->unsetAttributes();  // clear any default values
+
         if(isset($_GET['DirectInvoice']))
         $model->attributes=$_GET['DirectInvoice'];
 
 
-        if(Yii::app()->request->isPostRequest){
+        /*if(Yii::app()->request->isPostRequest){
 
             if(isset($_POST['DirectInvoice']['search'])){
                 $model->attributes=$_POST['DirectInvoice']['search'];
             }
-        }
+        }*/
 
         $this->render('index',array(
             'model'=>$model,

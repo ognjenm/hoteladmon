@@ -569,6 +569,7 @@ class ReservationController extends Controller
 		$texto="";
 		$tipodecabaña="";
 		$disponibles=array();
+        $band=false;
 
         if($requestFormat==2) $status=5;
         if($requestFormat==1) $status=3;
@@ -577,44 +578,38 @@ class ReservationController extends Controller
 			'condition'=>'customer_reservation_id=:customerReservationId',
 			'params'=>array('customerReservationId'=>$id)
 		));
-		
-		
+
 		foreach($reservations as $value){
-			
+
+            $checkin= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->ToEnglishDateTime($value->checkin)));
+            $checkout= date('Y-m-d H:i',strtotime(Yii::app()->quoteUtil->ToEnglishDateTime($value->checkout)));
+
 			$arrayocupados=Reservation::model()->find(array(
 
 				'condition'=>'(room_id=:roomId AND checkin BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
 							  (room_id=:roomId AND checkout BETWEEN :checkin AND :checkout AND (statux=5 or statux=8 or statux=9 or statux=10)) OR
 							  (room_id=:roomId AND checkin <= :checkin and checkout >= :checkout AND (statux=5 or statux=8 or statux=9 or statux=10))',
-				'params'=>array('roomId'=>$value->room_id,':checkin'=>$value->checkin,':checkout'=>$value->checkout)
-
-
+				'params'=>array('roomId'=>$value->room_id,':checkin'=>$checkin,':checkout'=>$checkout)
 
 			));
 
-            print_r($arrayocupados);
-
-			
 			if(!empty($arrayocupados)){
 
 				$tipodecabaña=($value->room_type_id==1) ? "CV-" :"CA-";
 				$texto.="Ya existe una reservación para la cabaña ".$tipodecabaña.$value->room_id.", para estas fechas<br>";
-				
 				$aux=Yii::app()->quoteUtil->checkAvailability($value->service_type,$value->checkin,$value->checkout);
 				$aux2=Rooms::model()->getRoomsavailable($aux,$value->room_type_id);
-				
-				foreach($aux2 as $i=>$v){
-					array_push($disponibles,$v);
-				}
-				
+
+                foreach($aux2 as $i=>$v) array_push($disponibles,$v);
+
+                $band=true;
 			}
 			
 		}
 
-				
-			if($arrayocupados){
+			if($band){
 				$cabañas=implode(",",array_unique($disponibles));
-				$texto.="Por favor, seleccione una de las siguientes cabañas disponibles: ".$cabañas;
+				$texto.="Para Continuar, seleccione una de las siguientes cabañas disponibles: ".$cabañas;
 				Yii::app()->user->setFlash('warning',$texto);
 			}
 		
@@ -626,17 +621,14 @@ class ReservationController extends Controller
 
 			$from=Poll::model()->find($criteria);
 			$customerReservation=CustomerReservations::model()->findByPk($id);
-			$customer=Customers::model()->findByPk($customerReservation->customer_id);
-
-
 			$format=Yii::app()->quoteUtil->EmailFormats($id,$requestFormat,$response,$bankId);
 
 			$this->render('accountNumber',array(
 				'format'=>$format,
 				'customerReservationId'=>$id,
 				'from'=>($from!=null) ? $from->used_email : Yii::app()->params['adminEmail'],
-				'email'=>$customer->email,
-				'cc'=>$customer->alternative_email,
+				'email'=>$customerReservation->customer->email,
+				'cc'=>$customerReservation->customer->alternative_email,
 				'status'=>$status,
 				'requestFormat'=>$requestFormat
 			));
